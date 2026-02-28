@@ -1,0 +1,12 @@
+<nav class="bg-green-700 text-white px-6 py-3 flex items-center justify-between">
+  <div class="flex items-center gap-6">
+    <span class="font-bold text-lg">家計簿</span>
+    <%= link_to "預算", root_path, class: "hover:text-green-200 text-sm" %>
+    <%= link_to "帳戶", accounts_path, class: "hover:text-green-200 text-sm" %>
+    <%= link_to "報表", reports_path, class: "hover:text-green-200 text-sm" %>
+  </div>
+  <div class="flex items-center gap-4 text-sm">
+    <span><%= Current.user.name %></span>
+    <%= button_to "登出", session_path, method: :delete, class: "hover:text-green-200" %>
+  </div>
+</nav>
