@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe Account, type: :model do
   it { should belong_to(:household) }
-  xit { should have_many(:transactions).dependent(:destroy) } # enable after Task 7 adds Transaction
+  it { should have_many(:transactions).dependent(:destroy) }
   it { should validate_presence_of(:name) }
   it { should validate_inclusion_of(:account_type).in_array(%w[budget tracking]) }
 

@@ -14,8 +14,7 @@ RSpec.describe BudgetEntry, type: :model do
     end
   end
 
-  # enable after Task 7 adds Transaction
-  xdescribe "#available" do
+  describe "#available" do
     it "sums carried_over + budgeted + activity" do
       category = create(:category)
       account = create(:account, household: category.household)
@@ -28,8 +27,7 @@ RSpec.describe BudgetEntry, type: :model do
     end
   end
 
-  # enable after Task 7 adds Transaction
-  xdescribe "#activity" do
+  describe "#activity" do
     it "sums transactions for the same category and month" do
       category = create(:category)
       account = create(:account, household: category.household)
