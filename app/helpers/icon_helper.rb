@@ -16,8 +16,12 @@ module IconHelper
   }.freeze
 
   def icon(name, classes: "w-5 h-5")
-    svg_content = ICONS[name]
-    return "".html_safe unless svg_content
+    svg_content = ICONS[name.to_s]
+    if svg_content.nil?
+      raise ArgumentError, "Unknown icon: #{name.inspect}. Available: #{ICONS.keys.join(', ')}" if Rails.env.local?
+      return "".html_safe
+    end
+    # svg_content is sourced from the ICONS constant (static, trusted strings only — never user input).
     content_tag(:svg, svg_content.html_safe,
       xmlns: "http://www.w3.org/2000/svg",
       fill: "none",
