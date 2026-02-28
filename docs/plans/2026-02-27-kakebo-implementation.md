@@ -1670,6 +1670,22 @@ git commit -m "feat: add basic reports page"
 
 ---
 
+## 完成後：Code Review
+
+所有 Task 完成、確認清單勾完後，執行 code review：
+
+```
+/superpowers:requesting-code-review
+```
+
+檢查重點：
+- 所有 model 的資料隔離都有透過 `Current.household` 過濾
+- BudgetEntry 計算邏輯（available、carried_over）正確
+- 沒有 N+1 query 問題
+- 測試覆蓋核心邏輯
+
+---
+
 ## 環境提醒
 
 ```bash
