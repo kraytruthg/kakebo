@@ -22,15 +22,8 @@ class BudgetEntriesController < ApplicationController
     @entry.budgeted = budget_entry_params[:budgeted]
 
     if @entry.save
-      @activity  = Transaction
-                     .joins(:account, category: { category_group: :household })
-                     .where(accounts: { account_type: "budget" })
-                     .where(category_groups: { household_id: Current.household.id })
-                     .where(category_id: @category.id)
-                     .where("EXTRACT(year FROM date) = ? AND EXTRACT(month FROM date) = ?",
-                            @year, @month)
-                     .sum(:amount)
-      @available = (@entry.carried_over || 0) + @entry.budgeted + @activity
+      @activity  = @entry.activity
+      @available = @entry.available
 
       respond_to do |format|
         format.turbo_stream
