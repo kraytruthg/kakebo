@@ -1,0 +1,24 @@
+<div class="max-w-5xl mx-auto p-6">
+  <h1 class="text-2xl font-bold mb-6"><%= "#{@year} 年 #{@month} 月 報表" %></h1>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <h2 class="font-semibold mb-4">各類別支出</h2>
+    <% total = @spending_by_category.sum { |_, v| v } %>
+    <% @spending_by_category.each do |name, amount| %>
+      <div class="flex items-center gap-4 mb-3">
+        <span class="w-32 text-sm truncate"><%= name %></span>
+        <div class="flex-1 bg-gray-200 rounded-full h-4">
+          <div class="bg-green-500 h-4 rounded-full"
+               style="width: <%= total > 0 ? (amount / total * 100).round : 0 %>%"></div>
+        </div>
+        <span class="w-24 text-right text-sm font-medium">
+          <%= number_to_currency(amount, unit: "NT$", precision: 0) %>
+        </span>
+      </div>
+    <% end %>
+    <div class="border-t pt-3 mt-3 flex justify-between font-semibold">
+      <span>總計</span>
+      <span><%= number_to_currency(total, unit: "NT$", precision: 0) %></span>
+    </div>
+  </div>
+</div>
