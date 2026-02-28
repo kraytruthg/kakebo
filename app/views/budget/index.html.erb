@@ -35,8 +35,8 @@
           <% group.categories.each do |category| %>
             <% entry = category.budget_entries.find { |e| e.year == @year && e.month == @month } %>
             <% budgeted = entry&.budgeted || 0 %>
-            <% activity = entry&.activity || 0 %>
-            <% available = entry&.available || 0 %>
+            <% activity = @monthly_activities[category.id] || 0 %>
+            <% available = (entry&.carried_over || 0) + budgeted + activity %>
             <tr class="border-t hover:bg-gray-50">
               <td class="px-4 py-3 text-sm"><%= category.name %></td>
               <td class="px-4 py-3 text-right text-sm">
