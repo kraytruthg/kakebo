@@ -51,13 +51,23 @@
                 <%= category.name %>
               </td>
               <td class="px-5 py-3 text-right text-sm text-slate-600">
-                <%= number_to_currency(budgeted, unit: "NT$", precision: 0) %>
+                <turbo-frame id="budget-entry-<%= category.id %>">
+                  <%= link_to edit_budget_entries_path(category_id: category.id, year: @year, month: @month),
+                        class: "cursor-pointer hover:text-indigo-600 transition-colors" do %>
+                    <%= number_to_currency(budgeted, unit: "NT$", precision: 0) %>
+                  <% end %>
+                </turbo-frame>
               </td>
               <td class="px-5 py-3 text-right text-sm <%= activity < 0 ? 'text-red-500' : 'text-slate-600' %>">
-                <%= number_to_currency(activity, unit: "NT$", precision: 0) %>
+                <span id="activity-<%= category.id %>">
+                  <%= number_to_currency(activity, unit: "NT$", precision: 0) %>
+                </span>
               </td>
-              <td class="px-5 py-3 text-right text-sm font-semibold <%= available < 0 ? 'text-red-600' : 'text-emerald-600' %>">
-                <%= number_to_currency(available, unit: "NT$", precision: 0) %>
+              <td class="px-5 py-3 text-right text-sm font-semibold">
+                <span id="available-<%= category.id %>"
+                      class="<%= available < 0 ? 'text-red-600' : 'text-emerald-600' %>">
+                  <%= number_to_currency(available, unit: "NT$", precision: 0) %>
+                </span>
               </td>
             </tr>
           <% end %>
