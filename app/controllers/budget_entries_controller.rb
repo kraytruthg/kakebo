@@ -30,7 +30,10 @@ class BudgetEntriesController < ApplicationController
         format.html { redirect_to budget_path(year: @year, month: @month) }
       end
     else
-      head :unprocessable_entity
+      respond_to do |format|
+        format.turbo_stream { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_entity }
+      end
     end
   end
 

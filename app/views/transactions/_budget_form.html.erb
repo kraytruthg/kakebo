@@ -1,4 +1,5 @@
-<% first_account = Current.household.accounts.budget.first %>
+<% budget_accounts = Current.household.accounts.budget.to_a %>
+<% first_account = budget_accounts.first %>
 <%= form_with url: account_transactions_path(first_account),
       data: {
         budget_target: "form",
@@ -21,9 +22,10 @@
       <label class="block text-sm font-medium text-slate-700 mb-1.5">帳戶</label>
       <%= f.select :account_id,
             options_for_select(
-              Current.household.accounts.budget.map { |a| [a.name, a.id] }
+              budget_accounts.map { |a| [a.name, a.id] }
             ),
             {},
+            name: false,
             class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent",
             data: {
               budget_target: "accountSelect",
