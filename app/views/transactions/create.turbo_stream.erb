@@ -1,3 +1,4 @@
+<%= turbo_stream.remove "transactions-empty" %>
 <%= turbo_stream.prepend "transactions-tbody" do %>
   <%= render "transactions/row", transaction: @transaction, account: @account %>
 <% end %>

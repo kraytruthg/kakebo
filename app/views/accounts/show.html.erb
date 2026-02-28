@@ -34,29 +34,31 @@
 
   <%# Transaction list %>
   <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden" id="transaction-list">
-    <% if @transactions.empty? %>
-      <div class="text-center py-16 text-slate-400">
-        <p class="text-sm">還沒有交易紀錄</p>
-        <p class="text-xs mt-1">點擊「新增交易」開始記帳</p>
-      </div>
-    <% else %>
-      <table class="w-full">
-        <thead>
-          <tr class="border-b border-slate-100">
-            <th class="text-left px-5 py-3 text-xs font-medium text-slate-400">日期</th>
-            <th class="text-left px-5 py-3 text-xs font-medium text-slate-400">備註</th>
-            <th class="text-left px-5 py-3 text-xs font-medium text-slate-400">類別</th>
-            <th class="text-right px-5 py-3 text-xs font-medium text-slate-400">金額</th>
-            <th class="px-5 py-3"></th>
+    <table class="w-full">
+      <thead>
+        <tr class="border-b border-slate-100">
+          <th class="text-left px-5 py-3 text-xs font-medium text-slate-400">日期</th>
+          <th class="text-left px-5 py-3 text-xs font-medium text-slate-400">備註</th>
+          <th class="text-left px-5 py-3 text-xs font-medium text-slate-400">類別</th>
+          <th class="text-right px-5 py-3 text-xs font-medium text-slate-400">金額</th>
+          <th class="px-5 py-3"></th>
+        </tr>
+      </thead>
+      <tbody id="transactions-tbody">
+        <% if @transactions.empty? %>
+          <tr id="transactions-empty">
+            <td colspan="5" class="text-center py-16 text-slate-400">
+              <p class="text-sm">還沒有交易紀錄</p>
+              <p class="text-xs mt-1">點擊「新增交易」開始記帳</p>
+            </td>
           </tr>
-        </thead>
-        <tbody id="transactions-tbody">
+        <% else %>
           <% @transactions.each do |t| %>
             <%= render "transactions/row", transaction: t, account: @account %>
           <% end %>
-        </tbody>
-      </table>
-    <% end %>
+        <% end %>
+      </tbody>
+    </table>
   </div>
 
   <%# Slide-over Drawer backdrop %>
