@@ -1,0 +1,58 @@
+<% first_account = Current.household.accounts.budget.first %>
+<%= form_with url: account_transactions_path(first_account),
+      data: {
+        budget_target: "form",
+        turbo_stream: true,
+        action: "turbo:submit-end->budget#close"
+      } do |f| %>
+  <div class="space-y-5">
+
+    <%# 類別（唯讀顯示 + hidden input） %>
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1.5">類別</label>
+      <div class="block w-full rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-600"
+           data-budget-target="categoryName">
+      </div>
+      <%= f.hidden_field :category_id, data: { budget_target: "categoryId" } %>
+    </div>
+
+    <%# 帳戶選擇（控制 form action） %>
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1.5">帳戶</label>
+      <%= f.select :account_id,
+            options_for_select(
+              Current.household.accounts.budget.map { |a| [a.name, a.id] }
+            ),
+            {},
+            class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent",
+            data: {
+              budget_target: "accountSelect",
+              action: "change->budget#accountChanged"
+            } %>
+    </div>
+
+    <%# 日期 %>
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1.5">日期</label>
+      <%= f.date_field :date, value: Date.today,
+            class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" %>
+    </div>
+
+    <%# 金額 %>
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1.5">金額</label>
+      <%= f.number_field :amount, step: 1, placeholder: "支出填負數，例：-500",
+            class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" %>
+    </div>
+
+    <%# 備註 %>
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1.5">備註</label>
+      <%= f.text_field :memo, placeholder: "例：午餐",
+            class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" %>
+    </div>
+
+    <%= f.submit "新增交易",
+          class: "w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg cursor-pointer transition-colors text-sm" %>
+  </div>
+<% end %>
