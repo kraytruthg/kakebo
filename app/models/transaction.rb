@@ -15,7 +15,8 @@ class Transaction < ApplicationRecord
 
   delegate :household, to: :account
 
-  after_commit :trigger_recalculation, on: [:create, :update, :destroy]
+  after_commit :trigger_recalculation, on: [:create, :destroy]
+  after_commit :trigger_recalculation_on_update, on: :update
 
   def transfer?
     transfer_pair_id.present?
@@ -29,10 +30,14 @@ class Transaction < ApplicationRecord
 
   def trigger_recalculation
     return if category_id.nil?
-    BudgetEntryRecalculationJob.perform_later(
-      category_id,
-      date.year,
-      date.month
-    )
+    BudgetEntryRecalculationJob.perform_later(category_id, date.year, date.month)
+  end
+
+  def trigger_recalculation_on_update
+    trigger_recalculation
+    if saved_change_to_category_id?
+      old_category_id = saved_changes["category_id"].first
+      BudgetEntryRecalculationJob.perform_later(old_category_id, date.year, date.month) if old_category_id
+    end
   end
 end
