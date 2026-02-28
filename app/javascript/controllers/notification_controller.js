@@ -10,8 +10,8 @@ export default class extends Controller {
   }
 
   dismiss() {
-    this.element.style.opacity = "0"
     this.element.style.transition = "opacity 0.3s"
+    this.element.style.opacity = "0"
     setTimeout(() => this.element.remove(), 300)
   }
 }
