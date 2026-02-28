@@ -3,7 +3,7 @@
   <div class="flex h-16 items-center px-6 border-b border-slate-100">
     <span class="text-indigo-600 font-bold text-lg tracking-tight">家計簿</span>
   </div>
-  <nav class="flex-1 px-3 py-4 space-y-1">
+  <nav class="flex-1 px-3 py-4 space-y-1" aria-label="主要導覽">
     <%= link_to budget_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium #{request.path == budget_path ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}" do %>
       <%= icon "chart-bar", classes: "w-5 h-5 shrink-0" %>
       預算
@@ -24,7 +24,8 @@
         <span class="text-sm text-slate-600 truncate"><%= Current.user.name %></span>
       </div>
       <%= button_to session_path, method: :delete,
-            class: "flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600" do %>
+            class: "flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600",
+            aria: { label: "登出" } do %>
         <%= icon "arrow-right-on-rectangle", classes: "w-4 h-4" %>
       <% end %>
     </div>
@@ -32,7 +33,7 @@
 </aside>
 
 <%# Mobile bottom tab bar %>
-<nav class="lg:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 flex z-10">
+<nav class="lg:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 flex z-10" aria-label="行動裝置導覽">
   <%= link_to budget_path, class: "flex-1 flex flex-col items-center py-3 gap-1 text-xs #{request.path == budget_path ? 'text-indigo-600' : 'text-slate-500'}" do %>
     <%= icon "chart-bar", classes: "w-6 h-6" %>
     預算
