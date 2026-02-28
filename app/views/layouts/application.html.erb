@@ -1,40 +1,40 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Kakebo" %></title>
+    <title><%= content_for(:title) || "家計簿" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Kakebo">
-    <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
     <%= yield :head %>
-
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
-
-  <body class="bg-gray-100 min-h-screen">
+  <body class="bg-slate-50 min-h-screen">
     <% if Current.user %>
       <%= render "shared/nav" %>
     <% end %>
 
-    <% if notice %>
-      <div class="bg-green-100 text-green-800 px-4 py-2 text-sm"><%= notice %></div>
-    <% end %>
-    <% if alert %>
-      <div class="bg-red-100 text-red-800 px-4 py-2 text-sm"><%= alert %></div>
-    <% end %>
+    <%# Toast notifications %>
+    <div class="fixed top-4 right-4 z-50 space-y-2" id="toasts">
+      <% if notice %>
+        <div data-controller="notification"
+             class="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-lg text-sm text-slate-700">
+          <%= icon "check-circle", classes: "w-5 h-5 text-emerald-500 shrink-0" %>
+          <%= notice %>
+        </div>
+      <% end %>
+      <% if alert %>
+        <div data-controller="notification"
+             class="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-lg text-sm text-slate-700">
+          <%= icon "exclamation-circle", classes: "w-5 h-5 text-red-500 shrink-0" %>
+          <%= alert %>
+        </div>
+      <% end %>
+    </div>
 
-    <%= yield %>
+    <main class="<%= Current.user ? 'lg:pl-60 pb-20 lg:pb-0' : '' %>">
+      <%= yield %>
+    </main>
   </body>
 </html>

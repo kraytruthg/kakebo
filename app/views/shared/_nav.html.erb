@@ -1,12 +1,48 @@
-<nav class="bg-green-700 text-white px-6 py-3 flex items-center justify-between">
-  <div class="flex items-center gap-6">
-    <span class="font-bold text-lg">家計簿</span>
-    <%= link_to "預算", root_path, class: "hover:text-green-200 text-sm" %>
-    <%= link_to "帳戶", accounts_path, class: "hover:text-green-200 text-sm" %>
-    <%= link_to "報表", reports_path, class: "hover:text-green-200 text-sm" %>
+<%# Desktop sidebar %>
+<aside class="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-60 lg:flex-col bg-white border-r border-slate-200 z-10">
+  <div class="flex h-16 items-center px-6 border-b border-slate-100">
+    <span class="text-indigo-600 font-bold text-lg tracking-tight">家計簿</span>
   </div>
-  <div class="flex items-center gap-4 text-sm">
-    <span><%= Current.user.name %></span>
-    <%= button_to "登出", session_path, method: :delete, class: "hover:text-green-200" %>
+  <nav class="flex-1 px-3 py-4 space-y-1">
+    <%= link_to budget_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium #{request.path == budget_path ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}" do %>
+      <%= icon "chart-bar", classes: "w-5 h-5 shrink-0" %>
+      預算
+    <% end %>
+    <%= link_to accounts_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium #{request.path.start_with?(accounts_path) ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}" do %>
+      <%= icon "credit-card", classes: "w-5 h-5 shrink-0" %>
+      帳戶
+    <% end %>
+    <%= link_to reports_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium #{request.path == reports_path ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}" do %>
+      <%= icon "presentation-chart-line", classes: "w-5 h-5 shrink-0" %>
+      報表
+    <% end %>
+  </nav>
+  <div class="px-4 py-4 border-t border-slate-100">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <%= icon "user", classes: "w-4 h-4 text-slate-400" %>
+        <span class="text-sm text-slate-600 truncate"><%= Current.user.name %></span>
+      </div>
+      <%= button_to session_path, method: :delete,
+            class: "flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600" do %>
+        <%= icon "arrow-right-on-rectangle", classes: "w-4 h-4" %>
+      <% end %>
+    </div>
   </div>
+</aside>
+
+<%# Mobile bottom tab bar %>
+<nav class="lg:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 flex z-10">
+  <%= link_to budget_path, class: "flex-1 flex flex-col items-center py-3 gap-1 text-xs #{request.path == budget_path ? 'text-indigo-600' : 'text-slate-500'}" do %>
+    <%= icon "chart-bar", classes: "w-6 h-6" %>
+    預算
+  <% end %>
+  <%= link_to accounts_path, class: "flex-1 flex flex-col items-center py-3 gap-1 text-xs #{request.path.start_with?(accounts_path) ? 'text-indigo-600' : 'text-slate-500'}" do %>
+    <%= icon "credit-card", classes: "w-6 h-6" %>
+    帳戶
+  <% end %>
+  <%= link_to reports_path, class: "flex-1 flex flex-col items-center py-3 gap-1 text-xs #{request.path == reports_path ? 'text-indigo-600' : 'text-slate-500'}" do %>
+    <%= icon "presentation-chart-line", classes: "w-6 h-6" %>
+    報表
+  <% end %>
 </nav>
