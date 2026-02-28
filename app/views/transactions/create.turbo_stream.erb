@@ -1,0 +1,3 @@
+<%= turbo_stream.prepend "transactions-tbody" do %>
+  <%= render "transactions/row", transaction: @transaction, account: @account %>
+<% end %>

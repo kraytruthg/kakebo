@@ -50,7 +50,7 @@
             <th class="px-5 py-3"></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="transactions-tbody">
           <% @transactions.each do |t| %>
             <%= render "transactions/row", transaction: t, account: @account %>
           <% end %>
