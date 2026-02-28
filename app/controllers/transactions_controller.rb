@@ -5,6 +5,7 @@ class TransactionsController < ApplicationController
     @transaction = @account.transactions.build(transaction_params)
     if @transaction.save
       @account.recalculate_balance!
+      set_budget_data_for_turbo_stream
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to account_path(@account), notice: "交易已新增" }
@@ -25,6 +26,29 @@ class TransactionsController < ApplicationController
   end
 
   private
+
+  def set_budget_data_for_turbo_stream
+    return unless @transaction.category_id.present?
+
+    year  = @transaction.date.year
+    month = @transaction.date.month
+
+    @budget_activity = Transaction
+                         .joins(:account, category: { category_group: :household })
+                         .where(accounts: { account_type: "budget" })
+                         .where(category_groups: { household_id: Current.household.id })
+                         .where(category_id: @transaction.category_id)
+                         .where("EXTRACT(year FROM date) = ? AND EXTRACT(month FROM date) = ?",
+                                year, month)
+                         .sum(:amount)
+
+    @budget_entry     = BudgetEntry.find_by(
+      category_id: @transaction.category_id, year: year, month: month
+    )
+    @budget_available = (@budget_entry&.carried_over || 0) +
+                        (@budget_entry&.budgeted || 0) +
+                        @budget_activity
+  end
 
   def set_account
     @account = Current.household.accounts.find(params[:account_id])

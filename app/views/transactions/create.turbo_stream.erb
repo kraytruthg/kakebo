@@ -2,3 +2,19 @@
 <%= turbo_stream.prepend "transactions-tbody" do %>
   <%= render "transactions/row", transaction: @transaction, account: @account %>
 <% end %>
+
+<% if @budget_activity %>
+  <%= turbo_stream.replace "activity-#{@transaction.category_id}" do %>
+    <span id="activity-<%= @transaction.category_id %>"
+          class="<%= @budget_activity < 0 ? 'text-red-500' : 'text-slate-600' %>">
+      <%= number_to_currency(@budget_activity, unit: "NT$", precision: 0) %>
+    </span>
+  <% end %>
+
+  <%= turbo_stream.replace "available-#{@transaction.category_id}" do %>
+    <span id="available-<%= @transaction.category_id %>"
+          class="font-semibold <%= @budget_available < 0 ? 'text-red-600' : 'text-emerald-600' %>">
+      <%= number_to_currency(@budget_available, unit: "NT$", precision: 0) %>
+    </span>
+  <% end %>
+<% end %>
