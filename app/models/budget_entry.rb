@@ -9,6 +9,8 @@ class BudgetEntry < ApplicationRecord
 
   def activity
     category.transactions
+            .joins(:account)
+            .where(accounts: { account_type: "budget" })
             .where("EXTRACT(year FROM date) = ? AND EXTRACT(month FROM date) = ?", year, month)
             .sum(:amount)
   end

@@ -7,6 +7,7 @@ class SessionsController < ApplicationController
   def create
     user = User.find_by(email: params[:email])
     if user&.authenticate(params[:password])
+      reset_session
       session[:user_id] = user.id
       redirect_to root_path, notice: "歡迎回來，#{user.name}！"
     else
