@@ -5,9 +5,15 @@ class TransactionsController < ApplicationController
     @transaction = @account.transactions.build(transaction_params)
     if @transaction.save
       @account.recalculate_balance!
-      redirect_to account_path(@account), notice: "交易已新增"
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to account_path(@account), notice: "交易已新增" }
+      end
     else
-      redirect_to account_path(@account), alert: "請填寫必要欄位"
+      respond_to do |format|
+        format.turbo_stream { head :unprocessable_entity }
+        format.html { redirect_to account_path(@account), alert: "請填寫必要欄位" }
+      end
     end
   end
 
@@ -27,7 +33,9 @@ class TransactionsController < ApplicationController
   def transaction_params
     p = params.require(:transaction).permit(:category_id, :amount, :date, :memo)
     if p[:category_id].present?
-      Current.household.categories.find(p[:category_id])
+      Category.joins(:category_group)
+              .where(category_groups: { household_id: Current.household.id })
+              .find(p[:category_id])
     end
     p
   end

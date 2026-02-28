@@ -1,0 +1,17 @@
+<tr class="border-t border-slate-50 hover:bg-slate-50 group transition-colors" id="<%= dom_id(transaction) %>">
+  <td class="px-5 py-3 text-sm text-slate-500"><%= transaction.date.strftime("%m/%d") %></td>
+  <td class="px-5 py-3 text-sm text-slate-800"><%= transaction.memo.presence || "─" %></td>
+  <td class="px-5 py-3 text-sm text-slate-400"><%= transaction.category&.name || "收入" %></td>
+  <td class="px-5 py-3 text-right text-sm font-medium <%= transaction.amount < 0 ? 'text-red-500' : 'text-emerald-600' %>">
+    <%= number_to_currency(transaction.amount, unit: "NT$", precision: 0) %>
+  </td>
+  <td class="px-5 py-3 text-right">
+    <%= button_to account_transaction_path(account, transaction),
+          method: :delete,
+          data: { turbo_confirm: "確定刪除這筆交易？" },
+          class: "opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-500",
+          aria: { label: "刪除交易" } do %>
+      <%= icon "trash", classes: "w-4 h-4" %>
+    <% end %>
+  </td>
+</tr>

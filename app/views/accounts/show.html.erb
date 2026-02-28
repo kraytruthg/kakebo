@@ -1,70 +1,85 @@
-<div class="max-w-5xl mx-auto p-6">
-  <div class="flex items-center gap-4 mb-6">
-    <%= link_to "← 帳戶列表", accounts_path, class: "text-green-700 hover:underline text-sm" %>
-    <h1 class="text-2xl font-bold"><%= @account.name %></h1>
-    <span class="text-2xl font-bold text-green-700">
-      <%= number_to_currency(@account.balance, unit: "NT$", precision: 0) %>
-    </span>
-  </div>
+<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8"
+     data-controller="drawer">
 
-  <%# 新增交易表單 %>
-  <div class="bg-white rounded-lg shadow p-4 mb-6">
-    <h2 class="font-semibold mb-3">新增交易</h2>
-    <%= form_with url: account_transactions_path(@account) do |f| %>
-      <div class="grid grid-cols-4 gap-3">
-        <div>
-          <%= f.date_field :date, value: Date.today, class: "w-full border rounded px-2 py-1 text-sm" %>
-        </div>
-        <div>
-          <%= f.select :category_id,
-                options_for_select(Current.household.category_groups.includes(:categories).flat_map { |g|
-                  g.categories.map { |c| ["#{g.name} / #{c.name}", c.id] }
-                }),
-                { include_blank: "收入（直接到 RTA）" },
-                class: "w-full border rounded px-2 py-1 text-sm" %>
-        </div>
-        <div>
-          <%= f.number_field :amount, placeholder: "金額（支出用負數）", step: 1,
-                             class: "w-full border rounded px-2 py-1 text-sm" %>
-        </div>
-        <div class="flex gap-2">
-          <%= f.text_field :memo, placeholder: "備註", class: "flex-1 border rounded px-2 py-1 text-sm" %>
-          <%= f.submit "新增", class: "bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700" %>
-        </div>
+  <%# Hero header %>
+  <div class="flex items-start justify-between mb-6">
+    <div>
+      <%= link_to accounts_path, class: "inline-flex items-center gap-1 text-sm text-slate-400 hover:text-slate-700 mb-2" do %>
+        <%= icon "chevron-left", classes: "w-4 h-4" %>
+        帳戶
+      <% end %>
+      <h1 class="text-2xl font-bold text-slate-900"><%= @account.name %></h1>
+      <span class="inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full <%= @account.budget? ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600' %>">
+        <%= @account.budget? ? "預算帳戶" : "追蹤帳戶" %>
+      </span>
+    </div>
+    <div class="text-right">
+      <p class="text-3xl font-bold text-slate-900">
+        <%= number_to_currency(@account.balance, unit: "NT$", precision: 0) %>
+      </p>
+      <div class="flex gap-2 mt-3 justify-end">
+        <%= link_to edit_account_path(@account),
+              class: "inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 border border-slate-200 rounded-lg px-3 py-1.5 transition-colors" do %>
+          <%= icon "pencil-square", classes: "w-3.5 h-3.5" %>
+          編輯
+        <% end %>
+        <button data-action="drawer#open"
+                class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-1.5 rounded-lg transition-colors">
+          <%= icon "plus", classes: "w-4 h-4" %>
+          新增交易
+        </button>
       </div>
-    <% end %>
+    </div>
   </div>
 
-  <%# 交易清單 %>
-  <div class="bg-white rounded-lg shadow overflow-hidden">
+  <%# Transaction list %>
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden" id="transaction-list">
     <table class="w-full">
-      <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
-        <tr>
-          <th class="text-left px-4 py-3">日期</th>
-          <th class="text-left px-4 py-3">備註</th>
-          <th class="text-left px-4 py-3">類別</th>
-          <th class="text-right px-4 py-3">金額</th>
-          <th class="px-4 py-3"></th>
+      <thead>
+        <tr class="border-b border-slate-100">
+          <th class="text-left px-5 py-3 text-xs font-medium text-slate-400">日期</th>
+          <th class="text-left px-5 py-3 text-xs font-medium text-slate-400">備註</th>
+          <th class="text-left px-5 py-3 text-xs font-medium text-slate-400">類別</th>
+          <th class="text-right px-5 py-3 text-xs font-medium text-slate-400">金額</th>
+          <th class="px-5 py-3"></th>
         </tr>
       </thead>
-      <tbody>
-        <% @transactions.each do |t| %>
-          <tr class="border-t hover:bg-gray-50">
-            <td class="px-4 py-3 text-sm"><%= t.date.strftime("%m/%d") %></td>
-            <td class="px-4 py-3 text-sm"><%= t.memo %></td>
-            <td class="px-4 py-3 text-sm text-gray-500"><%= t.category&.name || "收入" %></td>
-            <td class="px-4 py-3 text-right text-sm font-medium <%= t.amount < 0 ? 'text-red-600' : 'text-green-700' %>">
-              <%= number_to_currency(t.amount, unit: "NT$", precision: 0) %>
-            </td>
-            <td class="px-4 py-3 text-right">
-              <%= button_to "刪除", account_transaction_path(@account, t),
-                            method: :delete,
-                            data: { turbo_confirm: "確定刪除？" },
-                            class: "text-xs text-gray-400 hover:text-red-600" %>
+      <tbody id="transactions-tbody">
+        <% if @transactions.empty? %>
+          <tr id="transactions-empty">
+            <td colspan="5" class="text-center py-16 text-slate-400">
+              <p class="text-sm">還沒有交易紀錄</p>
+              <p class="text-xs mt-1">點擊「新增交易」開始記帳</p>
             </td>
           </tr>
+        <% else %>
+          <% @transactions.each do |t| %>
+            <%= render "transactions/row", transaction: t, account: @account %>
+          <% end %>
         <% end %>
       </tbody>
     </table>
+  </div>
+
+  <%# Slide-over Drawer backdrop %>
+  <div data-drawer-target="backdrop"
+       class="fixed inset-0 bg-black/40 z-40 opacity-0 pointer-events-none transition-opacity duration-200"
+       data-action="click->drawer#backdropClick">
+  </div>
+
+  <%# Slide-over Drawer panel %>
+  <div data-drawer-target="panel"
+       class="fixed inset-y-0 right-0 w-full sm:w-96 bg-white shadow-2xl z-50 translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+      <h2 class="text-base font-semibold text-slate-900">新增交易</h2>
+      <button data-action="drawer#close"
+              class="text-slate-400 hover:text-slate-700 transition-colors"
+              aria-label="關閉">
+        <%= icon "x-mark", classes: "w-5 h-5" %>
+      </button>
+    </div>
+    <div class="flex-1 overflow-y-auto px-5 py-5">
+      <%= render "transactions/form", account: @account %>
+    </div>
   </div>
 </div>
