@@ -3,7 +3,7 @@
   <%= render "transactions/row", transaction: @transaction, account: @account %>
 <% end %>
 
-<% if @budget_activity %>
+<% unless @budget_activity.nil? %>
   <%= turbo_stream.replace "activity-#{@transaction.category_id}" do %>
     <span id="activity-<%= @transaction.category_id %>"
           class="<%= @budget_activity < 0 ? 'text-red-500' : 'text-slate-600' %>">
