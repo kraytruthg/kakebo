@@ -1,0 +1,16 @@
+<%= form_with model: account, class: "space-y-4" do |f| %>
+  <div>
+    <%= f.label :name, "帳戶名稱" %>
+    <%= f.text_field :name, class: "mt-1 block w-full border rounded px-3 py-2" %>
+  </div>
+  <div>
+    <%= f.label :account_type, "類型" %>
+    <%= f.select :account_type, [["預算帳戶", "budget"], ["追蹤帳戶", "tracking"]],
+                 {}, class: "mt-1 block w-full border rounded px-3 py-2" %>
+  </div>
+  <div>
+    <%= f.label :starting_balance, "起始餘額" %>
+    <%= f.number_field :starting_balance, step: 1, class: "mt-1 block w-full border rounded px-3 py-2" %>
+  </div>
+  <%= f.submit class: "bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 cursor-pointer" %>
+<% end %>

@@ -1,0 +1,70 @@
+<div class="max-w-5xl mx-auto p-6">
+  <div class="flex items-center gap-4 mb-6">
+    <%= link_to "← 帳戶列表", accounts_path, class: "text-green-700 hover:underline text-sm" %>
+    <h1 class="text-2xl font-bold"><%= @account.name %></h1>
+    <span class="text-2xl font-bold text-green-700">
+      <%= number_to_currency(@account.balance, unit: "NT$", precision: 0) %>
+    </span>
+  </div>
+
+  <%# 新增交易表單 %>
+  <div class="bg-white rounded-lg shadow p-4 mb-6">
+    <h2 class="font-semibold mb-3">新增交易</h2>
+    <%= form_with url: account_transactions_path(@account) do |f| %>
+      <div class="grid grid-cols-4 gap-3">
+        <div>
+          <%= f.date_field :date, value: Date.today, class: "w-full border rounded px-2 py-1 text-sm" %>
+        </div>
+        <div>
+          <%= f.select :category_id,
+                options_for_select(Current.household.category_groups.includes(:categories).flat_map { |g|
+                  g.categories.map { |c| ["#{g.name} / #{c.name}", c.id] }
+                }),
+                { include_blank: "收入（直接到 RTA）" },
+                class: "w-full border rounded px-2 py-1 text-sm" %>
+        </div>
+        <div>
+          <%= f.number_field :amount, placeholder: "金額（支出用負數）", step: 1,
+                             class: "w-full border rounded px-2 py-1 text-sm" %>
+        </div>
+        <div class="flex gap-2">
+          <%= f.text_field :memo, placeholder: "備註", class: "flex-1 border rounded px-2 py-1 text-sm" %>
+          <%= f.submit "新增", class: "bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%# 交易清單 %>
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <table class="w-full">
+      <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+        <tr>
+          <th class="text-left px-4 py-3">日期</th>
+          <th class="text-left px-4 py-3">備註</th>
+          <th class="text-left px-4 py-3">類別</th>
+          <th class="text-right px-4 py-3">金額</th>
+          <th class="px-4 py-3"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @transactions.each do |t| %>
+          <tr class="border-t hover:bg-gray-50">
+            <td class="px-4 py-3 text-sm"><%= t.date.strftime("%m/%d") %></td>
+            <td class="px-4 py-3 text-sm"><%= t.memo %></td>
+            <td class="px-4 py-3 text-sm text-gray-500"><%= t.category&.name || "收入" %></td>
+            <td class="px-4 py-3 text-right text-sm font-medium <%= t.amount < 0 ? 'text-red-600' : 'text-green-700' %>">
+              <%= number_to_currency(t.amount, unit: "NT$", precision: 0) %>
+            </td>
+            <td class="px-4 py-3 text-right">
+              <%= button_to "刪除", account_transaction_path(@account, t),
+                            method: :delete,
+                            data: { turbo_confirm: "確定刪除？" },
+                            class: "text-xs text-gray-400 hover:text-red-600" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
