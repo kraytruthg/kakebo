@@ -1,0 +1,42 @@
+require "rails_helper"
+
+RSpec.describe "BudgetEntries", type: :request do
+  let(:user) { create(:user) }
+  let(:household) { user.household }
+  let(:category_group) { create(:category_group, household: household) }
+  let(:category) { create(:category, category_group: category_group) }
+
+  before do
+    post session_path, params: { email: user.email, password: "password123" }
+  end
+
+  describe "GET /budget_entries/edit" do
+    context "when no budget entry exists for this month" do
+      it "returns 200" do
+        get edit_budget_entries_path,
+            params: { category_id: category.id, year: 2026, month: 2 }
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "when a budget entry exists" do
+      it "returns 200 and includes the existing budgeted value" do
+        create(:budget_entry, category: category, year: 2026, month: 2, budgeted: 5000)
+        get edit_budget_entries_path,
+            params: { category_id: category.id, year: 2026, month: 2 }
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("5000")
+      end
+    end
+
+    context "with a category from another household" do
+      it "raises ActiveRecord::RecordNotFound" do
+        other_category = create(:category)
+        expect {
+          get edit_budget_entries_path,
+              params: { category_id: other_category.id, year: 2026, month: 2 }
+        }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
+end

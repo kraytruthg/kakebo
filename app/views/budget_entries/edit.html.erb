@@ -1,0 +1,14 @@
+<turbo-frame id="budget-entry-<%= @category.id %>">
+  <%= form_with url: budget_entries_path, data: { turbo: true } do |f| %>
+    <%= f.hidden_field :category_id, value: @category.id %>
+    <%= f.hidden_field :year,        value: @year %>
+    <%= f.hidden_field :month,       value: @month %>
+    <%= f.number_field :budgeted,
+          value: @entry.budgeted.to_i,
+          autofocus: true,
+          step: 1,
+          class: "w-28 text-right rounded border border-indigo-400 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+    <%= f.submit "✓",
+          class: "ml-1 text-sm text-indigo-600 hover:text-indigo-800 cursor-pointer" %>
+  <% end %>
+</turbo-frame>
