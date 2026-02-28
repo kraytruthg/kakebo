@@ -25,6 +25,10 @@ class TransactionsController < ApplicationController
   end
 
   def transaction_params
-    params.require(:transaction).permit(:category_id, :amount, :date, :memo)
+    p = params.require(:transaction).permit(:category_id, :amount, :date, :memo)
+    if p[:category_id].present?
+      Current.household.categories.find(p[:category_id])
+    end
+    p
   end
 end
