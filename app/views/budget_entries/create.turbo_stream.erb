@@ -1,0 +1,15 @@
+<%= turbo_stream.replace "budget-entry-#{@category.id}" do %>
+  <turbo-frame id="budget-entry-<%= @category.id %>">
+    <%= link_to edit_budget_entries_path(category_id: @category.id, year: @year, month: @month),
+          class: "cursor-pointer hover:text-indigo-600 transition-colors" do %>
+      <%= number_to_currency(@entry.budgeted, unit: "NT$", precision: 0) %>
+    <% end %>
+  </turbo-frame>
+<% end %>
+
+<%= turbo_stream.replace "available-#{@category.id}" do %>
+  <span id="available-<%= @category.id %>"
+        class="font-semibold <%= @available < 0 ? 'text-red-600' : 'text-emerald-600' %>">
+    <%= number_to_currency(@available, unit: "NT$", precision: 0) %>
+  </span>
+<% end %>

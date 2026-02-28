@@ -39,4 +39,43 @@ RSpec.describe "BudgetEntries", type: :request do
       end
     end
   end
+
+  describe "POST /budget_entries" do
+    context "when no budget entry exists (create)" do
+      it "creates a new BudgetEntry" do
+        expect {
+          post budget_entries_path,
+               params: { budget_entry: { category_id: category.id,
+                                         year: 2026, month: 2, budgeted: 3000 } },
+               headers: { "Accept" => "text/vnd.turbo-stream.html" }
+        }.to change(BudgetEntry, :count).by(1)
+        expect(BudgetEntry.last.budgeted).to eq(3000)
+      end
+    end
+
+    context "when a budget entry already exists (update)" do
+      it "updates budgeted without creating a new record" do
+        entry = create(:budget_entry, category: category, year: 2026, month: 2, budgeted: 1000)
+        expect {
+          post budget_entries_path,
+               params: { budget_entry: { category_id: category.id,
+                                         year: 2026, month: 2, budgeted: 5000 } },
+               headers: { "Accept" => "text/vnd.turbo-stream.html" }
+        }.not_to change(BudgetEntry, :count)
+        expect(entry.reload.budgeted).to eq(5000)
+      end
+    end
+
+    context "with a category from another household" do
+      it "raises ActiveRecord::RecordNotFound" do
+        other_category = create(:category)
+        expect {
+          post budget_entries_path,
+               params: { budget_entry: { category_id: other_category.id,
+                                         year: 2026, month: 2, budgeted: 1000 } },
+               headers: { "Accept" => "text/vnd.turbo-stream.html" }
+        }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
 end
