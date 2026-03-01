@@ -1,6 +1,9 @@
 <% budget_accounts = Current.household.accounts.budget.to_a %>
 <% first_account = budget_accounts.first %>
-<%= form_with url: account_transactions_path(first_account),
+<% if first_account.nil? %>
+  <p class="text-sm text-slate-500 text-center py-4">請先建立預算帳戶才能新增交易。</p>
+<% else %>
+<%= form_with url: account_transactions_path(first_account), scope: :transaction,
       data: {
         budget_target: "form",
         turbo_stream: true,
@@ -57,4 +60,5 @@
     <%= f.submit "新增交易",
           class: "w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg cursor-pointer transition-colors text-sm" %>
   </div>
+<% end %>
 <% end %>

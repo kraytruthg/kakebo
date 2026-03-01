@@ -11,6 +11,10 @@ class Account < ApplicationRecord
   scope :tracking, -> { where(account_type: "tracking") }
   scope :active, -> { where(active: true) }
 
+  def budget?
+    account_type == "budget"
+  end
+
   def recalculate_balance!
     calculated = starting_balance + transactions.sum(:amount)
     update_columns(balance: calculated)

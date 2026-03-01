@@ -1,4 +1,4 @@
-<%= form_with url: account_transactions_path(account),
+<%= form_with url: account_transactions_path(account), scope: :transaction,
       data: { turbo_stream: true, action: "turbo:submit-end->drawer#close" } do |f| %>
   <div class="space-y-5">
     <div>

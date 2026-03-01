@@ -11,8 +11,7 @@ class SessionsController < ApplicationController
       session[:user_id] = user.id
       redirect_to root_path, notice: "歡迎回來，#{user.name}！"
     else
-      flash.now[:alert] = "Email 或密碼錯誤"
-      render :new, status: :unprocessable_entity
+      redirect_to new_session_path, alert: "Email 或密碼錯誤"
     end
   end
 
