@@ -32,5 +32,6 @@ RSpec.describe "交易編輯", type: :system do
     fill_in "金額", with: ""
     click_button "更新"
     expect(page).to have_text("編輯交易")
+    expect(page).to have_text("Amount 不能為空白")
   end
 end

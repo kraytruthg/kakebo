@@ -1,6 +1,7 @@
 class TransactionsController < ApplicationController
   before_action :set_account
   before_action :set_transaction, only: [:edit, :update, :destroy]
+  before_action :set_categories, only: [:edit, :update]
 
   def create
     @transaction = @account.transactions.build(transaction_params)
@@ -20,7 +21,6 @@ class TransactionsController < ApplicationController
   end
 
   def edit
-    @categories  = Current.household.category_groups.includes(:categories)
   end
 
   def update
@@ -28,7 +28,6 @@ class TransactionsController < ApplicationController
       @account.recalculate_balance!
       redirect_back_or_to account_path(@account), notice: "交易已更新"
     else
-      @categories = Current.household.category_groups.includes(:categories)
       render :edit, status: :unprocessable_entity
     end
   end
@@ -40,6 +39,10 @@ class TransactionsController < ApplicationController
   end
 
   private
+
+  def set_categories
+    @categories = Current.household.category_groups.includes(:categories)
+  end
 
   def set_budget_data_for_turbo_stream
     return unless @transaction.category_id.present?

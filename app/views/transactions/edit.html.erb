@@ -1,5 +1,14 @@
 <div class="max-w-md mx-auto p-6">
   <h1 class="text-xl font-bold mb-4">編輯交易</h1>
+  <% if @transaction.errors.any? %>
+    <div class="mb-4 p-3 bg-red-50 border border-red-300 rounded text-red-700 text-sm">
+      <ul>
+        <% @transaction.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
   <%= form_with model: [@account, @transaction] do |f| %>
     <div class="mb-4">
       <%= f.label :date, "日期" %>
