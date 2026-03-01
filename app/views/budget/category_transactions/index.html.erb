@@ -52,10 +52,11 @@
               <td class="px-5 py-3 text-sm text-slate-500"><%= t.date.strftime("%m/%d") %></td>
               <td class="px-5 py-3 text-sm text-slate-800"><%= t.memo.presence || "─" %></td>
               <td class="px-5 py-3 text-sm text-slate-400"><%= t.account.name %></td>
-              <td class="px-5 py-3 text-right text-sm font-medium <%= t.amount < 0 ? 'text-red-500' : 'text-emerald-600' %>">
+              <td class="px-5 py-3 text-right text-sm font-medium <%= t.amount < 0 ? 'text-red-600' : 'text-emerald-600' %>">
                 <%= number_to_currency(t.amount, unit: "NT$", precision: 0) %>
               </td>
-              <td class="px-5 py-3 text-right flex items-center gap-2 justify-end">
+              <td class="px-5 py-3">
+                <div class="flex items-center gap-2 justify-end">
                 <%= link_to "編輯",
                       edit_account_transaction_path(t.account, t),
                       class: "opacity-0 group-hover:opacity-100 transition-opacity text-sm text-blue-500 hover:text-blue-700" %>
@@ -66,6 +67,7 @@
                       aria: { label: "刪除交易" } do %>
                   <%= icon "trash", classes: "w-4 h-4" %>
                 <% end %>
+                </div>
               </td>
             </tr>
           <% end %>
