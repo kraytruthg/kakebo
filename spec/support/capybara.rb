@@ -11,7 +11,11 @@ end
 
 RSpec.configure do |config|
   config.before(:each, type: :system) do
-    Capybara.reset_sessions!
     driven_by :headless_chrome
+  end
+
+  config.after(:each, type: :system) do
+    Capybara.current_session.driver.browser.manage.delete_all_cookies rescue nil
+    Capybara.reset_sessions!
   end
 end
