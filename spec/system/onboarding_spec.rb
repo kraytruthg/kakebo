@@ -19,6 +19,7 @@ RSpec.describe "Onboarding", type: :system do
       select "預算帳戶", from: "帳戶類型"
       fill_in "起始餘額", with: "50000"
       click_button "建立帳戶"
+      expect(page).to have_text("帳戶已建立")
       visit root_path
       expect(page).to have_current_path(budget_path)
     end
