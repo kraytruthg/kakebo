@@ -1,6 +1,7 @@
 class Transaction < ApplicationRecord
   belongs_to :account
   belongs_to :category, optional: true
+  belongs_to :transfer_pair, class_name: "Transaction", foreign_key: :transfer_pair_id, optional: true
 
   validates :amount, presence: true
   validates :date, presence: true
