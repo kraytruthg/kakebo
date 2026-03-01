@@ -7,7 +7,7 @@ class AccountsController < ApplicationController
   end
 
   def show
-    @transactions = @account.transactions.recent.limit(50)
+    @transactions = @account.transactions.includes(transfer_pair: :account).recent.limit(50)
     @new_transaction = Transaction.new(account: @account, date: Date.today)
   end
 
