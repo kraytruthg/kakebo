@@ -1,16 +1,15 @@
 class ReportsController < ApplicationController
-  def index
-    @year = params[:year]&.to_i || Date.today.year
-    @month = params[:month]&.to_i || Date.today.month
+  include MonthNavigable
 
-    @spending_by_category = Transaction
-      .joins(:account, :category)
-      .where(accounts: { household_id: Current.household.id })
-      .for_month(@year, @month)
-      .where.not(category_id: nil)
-      .group("categories.name")
-      .sum(:amount)
-      .transform_values(&:abs)
-      .sort_by { |_, v| -v }
+  def index
+    @household = Current.household
+    @expenses = Transaction
+                  .joins(:account, category: { category_group: :household })
+                  .where(accounts: { account_type: "budget" })
+                  .where(category_groups: { household_id: @household.id })
+                  .where("EXTRACT(year FROM date) = ? AND EXTRACT(month FROM date) = ?", @year, @month)
+                  .group("categories.name")
+                  .sum(:amount)
+                  .sort_by { |_, v| v }.reverse
   end
 end
