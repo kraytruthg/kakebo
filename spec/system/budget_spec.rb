@@ -15,7 +15,7 @@ RSpec.describe "Budget", type: :system do
   end
 
   it "顯示預算頁面與 Ready to Assign" do
-    expect(page).to have_text(category_group.name.upcase)
+    expect(page).to have_text(category_group.name)
     expect(page).to have_text(category.name)
   end
 
