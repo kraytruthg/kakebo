@@ -14,7 +14,7 @@ RSpec.describe "Users", type: :system do
         fill_in "確認密碼", with: "password123"
         click_button "註冊"
 
-        expect(page).to have_text("Ready to Assign")
+        expect(page).to have_text("開始設定")
       end
 
       it "email 重複時顯示錯誤" do

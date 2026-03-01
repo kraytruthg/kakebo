@@ -2,6 +2,7 @@ require "rails_helper"
 
 RSpec.describe "月份切換", type: :system do
   let(:user) { create(:user) }
+  let!(:account) { create(:account, household: user.household) }
 
   before { sign_in(user) }
 

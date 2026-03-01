@@ -4,7 +4,7 @@ module SystemHelpers
     fill_in "Email", with: user.email
     fill_in "密碼", with: password
     click_button "登入"
-    expect(page).to have_text("Ready to Assign")
+    expect(page).not_to have_current_path(new_session_path)
   end
 end
 

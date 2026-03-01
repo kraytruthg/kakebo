@@ -2,6 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Sessions", type: :system do
   let(:user) { create(:user) }
+  let!(:account) { create(:account, household: user.household) }
 
   describe "登入" do
     it "成功後顯示預算頁面" do

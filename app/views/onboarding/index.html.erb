@@ -1,0 +1,32 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50">
+  <div class="max-w-lg w-full p-8 bg-white rounded-2xl shadow text-center">
+    <h1 class="text-2xl font-bold mb-2">歡迎使用 Kakebo！</h1>
+    <p class="text-gray-500 mb-8">開始設定你的帳本，只需要幾個步驟。</p>
+
+    <div class="text-left space-y-4 mb-8">
+      <div class="flex items-start gap-3">
+        <span class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold shrink-0">1</span>
+        <div>
+          <p class="font-semibold">建立第一個帳戶</p>
+          <p class="text-sm text-gray-500">例如：玉山銀行、現金</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="w-8 h-8 bg-gray-200 text-gray-400 rounded-full flex items-center justify-center font-bold shrink-0">2</span>
+        <div>
+          <p class="font-semibold text-gray-400">確認預設類別</p>
+          <p class="text-sm text-gray-400">系統已建立基本分類，可之後調整</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="w-8 h-8 bg-gray-200 text-gray-400 rounded-full flex items-center justify-center font-bold shrink-0">3</span>
+        <div>
+          <p class="font-semibold text-gray-400">開始記帳</p>
+          <p class="text-sm text-gray-400">分配預算，記錄每一筆收支</p>
+        </div>
+      </div>
+    </div>
+
+    <%= link_to "新增帳戶", new_account_path, class: "inline-block bg-blue-600 text-white px-8 py-3 rounded-xl text-lg hover:bg-blue-700" %>
+  </div>
+</div>

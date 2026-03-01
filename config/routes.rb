@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   resource :session, only: [:new, :create, :destroy]
+  get "onboarding", to: "onboarding#index", as: :onboarding
   get "signup", to: "users#new"
   resources :users, only: [:create]
   get "budget", to: "budget#index", as: :budget
@@ -21,6 +22,6 @@ Rails.application.routes.draw do
   end
   get "settings/categories", to: "settings/category_groups#index", as: :settings_categories
 
-  root "budget#index"
+  root to: redirect("/budget")
   get "up" => "rails/health#show", as: :rails_health_check
 end
