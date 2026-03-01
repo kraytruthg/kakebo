@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   resource :session, only: [:new, :create, :destroy]
+  get "signup", to: "users#new"
+  resources :users, only: [:create]
   get "budget", to: "budget#index", as: :budget
   post "budget/copy_from_previous", to: "budget#copy_from_previous", as: :budget_copy_from_previous
   resources :budget_entries, only: [:create]
