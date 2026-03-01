@@ -57,16 +57,16 @@
               </td>
               <td class="px-5 py-3">
                 <div class="flex items-center gap-2 justify-end">
-                <%= link_to "編輯",
-                      edit_account_transaction_path(t.account, t),
-                      class: "opacity-0 group-hover:opacity-100 transition-opacity text-sm text-blue-500 hover:text-blue-700" %>
-                <%= button_to account_transaction_path(t.account, t),
-                      method: :delete,
-                      data: { turbo_confirm: "確定刪除這筆交易？" },
-                      class: "opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-500",
-                      aria: { label: "刪除交易" } do %>
-                  <%= icon "trash", classes: "w-4 h-4" %>
-                <% end %>
+                  <%= link_to "編輯",
+                        edit_account_transaction_path(t.account, t),
+                        class: "opacity-0 group-hover:opacity-100 transition-opacity text-sm text-blue-500 hover:text-blue-700" %>
+                  <%= button_to account_transaction_path(t.account, t),
+                        method: :delete,
+                        data: { turbo_confirm: "確定刪除這筆交易？" },
+                        class: "opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-500",
+                        aria: { label: "刪除交易" } do %>
+                    <%= icon "trash", classes: "w-4 h-4" %>
+                  <% end %>
                 </div>
               </td>
             </tr>
