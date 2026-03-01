@@ -15,7 +15,8 @@ RSpec.describe "Budget", type: :system do
   end
 
   it "顯示預算頁面與 Ready to Assign" do
-    expect(page).to have_text(category_group.name)
+    # category_group 以 CSS text-transform: uppercase 顯示，用 case-insensitive 匹配
+    expect(page).to have_text(/#{Regexp.escape(category_group.name)}/i)
     expect(page).to have_text(category.name)
   end
 
@@ -28,6 +29,11 @@ RSpec.describe "Budget", type: :system do
   it "從 budget drawer 新增交易後更新本月支出" do
     page.execute_script("document.querySelector('button[title=\"新增交易\"]').click()")
     expect(page).to have_css("[data-budget-target='panel']:not(.translate-x-full)")
+    # Stimulus が category_id を hidden field にセットするまで明示的に待機
+    expect(page).to have_css(
+      "input[name='transaction[category_id]'][value='#{category.id}']",
+      visible: :all
+    )
 
     within("[data-budget-target='panel']") do
       fill_in "transaction[amount]", with: "-1000"
