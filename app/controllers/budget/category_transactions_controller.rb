@@ -1,12 +1,13 @@
 class Budget::CategoryTransactionsController < ApplicationController
-  def index
-    @category = Category
-                  .joins(:category_group)
-                  .where(category_groups: { household_id: Current.household.id })
-                  .find(params[:category_id])
+  before_action :set_category
 
+  def index
     @year  = params[:year].to_i
     @month = params[:month].to_i
+
+    unless @year.between?(2000, 2099) && @month.between?(1, 12)
+      redirect_to budget_path and return
+    end
 
     @accounts = Current.household.accounts.active.order(:name)
     @selected_account = params[:account_id].present? ?
@@ -14,6 +15,7 @@ class Budget::CategoryTransactionsController < ApplicationController
 
     @transactions = Transaction
                       .joins(:account, category: :category_group)
+                      .preload(:account, :category)
                       .where(category_id: @category.id)
                       .where(category_groups: { household_id: Current.household.id })
                       .for_month(@year, @month)
@@ -21,5 +23,14 @@ class Budget::CategoryTransactionsController < ApplicationController
                       .recent
 
     @total = @transactions.sum(:amount)
+  end
+
+  private
+
+  def set_category
+    @category = Category
+                  .joins(:category_group)
+                  .where(category_groups: { household_id: Current.household.id })
+                  .find(params[:category_id])
   end
 end
