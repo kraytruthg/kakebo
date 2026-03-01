@@ -31,6 +31,7 @@ class Budget::CategoryTransactionsController < ApplicationController
     @category = Category
                   .joins(:category_group)
                   .where(category_groups: { household_id: Current.household.id })
-                  .find(params[:category_id])
+                  .find_by(id: params[:category_id])
+    redirect_to budget_path unless @category
   end
 end
