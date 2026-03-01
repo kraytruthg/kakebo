@@ -1,5 +1,6 @@
 class TransactionsController < ApplicationController
   before_action :set_account
+  before_action :set_transaction, only: [:edit, :update, :destroy]
 
   def create
     @transaction = @account.transactions.build(transaction_params)
@@ -19,12 +20,10 @@ class TransactionsController < ApplicationController
   end
 
   def edit
-    @transaction = @account.transactions.find(params[:id])
     @categories  = Current.household.category_groups.includes(:categories)
   end
 
   def update
-    @transaction = @account.transactions.find(params[:id])
     if @transaction.update(transaction_params)
       @account.recalculate_balance!
       redirect_back_or_to account_path(@account), notice: "交易已更新"
@@ -35,8 +34,7 @@ class TransactionsController < ApplicationController
   end
 
   def destroy
-    transaction = @account.transactions.find(params[:id])
-    transaction.destroy
+    @transaction.destroy
     @account.recalculate_balance!
     redirect_to account_path(@account), notice: "交易已刪除"
   end
@@ -68,6 +66,10 @@ class TransactionsController < ApplicationController
 
   def set_account
     @account = Current.household.accounts.find(params[:account_id])
+  end
+
+  def set_transaction
+    @transaction = @account.transactions.find(params[:id])
   end
 
   def transaction_params
