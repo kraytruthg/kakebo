@@ -10,6 +10,9 @@ Rails.application.routes.draw do
     resources :transactions, only: [:create, :destroy]
   end
   get "reports", to: "reports#index", as: :reports
+  resources :category_groups do
+    resources :categories, only: [:new, :create, :edit, :update, :destroy]
+  end
 
   namespace :settings do
     resources :category_groups, only: [:new, :create, :edit, :update, :destroy] do
