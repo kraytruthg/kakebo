@@ -3,6 +3,7 @@ class BudgetController < ApplicationController
 
   def index
     @household = Current.household
+    BudgetEntry.initialize_month!(@household, @year, @month)
     @ready_to_assign = @household.ready_to_assign(@year, @month)
     @category_groups = @household.category_groups.includes(categories: :budget_entries)
     @monthly_activities = Transaction
