@@ -27,7 +27,7 @@ class TransactionsController < ApplicationController
     @transaction = @account.transactions.find(params[:id])
     if @transaction.update(transaction_params)
       @account.recalculate_balance!
-      redirect_to account_path(@account), notice: "交易已更新"
+      redirect_back_or_to account_path(@account), notice: "交易已更新"
     else
       @categories = Current.household.category_groups.includes(:categories)
       render :edit, status: :unprocessable_entity
