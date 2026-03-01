@@ -18,31 +18,31 @@
     <%= form_with url: transfers_path do |f| %>
       <div class="space-y-5">
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1.5">來源帳戶</label>
+          <%= f.label :from_account_id, "來源帳戶", class: "block text-sm font-medium text-slate-700 mb-1.5" %>
           <%= f.select :from_account_id,
                 options_for_select(@accounts.map { |a| [a.name, a.id] }, @from_account_id),
                 { prompt: "選擇來源帳戶" },
                 class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
         </div>
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1.5">目標帳戶</label>
+          <%= f.label :to_account_id, "目標帳戶", class: "block text-sm font-medium text-slate-700 mb-1.5" %>
           <%= f.select :to_account_id,
                 options_for_select(@accounts.map { |a| [a.name, a.id] }),
                 { prompt: "選擇目標帳戶" },
                 class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
         </div>
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1.5">金額</label>
+          <%= f.label :amount, "金額", class: "block text-sm font-medium text-slate-700 mb-1.5" %>
           <%= f.number_field :amount, step: 1, min: 1, placeholder: "請填正整數，例：1000",
                 class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
         </div>
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1.5">日期</label>
+          <%= f.label :date, "日期", class: "block text-sm font-medium text-slate-700 mb-1.5" %>
           <%= f.date_field :date, value: Date.today,
                 class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
         </div>
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1.5">備註（選填）</label>
+          <%= f.label :memo, "備註（選填）", class: "block text-sm font-medium text-slate-700 mb-1.5" %>
           <%= f.text_field :memo, placeholder: "例：存款",
                 class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
         </div>
