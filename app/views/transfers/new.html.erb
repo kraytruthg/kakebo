@@ -1,0 +1,58 @@
+<%# app/views/transfers/new.html.erb %>
+<div class="max-w-lg mx-auto px-4 sm:px-6 py-8">
+  <div class="mb-6">
+    <%= link_to accounts_path, class: "inline-flex items-center gap-1 text-sm text-slate-400 hover:text-slate-700" do %>
+      <%= icon "chevron-left", classes: "w-4 h-4" %>
+      帳戶
+    <% end %>
+    <h1 class="text-2xl font-bold text-slate-900 mt-2">帳戶間轉帳</h1>
+  </div>
+
+  <% if @error %>
+    <div class="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+      <%= @error %>
+    </div>
+  <% end %>
+
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+    <%= form_with url: transfers_path do |f| %>
+      <div class="space-y-5">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1.5">來源帳戶</label>
+          <%= f.select :from_account_id,
+                options_for_select(@accounts.map { |a| [a.name, a.id] }, @from_account_id),
+                { prompt: "選擇來源帳戶" },
+                class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1.5">目標帳戶</label>
+          <%= f.select :to_account_id,
+                options_for_select(@accounts.map { |a| [a.name, a.id] }),
+                { prompt: "選擇目標帳戶" },
+                class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1.5">金額</label>
+          <%= f.number_field :amount, step: 1, min: 1, placeholder: "請填正整數，例：1000",
+                class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1.5">日期</label>
+          <%= f.date_field :date, value: Date.today,
+                class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1.5">備註（選填）</label>
+          <%= f.text_field :memo, placeholder: "例：存款",
+                class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <%= link_to "取消", accounts_path,
+                class: "flex-1 text-center py-2.5 rounded-lg border border-slate-300 text-sm text-slate-600 hover:bg-slate-50 transition-colors" %>
+          <%= f.submit "確認轉帳",
+                class: "flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg cursor-pointer transition-colors text-sm" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
