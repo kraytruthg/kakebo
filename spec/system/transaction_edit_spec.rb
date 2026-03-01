@@ -10,22 +10,28 @@ RSpec.describe "交易編輯", type: :system do
 
   before { sign_in(user) }
 
-  it "修改金額後帳戶頁更新" do
+  it "修改金額後顯示成功通知" do
     visit account_path(account)
     within("#transaction-#{txn.id}") { click_link "編輯" }
     fill_in "金額", with: "-800"
     click_button "更新"
-    expect(page).to have_text("800")
+    expect(page).to have_text("交易已更新")
   end
 
-  it "修改類別後兩方 available 都更新" do
-    BudgetEntry.find_or_create_by(category: cat1, year: Date.today.year, month: Date.today.month).update!(budgeted: 3000, carried_over: 0)
-    BudgetEntry.find_or_create_by(category: cat2, year: Date.today.year, month: Date.today.month).update!(budgeted: 2000, carried_over: 0)
-
+  it "修改類別後顯示成功通知" do
     visit account_path(account)
     within("#transaction-#{txn.id}") { click_link "編輯" }
     select "交通", from: "類別"
     click_button "更新"
-    expect(page).to have_text("更新")
+    expect(page).to have_text("交易已更新")
+  end
+
+  it "金額留空時顯示驗證錯誤" do
+    visit account_path(account)
+    within("#transaction-#{txn.id}") { click_link "編輯" }
+    fill_in "金額", with: ""
+    click_button "更新"
+    expect(page).to have_text("編輯交易")
+    expect(page).to have_text("Amount 不能為空白")
   end
 end

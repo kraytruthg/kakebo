@@ -7,7 +7,7 @@
   </td>
   <td class="px-5 py-3 text-right flex items-center gap-2 justify-end">
     <%= link_to "編輯", edit_account_transaction_path(account, transaction),
-        class: "opacity-0 group-hover:opacity-100 transition-opacity text-sm text-blue-500 hover:text-blue-700" %>
+        class: "text-sm text-blue-500 hover:text-blue-700" %>
     <%= button_to account_transaction_path(account, transaction),
           method: :delete,
           data: { turbo_confirm: "確定刪除這筆交易？" },

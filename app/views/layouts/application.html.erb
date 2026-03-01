@@ -9,6 +9,10 @@
     <link rel="icon" href="/icon.png" type="image/png">
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <% if Rails.env.test? %>
+      <style>*, *::before, *::after { transition: none !important; animation: none !important; }</style>
+      <meta name="turbo-cache-control" content="no-preview">
+    <% end %>
   </head>
   <body class="bg-slate-50 min-h-screen">
     <% if Current.user %>

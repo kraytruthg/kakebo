@@ -49,7 +49,9 @@
             <% available = (entry&.carried_over || 0) + budgeted + activity %>
             <tr class="border-t border-slate-50 hover:bg-slate-50 group transition-colors">
               <td class="px-5 py-3 text-sm text-slate-700 border-l-2 border-transparent group-hover:border-indigo-400 transition-colors">
-                <%= category.name %>
+                <%= link_to category.name,
+                      budget_category_transactions_path(@year, @month, category),
+                      class: "hover:text-indigo-600 hover:underline transition-colors" %>
               </td>
               <td class="px-5 py-3 text-right text-sm text-slate-600">
                 <turbo-frame id="budget-entry-<%= category.id %>">

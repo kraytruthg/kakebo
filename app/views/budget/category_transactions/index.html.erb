@@ -1,0 +1,89 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+  <%# Header %>
+  <div class="mb-6">
+    <%= link_to budget_path(year: @year, month: @month),
+          class: "inline-flex items-center gap-1 text-sm text-slate-400 hover:text-slate-700 mb-2" do %>
+      <%= icon "chevron-left", classes: "w-4 h-4" %>
+      預算
+    <% end %>
+    <h1 class="text-2xl font-bold text-slate-900">
+      <%= @category.name %>
+      <span class="text-slate-400 font-normal text-lg ml-2">
+        <%= @year %>年<%= @month %>月
+      </span>
+    </h1>
+  </div>
+
+  <%# Account filter chips %>
+  <div class="flex flex-wrap gap-2 mb-5">
+    <%= link_to "全部",
+          budget_category_transactions_path(@year, @month, @category),
+          class: "px-3 py-1.5 rounded-full text-sm font-medium transition-colors #{@selected_account.nil? ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" %>
+    <% @accounts.each do |account| %>
+      <%= link_to account.name,
+            budget_category_transactions_path(@year, @month, @category, account_id: account.id),
+            class: "px-3 py-1.5 rounded-full text-sm font-medium transition-colors #{@selected_account&.id == account.id ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" %>
+    <% end %>
+  </div>
+
+  <%# Transaction table %>
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <table class="w-full">
+      <thead>
+        <tr class="border-b border-slate-100">
+          <th class="text-left px-5 py-3 text-xs font-medium text-slate-400">日期</th>
+          <th class="text-left px-5 py-3 text-xs font-medium text-slate-400">備註</th>
+          <th class="text-left px-5 py-3 text-xs font-medium text-slate-400">帳戶</th>
+          <th class="text-right px-5 py-3 text-xs font-medium text-slate-400">金額</th>
+          <th class="px-5 py-3"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if @transactions.empty? %>
+          <tr>
+            <td colspan="5" class="text-center py-16 text-slate-400">
+              <p class="text-sm">本月沒有此類別的交易紀錄</p>
+            </td>
+          </tr>
+        <% else %>
+          <% @transactions.each do |t| %>
+            <tr class="border-t border-slate-50 hover:bg-slate-50 group transition-colors"
+                id="transaction-<%= t.id %>">
+              <td class="px-5 py-3 text-sm text-slate-500"><%= t.date.strftime("%m/%d") %></td>
+              <td class="px-5 py-3 text-sm text-slate-800"><%= t.memo.presence || "─" %></td>
+              <td class="px-5 py-3 text-sm text-slate-400"><%= t.account.name %></td>
+              <td class="px-5 py-3 text-right text-sm font-medium <%= t.amount < 0 ? 'text-red-600' : 'text-emerald-600' %>">
+                <%= number_to_currency(t.amount, unit: "NT$", precision: 0) %>
+              </td>
+              <td class="px-5 py-3">
+                <div class="flex items-center gap-2 justify-end">
+                  <%= link_to "編輯",
+                        edit_account_transaction_path(t.account, t),
+                        class: "opacity-0 group-hover:opacity-100 transition-opacity text-sm text-blue-500 hover:text-blue-700" %>
+                  <%= button_to account_transaction_path(t.account, t),
+                        method: :delete,
+                        data: { turbo_confirm: "確定刪除這筆交易？" },
+                        class: "opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-500",
+                        aria: { label: "刪除交易" } do %>
+                    <%= icon "trash", classes: "w-4 h-4" %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+      <% unless @transactions.empty? %>
+        <tfoot>
+          <tr class="border-t border-slate-200 bg-slate-50">
+            <td colspan="3" class="px-5 py-3 text-sm font-medium text-slate-500">合計</td>
+            <td class="px-5 py-3 text-right text-sm font-bold <%= @total < 0 ? 'text-red-600' : 'text-emerald-600' %>">
+              <%= number_to_currency(@total, unit: "NT$", precision: 0) %>
+            </td>
+            <td></td>
+          </tr>
+        </tfoot>
+      <% end %>
+    </table>
+  </div>
+</div>
