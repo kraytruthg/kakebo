@@ -13,3 +13,9 @@
     <%= number_to_currency(@available, unit: "NT$", precision: 0) %>
   </span>
 <% end %>
+
+<%= turbo_stream.replace "ready-to-assign" do %>
+  <p id="ready-to-assign" class="text-4xl font-bold tracking-tight">
+    <%= number_to_currency(@ready_to_assign, unit: "NT$", precision: 0) %>
+  </p>
+<% end %>

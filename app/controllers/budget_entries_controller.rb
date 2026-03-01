@@ -22,8 +22,9 @@ class BudgetEntriesController < ApplicationController
     @entry.budgeted = budget_entry_params[:budgeted]
 
     if @entry.save
-      @activity  = @entry.activity
-      @available = @entry.available
+      @activity        = @entry.activity
+      @available       = @entry.available
+      @ready_to_assign = Current.household.ready_to_assign(@year, @month)
 
       respond_to do |format|
         format.turbo_stream
