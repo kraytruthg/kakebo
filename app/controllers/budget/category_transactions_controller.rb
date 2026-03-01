@@ -32,6 +32,6 @@ class Budget::CategoryTransactionsController < ApplicationController
                   .joins(:category_group)
                   .where(category_groups: { household_id: Current.household.id })
                   .find_by(id: params[:category_id])
-    redirect_to budget_path unless @category
+    redirect_to(budget_path) and return unless @category
   end
 end
