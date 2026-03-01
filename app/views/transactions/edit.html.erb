@@ -1,0 +1,26 @@
+<div class="max-w-md mx-auto p-6">
+  <h1 class="text-xl font-bold mb-4">編輯交易</h1>
+  <%= form_with model: [@account, @transaction] do |f| %>
+    <div class="mb-4">
+      <%= f.label :date, "日期" %>
+      <%= f.date_field :date, class: "w-full border rounded px-3 py-2" %>
+    </div>
+    <div class="mb-4">
+      <%= f.label :amount, "金額" %>
+      <%= f.number_field :amount, step: 1, class: "w-full border rounded px-3 py-2" %>
+    </div>
+    <div class="mb-4">
+      <%= f.label :category_id, "類別" %>
+      <%= f.select :category_id,
+          @categories.map { |g| [g.name, g.categories.map { |c| [c.name, c.id] }] },
+          { include_blank: "（無類別）" },
+          class: "w-full border rounded px-3 py-2" %>
+    </div>
+    <div class="mb-6">
+      <%= f.label :memo, "備忘" %>
+      <%= f.text_field :memo, class: "w-full border rounded px-3 py-2" %>
+    </div>
+    <%= f.submit "更新", class: "bg-blue-600 text-white px-4 py-2 rounded" %>
+    <%= link_to "取消", account_path(@account), class: "ml-3 text-gray-500" %>
+  <% end %>
+</div>

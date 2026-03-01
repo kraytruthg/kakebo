@@ -18,6 +18,22 @@ class TransactionsController < ApplicationController
     end
   end
 
+  def edit
+    @transaction = @account.transactions.find(params[:id])
+    @categories  = Current.household.category_groups.includes(:categories)
+  end
+
+  def update
+    @transaction = @account.transactions.find(params[:id])
+    if @transaction.update(transaction_params)
+      @account.recalculate_balance!
+      redirect_to account_path(@account), notice: "交易已更新"
+    else
+      @categories = Current.household.category_groups.includes(:categories)
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   def destroy
     transaction = @account.transactions.find(params[:id])
     transaction.destroy
