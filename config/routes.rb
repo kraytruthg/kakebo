@@ -10,6 +10,9 @@ Rails.application.routes.draw do
   resources :accounts, only: [:index, :show, :new, :create, :edit, :update] do
     resources :transactions, only: [:create, :destroy, :edit, :update]
   end
+  get "budget/:year/:month/categories/:category_id/transactions",
+      to: "budget/category_transactions#index",
+      as: :budget_category_transactions
   get "reports", to: "reports#index", as: :reports
   resources :category_groups do
     resources :categories, only: [:new, :create, :edit, :update, :destroy]
