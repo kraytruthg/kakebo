@@ -35,7 +35,7 @@ class TransactionsController < ApplicationController
   def destroy
     @transaction.destroy
     @account.recalculate_balance!
-    redirect_to account_path(@account), notice: "交易已刪除"
+    redirect_back_or_to account_path(@account), notice: "交易已刪除"
   end
 
   private
