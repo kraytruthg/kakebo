@@ -40,6 +40,20 @@ class TransfersController < ApplicationController
   end
 
   def destroy
-    # Task 6 實作
+    transaction = Transaction
+                    .joins(:account)
+                    .where(accounts: { household_id: Current.household.id })
+                    .find(params[:id])
+
+    pair         = transaction.transfer_pair
+    from_account = transaction.account
+    to_account   = pair&.account
+
+    transaction.destroy
+    pair&.destroy
+    from_account.recalculate_balance!
+    to_account&.recalculate_balance!
+
+    redirect_back_or_to accounts_path, notice: "轉帳已刪除"
   end
 end
