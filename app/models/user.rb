@@ -6,7 +6,7 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :password, length: { minimum: 8 }, allow_nil: true
 
-  normalizes :email, with: -> e { e.strip.downcase }
+  normalizes :email, with: ->(e) { e.strip.downcase }
 
   before_create :create_household
 

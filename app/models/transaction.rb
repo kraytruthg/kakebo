@@ -16,7 +16,7 @@ class Transaction < ApplicationRecord
 
   delegate :household, to: :account
 
-  after_commit :trigger_recalculation, on: [:create, :destroy]
+  after_commit :trigger_recalculation, on: [ :create, :destroy ]
   after_commit :trigger_recalculation_on_update, on: :update
 
   def transfer?

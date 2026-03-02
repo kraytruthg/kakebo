@@ -20,7 +20,7 @@ class BudgetEntryRecalculationJob < ApplicationJob
   private
 
   def previous_month_available(category, year, month)
-    prev_year, prev_month = month == 1 ? [year - 1, 12] : [year, month - 1]
+    prev_year, prev_month = month == 1 ? [ year - 1, 12 ] : [ year, month - 1 ]
     prev_entry = category.budget_entries.find_by(year: prev_year, month: prev_month)
     prev_entry&.available || 0
   end

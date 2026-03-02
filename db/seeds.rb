@@ -39,7 +39,7 @@ Category.find_or_create_by!(category_group: savings, name: "緊急備用金", po
 
 # 當月的 BudgetEntry
 current_year, current_month = Date.today.year, Date.today.month
-[bills, daily, savings].each do |group|
+[ bills, daily, savings ].each do |group|
   group.categories.each do |cat|
     BudgetEntry.find_or_create_by!(category: cat, year: current_year, month: current_month)
   end
