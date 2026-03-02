@@ -1,5 +1,5 @@
 class AccountsController < ApplicationController
-  before_action :set_account, only: [:show, :edit, :update]
+  before_action :set_account, only: [ :show, :edit, :update ]
 
   def index
     @budget_accounts = Current.household.accounts.budget.active.order(:name)
