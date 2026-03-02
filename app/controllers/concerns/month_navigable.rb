@@ -49,5 +49,4 @@ module MonthNavigable
   def at_upper_bound?
     @year == YEAR_MAX && @month == 12
   end
-
 end

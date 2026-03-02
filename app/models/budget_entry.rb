@@ -3,7 +3,7 @@ class BudgetEntry < ApplicationRecord
 
   validates :year, presence: true
   validates :month, presence: true, inclusion: { in: 1..12 }
-  validates :category_id, uniqueness: { scope: [:year, :month] }
+  validates :category_id, uniqueness: { scope: [ :year, :month ] }
 
   scope :for_month, ->(year, month) { where(year: year, month: month) }
 

@@ -1,19 +1,42 @@
 <tr class="border-t border-slate-50 hover:bg-slate-50 group transition-colors" id="transaction-<%= transaction.id %>">
   <td class="px-5 py-3 text-sm text-slate-500"><%= transaction.date.strftime("%m/%d") %></td>
   <td class="px-5 py-3 text-sm text-slate-800"><%= transaction.memo.presence || "─" %></td>
-  <td class="px-5 py-3 text-sm text-slate-400"><%= transaction.category&.name || "收入" %></td>
+  <td class="px-5 py-3 text-sm text-slate-400">
+    <% if transaction.transfer? %>
+      <% partner_name = transaction.transfer_pair.account.name %>
+      <% if transaction.amount < 0 %>
+        轉出 → <%= partner_name %>
+      <% else %>
+        轉入 ← <%= partner_name %>
+      <% end %>
+    <% else %>
+      <%= transaction.category&.name || "收入" %>
+    <% end %>
+  </td>
   <td class="px-5 py-3 text-right text-sm font-medium <%= transaction.amount < 0 ? 'text-red-500' : 'text-emerald-600' %>">
     <%= number_to_currency(transaction.amount, unit: "NT$", precision: 0) %>
   </td>
   <td class="px-5 py-3 text-right flex items-center gap-2 justify-end">
-    <%= link_to "編輯", edit_account_transaction_path(account, transaction),
-        class: "text-sm text-blue-500 hover:text-blue-700" %>
-    <%= button_to account_transaction_path(account, transaction),
-          method: :delete,
-          data: { turbo_confirm: "確定刪除這筆交易？" },
-          class: "opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-500",
-          aria: { label: "刪除交易" } do %>
-      <%= icon "trash", classes: "w-4 h-4" %>
+    <% unless transaction.transfer? %>
+      <%= link_to "編輯", edit_account_transaction_path(account, transaction),
+          class: "text-sm text-blue-500 hover:text-blue-700" %>
+    <% end %>
+    <% if transaction.transfer? %>
+      <%= button_to transfer_path(transaction),
+            method: :delete,
+            data: { turbo_confirm: "確定刪除這筆轉帳？兩個帳戶的對應紀錄都會一併刪除。" },
+            class: "opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-500",
+            aria: { label: "刪除交易" } do %>
+        <%= icon "trash", classes: "w-4 h-4" %>
+      <% end %>
+    <% else %>
+      <%= button_to account_transaction_path(account, transaction),
+            method: :delete,
+            data: { turbo_confirm: "確定刪除這筆交易？" },
+            class: "opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-500",
+            aria: { label: "刪除交易" } do %>
+        <%= icon "trash", classes: "w-4 h-4" %>
+      <% end %>
     <% end %>
   </td>
 </tr>

@@ -3,7 +3,7 @@ class ReportsController < ApplicationController
 
   def index
     @household = Current.household
-    @expenses = Transaction
+    @spending_by_category = Transaction
                   .joins(:account, category: { category_group: :household })
                   .where(accounts: { account_type: "budget" })
                   .where(category_groups: { household_id: @household.id })

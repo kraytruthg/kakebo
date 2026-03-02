@@ -1,7 +1,7 @@
 class TransactionsController < ApplicationController
   before_action :set_account
-  before_action :set_transaction, only: [:edit, :update, :destroy]
-  before_action :set_categories, only: [:edit, :update]
+  before_action :set_transaction, only: [ :edit, :update, :destroy ]
+  before_action :set_categories, only: [ :edit, :update ]
 
   def create
     @transaction = @account.transactions.build(transaction_params)

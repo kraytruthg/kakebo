@@ -1,5 +1,5 @@
 class AccountsController < ApplicationController
-  before_action :set_account, only: [:show, :edit, :update]
+  before_action :set_account, only: [ :show, :edit, :update ]
 
   def index
     @budget_accounts = Current.household.accounts.budget.active.order(:name)
@@ -7,7 +7,7 @@ class AccountsController < ApplicationController
   end
 
   def show
-    @transactions = @account.transactions.recent.limit(50)
+    @transactions = @account.transactions.includes(transfer_pair: :account).recent.limit(50)
     @new_transaction = Transaction.new(account: @account, date: Date.today)
   end
 

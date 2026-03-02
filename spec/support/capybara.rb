@@ -14,5 +14,4 @@ RSpec.configure do |config|
     Capybara.reset_sessions!
     driven_by :headless_chrome
   end
-
 end
