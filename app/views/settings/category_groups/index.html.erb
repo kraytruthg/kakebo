@@ -8,12 +8,17 @@
     <% end %>
   </div>
 
-  <div class="space-y-4">
+  <div class="space-y-4" data-controller="sortable" data-sortable-url-value="<%= reorder_settings_category_groups_path %>">
     <% @category_groups.each do |group| %>
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden" data-sortable-id="<%= group.id %>">
         <%# Group header %>
         <div class="flex items-center justify-between px-5 py-3 bg-slate-50 border-b border-slate-100">
-          <span class="text-sm font-semibold text-slate-700"><%= group.name %></span>
+          <div class="flex items-center gap-2">
+            <span class="drag-handle cursor-grab text-slate-300 hover:text-slate-500">
+              <%= icon "bars-3", classes: "w-4 h-4" %>
+            </span>
+            <span class="text-sm font-semibold text-slate-700"><%= group.name %></span>
+          </div>
           <div class="flex items-center gap-2">
             <%= link_to edit_settings_category_group_path(group),
                   class: "text-xs text-slate-500 hover:text-indigo-600 transition-colors" do %>
@@ -28,10 +33,15 @@
         </div>
 
         <%# Categories %>
-        <div class="divide-y divide-slate-50">
+        <div class="divide-y divide-slate-50" data-controller="sortable" data-sortable-url-value="<%= reorder_settings_category_group_categories_path(group) %>">
           <% group.categories.each do |category| %>
-            <div class="flex items-center justify-between px-5 py-2.5">
-              <span class="text-sm text-slate-700"><%= category.name %></span>
+            <div class="flex items-center justify-between px-5 py-2.5" data-sortable-id="<%= category.id %>">
+              <div class="flex items-center gap-2">
+                <span class="drag-handle cursor-grab text-slate-300 hover:text-slate-500">
+                  <%= icon "bars-3", classes: "w-3.5 h-3.5" %>
+                </span>
+                <span class="text-sm text-slate-700"><%= category.name %></span>
+              </div>
               <div class="flex items-center gap-2">
                 <%= link_to edit_settings_category_group_category_path(group, category),
                       class: "text-slate-400 hover:text-indigo-600 transition-colors" do %>
