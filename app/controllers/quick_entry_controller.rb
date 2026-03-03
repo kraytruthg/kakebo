@@ -33,7 +33,7 @@ class QuickEntryController < ApplicationController
     @account_matched = resolved[:account].present?
     @category_matched = resolved[:category].present?
 
-    render :create
+    render :create, status: :unprocessable_entity
   end
 
   def create_transaction
