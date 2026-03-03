@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_28_004342) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_03_144314) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -62,6 +62,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_28_004342) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "quick_entry_mappings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "household_id", null: false
+    t.string "keyword", null: false
+    t.bigint "target_id", null: false
+    t.string "target_type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["household_id", "target_type", "keyword"], name: "idx_quick_entry_mappings_unique_keyword", unique: true
+    t.index ["household_id"], name: "index_quick_entry_mappings_on_household_id"
+  end
+
   create_table "transactions", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.decimal "amount", precision: 12, scale: 2, null: false
@@ -92,6 +103,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_28_004342) do
   add_foreign_key "budget_entries", "categories"
   add_foreign_key "categories", "category_groups"
   add_foreign_key "category_groups", "households"
+  add_foreign_key "quick_entry_mappings", "households"
   add_foreign_key "transactions", "accounts"
   add_foreign_key "transactions", "categories"
   add_foreign_key "users", "households"

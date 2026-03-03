@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     resources :transactions, only: [ :create, :destroy, :edit, :update ]
   end
   resources :transfers, only: [ :new, :create, :destroy ]
+  resource :quick_entry, only: [ :new, :create ], controller: "quick_entry"
   get "budget/:year/:month/categories/:category_id/transactions",
       to: "budget/category_transactions#index",
       as: :budget_category_transactions
@@ -26,6 +27,7 @@ Rails.application.routes.draw do
         end
       end
     end
+    resources :quick_entry_mappings, only: [ :index, :new, :create, :edit, :update, :destroy ]
   end
   get "settings/categories", to: "settings/category_groups#index", as: :settings_categories
 

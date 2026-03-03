@@ -1,0 +1,76 @@
+<div class="max-w-2xl mx-auto px-4 sm:px-6 py-8">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-xl font-bold text-slate-900">快速記帳對應</h1>
+    <%= link_to new_settings_quick_entry_mapping_path,
+          class: "flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" do %>
+      <%= icon "plus", classes: "w-4 h-4" %>
+      新增對應
+    <% end %>
+  </div>
+
+  <%# Category mappings %>
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-4">
+    <div class="px-5 py-3 bg-slate-50 border-b border-slate-100">
+      <span class="text-sm font-semibold text-slate-700">類別對應</span>
+    </div>
+    <% if @category_mappings.any? %>
+      <div class="divide-y divide-slate-50">
+        <% @category_mappings.each do |mapping| %>
+          <div class="flex items-center justify-between px-5 py-3">
+            <div class="text-sm text-slate-700">
+              <span class="font-medium"><%= mapping.keyword %></span>
+              <span class="text-slate-400 mx-2">&rarr;</span>
+              <span><%= mapping.target.name %></span>
+            </div>
+            <div class="flex items-center gap-2">
+              <%= link_to edit_settings_quick_entry_mapping_path(mapping),
+                    class: "text-slate-400 hover:text-indigo-600 transition-colors" do %>
+                <%= icon "pencil", classes: "w-4 h-4" %>
+              <% end %>
+              <%= button_to settings_quick_entry_mapping_path(mapping), method: :delete,
+                    data: { turbo_confirm: "確定要刪除「#{mapping.keyword}」的對應嗎？" },
+                    class: "text-slate-400 hover:text-red-500 transition-colors" do %>
+                <%= icon "trash", classes: "w-4 h-4" %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="px-5 py-4 text-sm text-slate-400">尚無類別對應</div>
+    <% end %>
+  </div>
+
+  <%# Account mappings %>
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <div class="px-5 py-3 bg-slate-50 border-b border-slate-100">
+      <span class="text-sm font-semibold text-slate-700">帳戶對應</span>
+    </div>
+    <% if @account_mappings.any? %>
+      <div class="divide-y divide-slate-50">
+        <% @account_mappings.each do |mapping| %>
+          <div class="flex items-center justify-between px-5 py-3">
+            <div class="text-sm text-slate-700">
+              <span class="font-medium"><%= mapping.keyword %></span>
+              <span class="text-slate-400 mx-2">&rarr;</span>
+              <span><%= mapping.target.name %></span>
+            </div>
+            <div class="flex items-center gap-2">
+              <%= link_to edit_settings_quick_entry_mapping_path(mapping),
+                    class: "text-slate-400 hover:text-indigo-600 transition-colors" do %>
+                <%= icon "pencil", classes: "w-4 h-4" %>
+              <% end %>
+              <%= button_to settings_quick_entry_mapping_path(mapping), method: :delete,
+                    data: { turbo_confirm: "確定要刪除「#{mapping.keyword}」的對應嗎？" },
+                    class: "text-slate-400 hover:text-red-500 transition-colors" do %>
+                <%= icon "trash", classes: "w-4 h-4" %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="px-5 py-4 text-sm text-slate-400">尚無帳戶對應</div>
+    <% end %>
+  </div>
+</div>
