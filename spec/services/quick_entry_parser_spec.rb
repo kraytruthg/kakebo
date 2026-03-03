@@ -47,6 +47,16 @@ RSpec.describe QuickEntryParser do
       expect(result).to eq({ payer: "Jerry", description: "家樂福採買", amount: 500.0 })
     end
 
+    it "parses verb format without prefix: 老婆支付家樂福採買300" do
+      result = QuickEntryParser.parse("老婆支付家樂福採買300")
+      expect(result).to eq({ payer: "老婆", description: "家樂福採買", amount: 300.0 })
+    end
+
+    it "parses verb format with spaces: 老婆 支付 家樂福採買 300" do
+      result = QuickEntryParser.parse("老婆 支付 家樂福採買 300")
+      expect(result).to eq({ payer: "老婆", description: "家樂福採買", amount: 300.0 })
+    end
+
     it "parses minimal format without space: 停車費100" do
       result = QuickEntryParser.parse("停車費100")
       expect(result).to eq({ payer: nil, description: "停車費", amount: 100.0 })
