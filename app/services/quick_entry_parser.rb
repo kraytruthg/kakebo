@@ -3,9 +3,9 @@ class QuickEntryParser
   #   紀錄/記錄 {payer} 支付 {description} {amount}
   #   {payer} {description} {amount}
   #   {description} {amount}
-  FULL_PATTERN = /\A(?:紀錄|記錄)\s+(\S+)\s+支付\s+(.+?)\s+(\d+(?:\.\d+)?)\z/
+  FULL_PATTERN = /\A(?:紀錄|記錄)\s*(.+?)\s*支付\s*(.+?)\s*(\d+(?:\.\d+)?)\z/
   SHORT_PATTERN = /\A(\S+)\s+(.+?)\s+(\d+(?:\.\d+)?)\z/
-  MINIMAL_PATTERN = /\A(.+?)\s+(\d+(?:\.\d+)?)\z/
+  MINIMAL_PATTERN = /\A(.+?)\s*(\d+(?:\.\d+)?)\z/
 
   def self.parse(input)
     text = input.to_s.strip.gsub(/\s+/, " ")

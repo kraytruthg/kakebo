@@ -37,6 +37,21 @@ RSpec.describe QuickEntryParser do
       expect(result).to eq({ payer: "Jerry", description: "午餐", amount: 350.0 })
     end
 
+    it "parses full format without spaces (voice input): 紀錄Jerry支付停車費100" do
+      result = QuickEntryParser.parse("紀錄Jerry支付停車費100")
+      expect(result).to eq({ payer: "Jerry", description: "停車費", amount: 100.0 })
+    end
+
+    it "parses full format with partial spaces: 紀錄Jerry 支付家樂福採買 500" do
+      result = QuickEntryParser.parse("紀錄Jerry 支付家樂福採買 500")
+      expect(result).to eq({ payer: "Jerry", description: "家樂福採買", amount: 500.0 })
+    end
+
+    it "parses minimal format without space: 停車費100" do
+      result = QuickEntryParser.parse("停車費100")
+      expect(result).to eq({ payer: nil, description: "停車費", amount: 100.0 })
+    end
+
     it "returns nil for unparseable input" do
       result = QuickEntryParser.parse("hello")
       expect(result).to be_nil
