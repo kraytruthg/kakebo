@@ -11,11 +11,12 @@ RSpec.describe "Budget", type: :system do
     account
     category
     sign_in(user)
-    expect(page).to have_text("Ready to Assign") # 等待 Turbo redirect 完成
+    expect(page).to have_text("全部已分配") # 等待 Turbo redirect 完成
   end
 
-  it "顯示預算頁面與 Ready to Assign" do
-    # category_group 以 CSS text-transform: uppercase 顯示，用 case-insensitive 匹配
+  it "顯示預算頁面與兩個預算摘要卡片" do
+    expect(page).to have_text("全部已分配")
+    expect(page).to have_text("剩餘可分配")
     expect(page).to have_text(/#{Regexp.escape(category_group.name)}/i)
     expect(page).to have_text(category.name)
   end
@@ -44,5 +45,16 @@ RSpec.describe "Budget", type: :system do
     within("tr", text: category.name) do
       expect(page).to have_text("-NT$1,000")
     end
+  end
+
+  it "分配預算後即時更新全部已分配與剩餘可分配" do
+    within("tr", text: category.name) do
+      click_link "NT$0"
+      fill_in "budget_entry[budgeted]", with: "5000"
+      find("input[type='submit']").click
+    end
+
+    expect(page).to have_css("#total-budgeted", text: "NT$5,000")
+    expect(page).to have_css("#ready-to-assign", text: "-NT$5,000")
   end
 end
