@@ -21,7 +21,14 @@ Rails.application.routes.draw do
 
   namespace :settings do
     resources :category_groups, only: [ :new, :create, :edit, :update, :destroy ] do
-      resources :categories, only: [ :new, :create, :edit, :update, :destroy ]
+      collection do
+        patch :reorder
+      end
+      resources :categories, only: [ :new, :create, :edit, :update, :destroy ] do
+        collection do
+          patch :reorder
+        end
+      end
     end
   end
   get "settings/categories", to: "settings/category_groups#index", as: :settings_categories
