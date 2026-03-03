@@ -10,6 +10,7 @@ RSpec.describe "Admin user management", type: :system do
   let!(:household) { create(:household, name: "我們家") }
   let!(:admin) { create(:user, name: "Admin", email: "admin@example.com", password: "password123", household: household) }
   let!(:other_user) { create(:user, name: "Rainy", email: "rainy@example.com", password: "password123", household: household) }
+  let!(:account) { create(:account, household: household) }
 
   describe "user list" do
     it "shows all users with their household" do
@@ -49,6 +50,52 @@ RSpec.describe "Admin user management", type: :system do
       click_button "建立用戶"
 
       expect(page).to have_content("Name")
+    end
+  end
+
+  describe "edit user" do
+    it "updates user name and email" do
+      sign_in(admin)
+      visit edit_admin_user_path(other_user)
+
+      fill_in "姓名", with: "Updated Name"
+      fill_in "Email", with: "updated@example.com"
+      click_button "更新用戶"
+
+      expect(page).to have_content("用戶已更新")
+      expect(page).to have_content("Updated Name")
+      expect(page).to have_content("updated@example.com")
+    end
+
+    it "resets password when provided" do
+      sign_in(admin)
+      visit edit_admin_user_path(other_user)
+
+      fill_in "新密碼", with: "newpassword123"
+      fill_in "確認新密碼", with: "newpassword123"
+      click_button "更新用戶"
+
+      expect(page).to have_content("用戶已更新")
+
+      # Verify new password works by logging out and back in
+      find("button[aria-label='登出']").click
+      sign_in(other_user.reload, password: "newpassword123")
+      expect(page).to have_content("預算")
+    end
+
+    it "does not change password when fields are blank" do
+      sign_in(admin)
+      visit edit_admin_user_path(other_user)
+
+      fill_in "姓名", with: "Same Password"
+      click_button "更新用戶"
+
+      expect(page).to have_content("用戶已更新")
+
+      # Verify old password still works
+      find("button[aria-label='登出']").click
+      sign_in(other_user.reload, password: "password123")
+      expect(page).to have_content("預算")
     end
   end
 end

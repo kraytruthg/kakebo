@@ -19,6 +19,23 @@ module Admin
       end
     end
 
+    def edit
+      @user = User.find(params[:id])
+      @households = Household.order(:name)
+    end
+
+    def update
+      @user = User.find(params[:id])
+      update_params = user_params
+      update_params = update_params.except(:password, :password_confirmation) if update_params[:password].blank?
+      if @user.update(update_params)
+        redirect_to admin_users_path, notice: "用戶已更新"
+      else
+        @households = Household.order(:name)
+        render :edit, status: :unprocessable_entity
+      end
+    end
+
     private
 
     def user_params
