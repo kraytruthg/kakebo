@@ -4,7 +4,8 @@ export default class extends Controller {
   static targets = [
     "backdrop", "panel",
     "categoryId", "categoryName",
-    "form", "accountSelect"
+    "form", "accountSelect",
+    "outflow", "inflow"
   ]
 
   // 開啟 Drawer 並預先設定類別
@@ -21,6 +22,9 @@ export default class extends Controller {
     this.backdropTarget.classList.remove("opacity-0", "pointer-events-none")
     this.backdropTarget.classList.add("opacity-100")
     this.panelTarget.classList.remove("translate-x-full")
+    if (this.hasOutflowTarget) {
+      this.outflowTarget.focus()
+    }
   }
 
   close() {
@@ -41,5 +45,18 @@ export default class extends Controller {
   updateFormAction() {
     const accountId = this.accountSelectTarget.value
     this.formTarget.action = `/accounts/${accountId}/transactions`
+  }
+
+  // Outflow/Inflow 互斥
+  outflowInput() {
+    if (this.outflowTarget.value !== "") {
+      this.inflowTarget.value = ""
+    }
+  }
+
+  inflowInput() {
+    if (this.inflowTarget.value !== "") {
+      this.outflowTarget.value = ""
+    }
   }
 }
