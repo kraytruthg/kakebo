@@ -5,6 +5,10 @@ class BudgetController < ApplicationController
     @household = Current.household
     BudgetEntry.initialize_month!(@household, @year, @month)
     @ready_to_assign = @household.ready_to_assign(@year, @month)
+    @total_budgeted = BudgetEntry
+                        .joins(category: { category_group: :household })
+                        .where(category_groups: { household_id: @household.id }, year: @year, month: @month)
+                        .sum(:budgeted)
     @category_groups = @household.category_groups.includes(categories: :budget_entries)
     @monthly_activities = Transaction
                             .joins(:account, category: { category_group: :household })
