@@ -27,6 +27,7 @@ Rails.application.routes.draw do
         end
       end
     end
+    resources :quick_entry_mappings, only: [ :index, :new, :create, :edit, :update, :destroy ]
   end
   get "settings/categories", to: "settings/category_groups#index", as: :settings_categories
 

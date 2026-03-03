@@ -1,0 +1,55 @@
+<%= form_with model: [:settings, mapping], class: "bg-white rounded-2xl shadow-sm border border-slate-100 p-6 space-y-4", data: { controller: "quick-entry-mapping" } do |f| %>
+  <div>
+    <%= f.label :keyword, "關鍵字", class: "block text-sm font-medium text-slate-700 mb-1.5" %>
+    <%= f.text_field :keyword, autofocus: true, placeholder: "例：家樂福採買、Jerry",
+          class: "block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+    <% mapping.errors[:keyword].each do |msg| %>
+      <p class="text-xs text-red-500 mt-1"><%= msg %></p>
+    <% end %>
+  </div>
+
+  <div>
+    <%= f.label :target_type, "對應類型", class: "block text-sm font-medium text-slate-700 mb-1.5" %>
+    <%= f.select :target_type, [["類別", "Category"], ["帳戶", "Account"]],
+          {},
+          class: "block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500",
+          data: { action: "change->quick-entry-mapping#toggleTarget", quick_entry_mapping_target: "typeSelect" } %>
+  </div>
+
+  <div data-quick-entry-mapping-target="categoryField" class="<%= 'hidden' if mapping.target_type == 'Account' %>">
+    <%= f.label :target_id, "類別", class: "block text-sm font-medium text-slate-700 mb-1.5" %>
+    <select name="quick_entry_mapping[target_id]" id="category_target_id"
+            class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      <option value="">-- 請選擇 --</option>
+      <% @categories.each do |group| %>
+        <optgroup label="<%= group.name %>">
+          <% group.categories.each do |cat| %>
+            <option value="<%= cat.id %>" <%= "selected" if mapping.target_type == "Category" && mapping.target_id == cat.id %>><%= cat.name %></option>
+          <% end %>
+        </optgroup>
+      <% end %>
+    </select>
+  </div>
+
+  <div data-quick-entry-mapping-target="accountField" class="<%= 'hidden' unless mapping.target_type == 'Account' %>">
+    <%= f.label :target_id, "帳戶", class: "block text-sm font-medium text-slate-700 mb-1.5" %>
+    <select name="quick_entry_mapping[target_id]" id="account_target_id"
+            class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      <option value="">-- 請選擇 --</option>
+      <% @accounts.each do |acct| %>
+        <option value="<%= acct.id %>" <%= "selected" if mapping.target_type == "Account" && mapping.target_id == acct.id %>><%= acct.name %></option>
+      <% end %>
+    </select>
+  </div>
+
+  <% mapping.errors[:target_type].each do |msg| %>
+    <p class="text-xs text-red-500"><%= msg %></p>
+  <% end %>
+
+  <div class="flex items-center gap-3 pt-2">
+    <%= f.submit mapping.persisted? ? "儲存" : "新增對應",
+          class: "bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-5 py-2 rounded-lg cursor-pointer transition-colors" %>
+    <%= link_to "取消", settings_quick_entry_mappings_path,
+          class: "text-sm text-slate-500 hover:text-slate-700" %>
+  </div>
+<% end %>
