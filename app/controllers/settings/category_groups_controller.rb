@@ -41,6 +41,16 @@ module Settings
       end
     end
 
+    def reorder
+      positions = params.require(:positions)
+      ApplicationRecord.transaction do
+        positions.each do |pos|
+          Current.household.category_groups.find(pos[:id]).update!(position: pos[:position])
+        end
+      end
+      head :ok
+    end
+
     private
 
     def category_group_params
