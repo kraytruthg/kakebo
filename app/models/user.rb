@@ -8,7 +8,7 @@ class User < ApplicationRecord
 
   normalizes :email, with: ->(e) { e.strip.downcase }
 
-  before_create :create_household
+  before_create :create_household, unless: -> { household_id.present? }
 
   def admin?
     admin_emails = ENV.fetch("ADMIN_EMAILS", "").split(",").map(&:strip).map(&:downcase)
