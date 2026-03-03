@@ -94,6 +94,29 @@ RSpec.describe "Settings::Categories", type: :request do
     end
   end
 
+  describe "PATCH /settings/category_groups/:id/categories/:id (change group)" do
+    it "moves category to another group" do
+      category = create(:category, category_group: group, name: "搬家類別", position: 0)
+      target_group = create(:category_group, household: household, name: "目標群組")
+
+      patch settings_category_group_category_path(group, category),
+            params: { category: { name: "搬家類別", category_group_id: target_group.id } }
+
+      expect(category.reload.category_group).to eq(target_group)
+      expect(response).to redirect_to(settings_categories_path)
+    end
+
+    it "rejects moving to a group from another household" do
+      category = create(:category, category_group: group, name: "不動類別")
+      other_household_group = create(:category_group)
+
+      patch settings_category_group_category_path(group, category),
+            params: { category: { name: "不動類別", category_group_id: other_household_group.id } }
+
+      expect(category.reload.category_group).to eq(group)
+    end
+  end
+
   describe "DELETE /settings/category_groups/:id/categories/:id" do
     it "無交易時刪除成功" do
       category = create(:category, category_group: group)

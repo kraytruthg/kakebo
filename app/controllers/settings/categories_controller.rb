@@ -22,7 +22,18 @@ module Settings
 
     def update
       @category = @category_group.categories.find(params[:id])
+      if category_params[:category_group_id].present?
+        target_group = Current.household.category_groups.find_by(id: category_params[:category_group_id])
+        unless target_group
+          redirect_to settings_categories_path, alert: "無效的目標群組"
+          return
+        end
+      end
+
       if @category.update(category_params)
+        if @category.saved_change_to_category_group_id?
+          @category.update_column(:position, @category.category_group.categories.maximum(:position).to_i + 1)
+        end
         redirect_to settings_categories_path, notice: "類別已更新"
       else
         render :edit, status: :unprocessable_entity
@@ -56,7 +67,7 @@ module Settings
     end
 
     def category_params
-      params.require(:category).permit(:name)
+      params.require(:category).permit(:name, :category_group_id)
     end
   end
 end
