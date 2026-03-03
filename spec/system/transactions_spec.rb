@@ -11,7 +11,7 @@ RSpec.describe "Transactions", type: :system do
     account
     category
     sign_in(user)
-    expect(page).to have_text("Ready to Assign")
+    expect(page).to have_text("全部已分配")
     visit account_path(account)
   end
 

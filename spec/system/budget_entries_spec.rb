@@ -10,7 +10,7 @@ RSpec.describe "BudgetEntries", type: :system do
   before do
     category
     sign_in(user)
-    expect(page).to have_text("Ready to Assign")
+    expect(page).to have_text("全部已分配")
   end
 
   it "點擊已分配金額可編輯並儲存" do
