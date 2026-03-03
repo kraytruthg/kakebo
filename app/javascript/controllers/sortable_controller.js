@@ -10,6 +10,7 @@ export default class extends Controller {
   connect() {
     this.sortable = Sortable.create(this.element, {
       handle: this.handleValue,
+      draggable: "[data-sortable-id]",
       animation: 150,
       ghostClass: "opacity-30",
       onEnd: this.onEnd.bind(this)

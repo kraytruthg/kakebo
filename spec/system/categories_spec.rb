@@ -51,9 +51,14 @@ RSpec.describe "類別管理", type: :system do
     group2 = create(:category_group, household: user.household, name: "娛樂", position: 2)
     visit settings_categories_path
 
-    source = find("[data-sortable-id='#{group2.id}'] .drag-handle")
-    target = find("[data-sortable-id='#{group.id}'] .drag-handle")
-    source.drag_to(target)
+    source = find(".space-y-4 > [data-sortable-id='#{group2.id}'] .drag-handle")
+    target = find(".space-y-4 > [data-sortable-id='#{group.id}'] .drag-handle")
+
+    page.driver.browser.action
+      .click_and_hold(source.native)
+      .move_by(0, -200)
+      .release
+      .perform
 
     sleep 1
     expect(group2.reload.position).to be < group.reload.position
