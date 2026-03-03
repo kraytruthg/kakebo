@@ -19,3 +19,9 @@
     <%= number_to_currency(@ready_to_assign, unit: "NT$", precision: 0) %>
   </p>
 <% end %>
+
+<%= turbo_stream.replace "total-budgeted" do %>
+  <p id="total-budgeted" class="text-4xl font-bold tracking-tight">
+    <%= number_to_currency(@total_budgeted, unit: "NT$", precision: 0) %>
+  </p>
+<% end %>
