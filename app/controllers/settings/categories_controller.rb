@@ -29,6 +29,16 @@ module Settings
       end
     end
 
+    def reorder
+      positions = params.require(:positions)
+      ApplicationRecord.transaction do
+        positions.each do |pos|
+          @category_group.categories.find(pos[:id]).update!(position: pos[:position])
+        end
+      end
+      head :ok
+    end
+
     def destroy
       @category = @category_group.categories.find(params[:id])
       if @category.transactions.any?

@@ -66,6 +66,34 @@ RSpec.describe "Settings::Categories", type: :request do
     end
   end
 
+  describe "PATCH /settings/category_groups/:id/categories/reorder" do
+    it "updates positions for categories within the group" do
+      c1 = create(:category, category_group: group, position: 0)
+      c2 = create(:category, category_group: group, position: 1)
+      c3 = create(:category, category_group: group, position: 2)
+
+      patch reorder_settings_category_group_categories_path(group),
+            params: { positions: [ { id: c3.id, position: 0 }, { id: c1.id, position: 1 }, { id: c2.id, position: 2 } ] },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(c3.reload.position).to eq(0)
+      expect(c1.reload.position).to eq(1)
+      expect(c2.reload.position).to eq(2)
+    end
+
+    it "rejects reordering categories from another group" do
+      other_group = create(:category_group)
+      other_cat = create(:category, category_group: other_group, position: 0)
+
+      expect {
+        patch reorder_settings_category_group_categories_path(group),
+              params: { positions: [ { id: other_cat.id, position: 0 } ] },
+              as: :json
+      }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
   describe "DELETE /settings/category_groups/:id/categories/:id" do
     it "無交易時刪除成功" do
       category = create(:category, category_group: group)
