@@ -7,24 +7,24 @@ RSpec.describe "類別管理", type: :system do
   before { sign_in(user) }
 
   it "新增 CategoryGroup" do
-    visit category_groups_path
+    visit settings_categories_path
     click_link "新增群組"
     fill_in "名稱", with: "娛樂"
-    click_button "儲存"
+    click_button "新增群組"
     expect(page).to have_text("娛樂")
   end
 
   it "新增 Category" do
-    visit category_groups_path
-    within("#group-#{group.id}") { click_link "新增類別" }
+    visit settings_categories_path
+    within("[data-sortable-id='#{group.id}']") { click_link "新增類別" }
     fill_in "名稱", with: "電影"
-    click_button "儲存"
+    click_button "新增類別"
     expect(page).to have_text("電影")
   end
 
   it "重新命名 CategoryGroup" do
-    visit category_groups_path
-    within("#group-#{group.id}") { click_link "編輯" }
+    visit settings_categories_path
+    within(".space-y-4 > [data-sortable-id='#{group.id}']") { find("a[href*='edit']").click }
     fill_in "名稱", with: "每日花費"
     click_button "儲存"
     expect(page).to have_text("每日花費")
@@ -32,8 +32,10 @@ RSpec.describe "類別管理", type: :system do
 
   it "刪除空的 Category 成功" do
     cat = create(:category, category_group: group, name: "無交易")
-    visit category_groups_path
-    within("#category-#{cat.id}") { click_button "刪除" }
+    visit settings_categories_path
+    within(".divide-y > [data-sortable-id='#{cat.id}']") do
+      accept_confirm { find("button[type='submit']").click }
+    end
     expect(page).not_to have_text("無交易")
   end
 
@@ -41,9 +43,51 @@ RSpec.describe "類別管理", type: :system do
     cat = create(:category, category_group: group, name: "有交易")
     account = create(:account, household: user.household, account_type: "budget")
     create(:transaction, account: account, category: cat, amount: -500, date: Date.today)
-    visit category_groups_path
-    within("#category-#{cat.id}") { click_button "刪除" }
-    expect(page).to have_text("有交易")
-    expect(page).to have_text("筆交易")
+    visit settings_categories_path
+    within(".divide-y > [data-sortable-id='#{cat.id}']") do
+      accept_confirm { find("button[type='submit']").click }
+    end
+    expect(page).to have_text("此類別有交易記錄，無法刪除")
+  end
+
+  it "拖曳調整 CategoryGroup 順序" do
+    group2 = create(:category_group, household: user.household, name: "娛樂", position: 2)
+    visit settings_categories_path
+
+    source = find(".space-y-4 > [data-sortable-id='#{group2.id}'] .drag-handle")
+    target = find(".space-y-4 > [data-sortable-id='#{group.id}'] .drag-handle")
+
+    source.drag_to(target)
+
+    sleep 1
+    expect(group2.reload.position).to be < group.reload.position
+  end
+
+  it "拖曳調整 Category 順序" do
+    cat1 = create(:category, category_group: group, name: "食物", position: 0)
+    cat2 = create(:category, category_group: group, name: "交通", position: 1)
+    visit settings_categories_path
+
+    source = find(:css, ".divide-y > [data-sortable-id='#{cat2.id}'] .drag-handle")
+    target = find(:css, ".divide-y > [data-sortable-id='#{cat1.id}'] .drag-handle")
+    source.drag_to(target)
+
+    sleep 1
+    expect(cat2.reload.position).to be < cat1.reload.position
+  end
+
+  it "編輯時將 Category 換到其他群組" do
+    group2 = create(:category_group, household: user.household, name: "娛樂")
+    cat = create(:category, category_group: group, name: "電影")
+    visit settings_categories_path
+
+    within(".divide-y[data-controller='sortable'] [data-sortable-id='#{cat.id}']") do
+      find("a[href*='edit']").click
+    end
+    select "娛樂", from: "所屬群組"
+    click_button "儲存"
+
+    expect(page).to have_text("類別已更新")
+    expect(cat.reload.category_group).to eq(group2)
   end
 end

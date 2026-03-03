@@ -100,4 +100,31 @@ RSpec.describe "Settings::CategoryGroups", type: :request do
       expect(response.body).to include("請先刪除群組內所有類別")
     end
   end
+
+  describe "PATCH /settings/category_groups/reorder" do
+    it "updates positions for all groups" do
+      g1 = create(:category_group, household: household, position: 0)
+      g2 = create(:category_group, household: household, position: 1)
+      g3 = create(:category_group, household: household, position: 2)
+
+      patch reorder_settings_category_groups_path,
+            params: { positions: [ { id: g3.id, position: 0 }, { id: g1.id, position: 1 }, { id: g2.id, position: 2 } ] },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(g3.reload.position).to eq(0)
+      expect(g1.reload.position).to eq(1)
+      expect(g2.reload.position).to eq(2)
+    end
+
+    it "rejects reordering groups from another household" do
+      other_group = create(:category_group, position: 0)
+
+      expect {
+        patch reorder_settings_category_groups_path,
+              params: { positions: [ { id: other_group.id, position: 0 } ] },
+              as: :json
+      }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
 end
