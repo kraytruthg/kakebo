@@ -25,6 +25,10 @@ class BudgetEntriesController < ApplicationController
       @activity        = @entry.activity
       @available       = @entry.available
       @ready_to_assign = Current.household.ready_to_assign(@year, @month)
+      @total_budgeted  = BudgetEntry
+                           .joins(category: { category_group: :household })
+                           .where(category_groups: { household_id: Current.household.id }, year: @year, month: @month)
+                           .sum(:budgeted)
 
       respond_to do |format|
         format.turbo_stream

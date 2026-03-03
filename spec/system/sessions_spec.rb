@@ -13,7 +13,7 @@ RSpec.describe "Sessions", type: :system do
       click_button "登入"
 
       expect(page).to have_text("歡迎回來")
-      expect(page).to have_text("Ready to Assign")
+      expect(page).to have_text("全部已分配")
     end
 
     it "密碼錯誤時顯示錯誤訊息" do

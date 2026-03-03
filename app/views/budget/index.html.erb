@@ -14,13 +14,22 @@
     <% end %>
   </div>
 
-  <%# Ready to Assign hero card %>
-  <div class="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-2xl p-6 mb-6 text-white shadow-lg shadow-indigo-200">
-    <p class="text-indigo-200 text-sm font-medium mb-1">Ready to Assign</p>
-    <p id="ready-to-assign" class="text-4xl font-bold tracking-tight">
-      <%= number_to_currency(@ready_to_assign, unit: "NT$", precision: 0) %>
-    </p>
-    <p class="text-indigo-300 text-xs mt-2">可分配給各類別的預算</p>
+  <%# Budget summary cards %>
+  <div class="grid grid-cols-2 gap-4 mb-6">
+    <div class="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-indigo-200">
+      <p class="text-indigo-200 text-sm font-medium mb-1">全部已分配</p>
+      <p id="total-budgeted" class="text-4xl font-bold tracking-tight">
+        <%= number_to_currency(@total_budgeted, unit: "NT$", precision: 0) %>
+      </p>
+      <p class="text-indigo-300 text-xs mt-2">本月已分配的預算</p>
+    </div>
+    <div class="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-indigo-200">
+      <p class="text-indigo-200 text-sm font-medium mb-1">剩餘可分配</p>
+      <p id="ready-to-assign" class="text-4xl font-bold tracking-tight">
+        <%= number_to_currency(@ready_to_assign, unit: "NT$", precision: 0) %>
+      </p>
+      <p class="text-indigo-300 text-xs mt-2">可分配給各類別的預算</p>
+    </div>
   </div>
 
   <%# Category groups %>

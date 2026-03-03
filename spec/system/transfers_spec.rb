@@ -10,7 +10,7 @@ RSpec.describe "帳戶間轉帳", type: :system do
     account_a.recalculate_balance!
     account_b.recalculate_balance!
     sign_in(user)
-    expect(page).to have_text("Ready to Assign")
+    expect(page).to have_text("全部已分配")
   end
 
   describe "建立轉帳" do
