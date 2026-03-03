@@ -99,3 +99,26 @@ RSpec.describe "Admin user management", type: :system do
     end
   end
 end
+
+RSpec.describe "Admin access control", type: :system do
+  before do
+    driven_by :selenium, using: :headless_chrome
+  end
+
+  let!(:household) { create(:household) }
+  let!(:account) { create(:account, household: household) }
+  let!(:user) { create(:user, household: household) }
+
+  it "does not show admin link for non-admin users" do
+    sign_in(user)
+    visit budget_path
+    expect(page).not_to have_link("管理", exact: true)
+  end
+
+  it "redirects non-admin from admin pages" do
+    sign_in(user)
+    visit admin_users_path
+    expect(page).to have_current_path(budget_path, ignore_query: true)
+    expect(page).to have_content("權限不足")
+  end
+end
