@@ -20,6 +20,12 @@
       <%= icon "cog-6-tooth", classes: "w-5 h-5 shrink-0" %>
       類別管理
     <% end %>
+    <% if Current.user.admin? %>
+      <%= link_to admin_users_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium #{request.path.start_with?('/admin') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}" do %>
+        <%= icon "users", classes: "w-5 h-5 shrink-0" %>
+        管理
+      <% end %>
+    <% end %>
   </nav>
   <div class="px-4 py-4 border-t border-slate-100">
     <div class="flex items-center justify-between">
@@ -53,5 +59,11 @@
   <%= link_to category_groups_path, class: "flex-1 flex flex-col items-center py-3 gap-1 text-xs #{request.path.start_with?(category_groups_path) ? 'text-indigo-600' : 'text-slate-500'}" do %>
     <%= icon "cog-6-tooth", classes: "w-6 h-6" %>
     類別管理
+  <% end %>
+  <% if Current.user.admin? %>
+    <%= link_to admin_users_path, class: "flex-1 flex flex-col items-center py-3 gap-1 text-xs #{request.path.start_with?('/admin') ? 'text-indigo-600' : 'text-slate-500'}" do %>
+      <%= icon "users", classes: "w-6 h-6" %>
+      管理
+    <% end %>
   <% end %>
 </nav>

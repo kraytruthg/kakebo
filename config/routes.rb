@@ -26,6 +26,10 @@ Rails.application.routes.draw do
   end
   get "settings/categories", to: "settings/category_groups#index", as: :settings_categories
 
+  namespace :admin do
+    resources :users, only: [ :index, :new, :create, :edit, :update ]
+  end
+
   root to: redirect("/budget")
   get "up" => "rails/health#show", as: :rails_health_check
 end

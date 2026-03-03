@@ -1,0 +1,38 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-xl font-bold text-slate-900">用戶管理</h1>
+    <%= link_to new_admin_user_path,
+          class: "flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" do %>
+      <%= icon "plus", classes: "w-4 h-4" %>
+      新增用戶
+    <% end %>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 border-b border-slate-100">
+        <tr>
+          <th class="text-left px-5 py-3 font-semibold text-slate-700">姓名</th>
+          <th class="text-left px-5 py-3 font-semibold text-slate-700">Email</th>
+          <th class="text-left px-5 py-3 font-semibold text-slate-700">家庭</th>
+          <th class="px-5 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-50">
+        <% @users.each do |user| %>
+          <tr>
+            <td class="px-5 py-3 text-slate-700"><%= user.name %></td>
+            <td class="px-5 py-3 text-slate-500"><%= user.email %></td>
+            <td class="px-5 py-3 text-slate-500"><%= user.household&.name %></td>
+            <td class="px-5 py-3 text-right">
+              <%= link_to edit_admin_user_path(user),
+                    class: "text-slate-400 hover:text-indigo-600 transition-colors" do %>
+                <%= icon "pencil", classes: "w-4 h-4" %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
