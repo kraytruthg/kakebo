@@ -76,12 +76,17 @@ class TransactionsController < ApplicationController
   end
 
   def transaction_params
-    p = params.require(:transaction).permit(:category_id, :amount, :date, :memo)
+    p = params.require(:transaction).permit(:category_id, :amount, :date, :memo, :outflow, :inflow)
     if p[:category_id].present?
       Category.joins(:category_group)
               .where(category_groups: { household_id: Current.household.id })
               .find(p[:category_id])
     end
-    p
+    if p[:outflow].present?
+      p[:amount] = -p[:outflow].to_d.abs
+    elsif p[:inflow].present?
+      p[:amount] = p[:inflow].to_d.abs
+    end
+    p.except(:outflow, :inflow)
   end
 end
