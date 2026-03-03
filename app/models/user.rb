@@ -10,6 +10,11 @@ class User < ApplicationRecord
 
   before_create :create_household
 
+  def admin?
+    admin_emails = ENV.fetch("ADMIN_EMAILS", "").split(",").map(&:strip).map(&:downcase)
+    admin_emails.include?(email)
+  end
+
   private
 
   def create_household
