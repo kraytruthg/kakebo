@@ -16,6 +16,10 @@
       <%= icon "presentation-chart-line", classes: "w-5 h-5 shrink-0" %>
       報表
     <% end %>
+    <%= link_to new_quick_entry_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium #{request.path.start_with?('/quick_entry') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}" do %>
+      <%= icon "bolt", classes: "w-5 h-5 shrink-0" %>
+      快速記帳
+    <% end %>
     <%= link_to settings_categories_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium #{request.path.start_with?('/settings') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}" do %>
       <%= icon "cog-6-tooth", classes: "w-5 h-5 shrink-0" %>
       類別管理
@@ -55,6 +59,10 @@
   <%= link_to reports_path, class: "flex-1 flex flex-col items-center py-3 gap-1 text-xs #{request.path == reports_path ? 'text-indigo-600' : 'text-slate-500'}" do %>
     <%= icon "presentation-chart-line", classes: "w-6 h-6" %>
     報表
+  <% end %>
+  <%= link_to new_quick_entry_path, class: "flex-1 flex flex-col items-center py-3 gap-1 text-xs #{request.path.start_with?('/quick_entry') ? 'text-indigo-600' : 'text-slate-500'}" do %>
+    <%= icon "bolt", classes: "w-6 h-6" %>
+    快速記帳
   <% end %>
   <%= link_to settings_categories_path, class: "flex-1 flex flex-col items-center py-3 gap-1 text-xs #{request.path.start_with?('/settings') ? 'text-indigo-600' : 'text-slate-500'}" do %>
     <%= icon "cog-6-tooth", classes: "w-6 h-6" %>
