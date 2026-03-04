@@ -13,19 +13,49 @@ class Budget::CategoryTransactionsController < ApplicationController
     @selected_account = params[:account_id].present? ?
                           Current.household.accounts.find_by(id: params[:account_id]) : nil
 
-    @transactions = Transaction
-                      .joins(:account, category: :category_group)
-                      .preload(:account, :category)
-                      .where(category_id: @category.id)
-                      .where(category_groups: { household_id: Current.household.id })
-                      .for_month(@year, @month)
-                      .then { |q| @selected_account ? q.where(account_id: @selected_account.id) : q }
-                      .recent
+    base_query = Transaction
+                  .joins(:account, category: :category_group)
+                  .preload(:account, :category)
+                  .where(category_id: @category.id)
+                  .where(category_groups: { household_id: Current.household.id })
+                  .then { |q| @selected_account ? q.where(account_id: @selected_account.id) : q }
+                  .recent
 
-    @total = @transactions.sum(:amount)
+    @pagy, @transactions = pagy(base_query)
+
+    compute_running_balances unless @selected_account
   end
 
   private
+
+  def compute_running_balances
+    current_entry = BudgetEntry.find_by(
+      category: @category,
+      year: @year,
+      month: @month
+    )
+    current_available = current_entry&.available || 0
+
+    if @pagy.page > 1
+      newer_ids = Transaction
+                    .joins(:account, category: :category_group)
+                    .where(category_id: @category.id)
+                    .where(category_groups: { household_id: Current.household.id })
+                    .recent
+                    .limit(@pagy.offset)
+                    .select(:id)
+      newer_sum = Transaction.where(id: newer_ids).sum(:amount)
+    else
+      newer_sum = 0
+    end
+
+    balance = current_available - newer_sum
+    @running_balances = {}
+    @transactions.each do |tx|
+      @running_balances[tx.id] = balance
+      balance -= tx.amount
+    end
+  end
 
   def set_category
     @category = Category
