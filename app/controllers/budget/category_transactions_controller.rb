@@ -13,13 +13,9 @@ class Budget::CategoryTransactionsController < ApplicationController
     @selected_account = params[:account_id].present? ?
                           Current.household.accounts.find_by(id: params[:account_id]) : nil
 
-    base_query = Transaction
-                  .joins(:account, category: :category_group)
+    base_query = category_transactions_scope
                   .preload(:account, :category)
-                  .where(category_id: @category.id)
-                  .where(category_groups: { household_id: Current.household.id })
                   .then { |q| @selected_account ? q.where(account_id: @selected_account.id) : q }
-                  .recent
 
     @pagy, @transactions = pagy(base_query)
 
@@ -27,6 +23,14 @@ class Budget::CategoryTransactionsController < ApplicationController
   end
 
   private
+
+  def category_transactions_scope
+    Transaction
+      .joins(:account, category: :category_group)
+      .where(category_id: @category.id)
+      .where(category_groups: { household_id: Current.household.id })
+      .recent
+  end
 
   def compute_running_balances
     current_entry = BudgetEntry.find_by(
@@ -37,13 +41,7 @@ class Budget::CategoryTransactionsController < ApplicationController
     current_available = current_entry&.available || 0
 
     if @pagy.page > 1
-      newer_ids = Transaction
-                    .joins(:account, category: :category_group)
-                    .where(category_id: @category.id)
-                    .where(category_groups: { household_id: Current.household.id })
-                    .recent
-                    .limit(@pagy.offset)
-                    .select(:id)
+      newer_ids = category_transactions_scope.limit(@pagy.offset).select(:id)
       newer_sum = Transaction.where(id: newer_ids).sum(:amount)
     else
       newer_sum = 0

@@ -71,16 +71,11 @@ RSpec.describe "Category Transactions", type: :system do
       expect(page).to have_text("晚餐")
     end
 
-    it "帳戶篩選只顯示該帳戶的交易" do
+    it "帳戶篩選只顯示該帳戶的交易且不顯示餘額欄" do
       click_link "現金"
       expect(page).not_to have_css("th", text: "餘額")
       expect(page).to have_text("早餐")
       expect(page).not_to have_text("晚餐")
-    end
-
-    it "帳戶篩選時不顯示餘額欄" do
-      click_link "現金"
-      expect(page).not_to have_css("th", text: "餘額")
     end
 
     it "刪除交易後從列表消失" do
