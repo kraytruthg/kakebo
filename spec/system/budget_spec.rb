@@ -24,18 +24,18 @@ RSpec.describe "Budget", type: :system do
   it "點擊類別的 + 按鈕開啟新增交易 drawer" do
     page.execute_script("document.querySelector('button[title=\"新增交易\"]').click()")
 
-    expect(page).to have_css("[data-budget-target='panel']:not(.translate-x-full)")
+    expect(page).to have_css("[data-drawer-target='panel']:not(.translate-x-full)")
   end
 
   it "從 budget drawer 用支出欄位新增交易後更新本月支出" do
     page.execute_script("document.querySelector('button[title=\"新增交易\"]').click()")
-    expect(page).to have_css("[data-budget-target='panel']:not(.translate-x-full)")
+    expect(page).to have_css("[data-drawer-target='panel']:not(.translate-x-full)")
     expect(page).to have_css(
       "input[name='transaction[category_id]'][value='#{category.id}']",
       visible: :all
     )
 
-    within("[data-budget-target='panel']") do
+    within("[data-drawer-target='panel']") do
       fill_in "transaction[outflow]", with: "1000"
       fill_in "transaction[memo]", with: "午餐"
       click_button "新增交易"
@@ -48,13 +48,13 @@ RSpec.describe "Budget", type: :system do
 
   it "從 budget drawer 用收入欄位新增退款交易" do
     page.execute_script("document.querySelector('button[title=\"新增交易\"]').click()")
-    expect(page).to have_css("[data-budget-target='panel']:not(.translate-x-full)")
+    expect(page).to have_css("[data-drawer-target='panel']:not(.translate-x-full)")
     expect(page).to have_css(
       "input[name='transaction[category_id]'][value='#{category.id}']",
       visible: :all
     )
 
-    within("[data-budget-target='panel']") do
+    within("[data-drawer-target='panel']") do
       fill_in "transaction[inflow]", with: "200"
       fill_in "transaction[memo]", with: "退款"
       click_button "新增交易"
