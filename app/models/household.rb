@@ -3,6 +3,7 @@ class Household < ApplicationRecord
   has_many :accounts, dependent: :destroy
   has_many :category_groups, dependent: :destroy
   has_many :quick_entry_mappings, dependent: :destroy
+  belongs_to :default_account, class_name: "Account", optional: true
 
   def ready_to_assign(year, month)
     total_budget_balance = accounts.budget.active.sum(:balance)
