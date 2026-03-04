@@ -6,12 +6,12 @@ export default class extends Controller {
   connect() {
     this._escHandler = this._closeOnEsc.bind(this)
     this._tabHandler = this._trapTab.bind(this)
-    document.addEventListener("keydown", this._escHandler)
   }
 
   disconnect() {
     document.removeEventListener("keydown", this._escHandler)
     document.removeEventListener("keydown", this._tabHandler)
+    this.previouslyFocused = null
   }
 
   open() {
@@ -20,6 +20,7 @@ export default class extends Controller {
     this.backdropTarget.classList.remove("opacity-0", "pointer-events-none")
     this.backdropTarget.classList.add("opacity-100")
     document.body.classList.add("overflow-hidden")
+    document.addEventListener("keydown", this._escHandler)
     document.addEventListener("keydown", this._tabHandler)
     this._focusFirstElement()
   }
@@ -29,6 +30,7 @@ export default class extends Controller {
     this.backdropTarget.classList.add("opacity-0", "pointer-events-none")
     this.backdropTarget.classList.remove("opacity-100")
     document.body.classList.remove("overflow-hidden")
+    document.removeEventListener("keydown", this._escHandler)
     document.removeEventListener("keydown", this._tabHandler)
     if (this.previouslyFocused) {
       this.previouslyFocused.focus()

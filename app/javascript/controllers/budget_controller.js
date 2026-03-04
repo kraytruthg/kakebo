@@ -19,8 +19,8 @@ export default class extends Controller {
     }
   }
 
-  closeDrawer() {
-    this.drawerOutlet.close()
+  closeDrawer(event) {
+    if (event.detail?.success) this.drawerOutlet.close()
   }
 
   accountChanged() {

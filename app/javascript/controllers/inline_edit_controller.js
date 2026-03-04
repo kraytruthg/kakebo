@@ -4,6 +4,7 @@ export default class extends Controller {
   static targets = ["restore"]
 
   connect() {
+    this._rafId = null
     this._handleFocusOut = this._onFocusOut.bind(this)
     this._handleFocusIn = this._onFocusIn.bind(this)
     // Wait for first focusin before listening for focusout,
@@ -12,6 +13,7 @@ export default class extends Controller {
   }
 
   disconnect() {
+    if (this._rafId) cancelAnimationFrame(this._rafId)
     this.element.removeEventListener("focusin", this._handleFocusIn)
     this.element.removeEventListener("focusout", this._handleFocusOut)
   }
@@ -30,12 +32,14 @@ export default class extends Controller {
   // Private
 
   _onFocusOut(event) {
-    requestAnimationFrame(() => {
+    this._rafId = requestAnimationFrame(() => {
+      this._rafId = null
       if (this.element.contains(document.activeElement)) return
       this._cancel()
     })
   }
 
+  // Replaces the turbo-frame content, destroying this controller's element
   _cancel() {
     if (!this.hasRestoreTarget) return
 
