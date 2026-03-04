@@ -50,13 +50,13 @@
                   class: "block bg-white rounded-xl border border-slate-100 px-4 py-3 active:bg-slate-50 transition-colors" do %>
               <div class="flex items-center justify-between mb-1.5">
                 <span class="text-sm font-medium text-slate-800"><%= category.name %></span>
-                <span class="text-sm font-semibold <%= available < 0 ? 'text-red-600' : 'text-emerald-600' %>">
+                <span id="mobile-available-<%= category.id %>" class="text-sm font-semibold <%= available < 0 ? 'text-red-600' : 'text-emerald-600' %>">
                   剩 <%= format_amount(available) %>
                 </span>
               </div>
               <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
                 <span>預算 <%= format_amount(budgeted) %></span>
-                <span>支出 <%= format_amount(activity) %></span>
+                <span id="mobile-activity-<%= category.id %>">支出 <%= format_amount(activity) %></span>
               </div>
               <div class="w-full bg-slate-100 rounded-full h-1.5">
                 <div class="h-1.5 rounded-full <%= spent_pct > 90 ? 'bg-red-500' : 'bg-indigo-500' %>"
