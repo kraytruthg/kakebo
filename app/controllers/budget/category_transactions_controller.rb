@@ -1,6 +1,8 @@
 class Budget::CategoryTransactionsController < ApplicationController
   before_action :set_category
 
+  LineItem = Data.define(:date, :memo, :account_name, :amount, :type, :record)
+
   def index
     @year  = params[:year].to_i
     @month = params[:month].to_i
@@ -13,19 +15,80 @@ class Budget::CategoryTransactionsController < ApplicationController
     @selected_account = params[:account_id].present? ?
                           Current.household.accounts.find_by(id: params[:account_id]) : nil
 
-    @transactions = Transaction
-                      .joins(:account, category: :category_group)
-                      .preload(:account, :category)
-                      .where(category_id: @category.id)
-                      .where(category_groups: { household_id: Current.household.id })
-                      .for_month(@year, @month)
-                      .then { |q| @selected_account ? q.where(account_id: @selected_account.id) : q }
-                      .recent
+    all_items = build_line_items
+    @pagy, @items = pagy_array(all_items)
 
-    @total = @transactions.sum(:amount)
+    compute_running_balances(all_items) unless @selected_account
   end
 
   private
+
+  def build_line_items
+    transactions = category_transactions_scope
+                    .preload(:account, :category)
+                    .then { |q| @selected_account ? q.where(account_id: @selected_account.id) : q }
+                    .to_a
+
+    items = transactions.map do |t|
+      LineItem.new(
+        date: t.date,
+        memo: t.memo,
+        account_name: t.account.name,
+        amount: t.amount,
+        type: :transaction,
+        record: t
+      )
+    end
+
+    unless @selected_account
+      today = Date.current
+      BudgetEntry.where(category: @category).where.not(budgeted: 0)
+                 .where("year < ? OR (year = ? AND month <= ?)", today.year, today.year, today.month)
+                 .find_each do |be|
+        items << LineItem.new(
+          date: Date.new(be.year, be.month, 1),
+          memo: "預算撥入",
+          account_name: nil,
+          amount: be.budgeted,
+          type: :budget,
+          record: be
+        )
+      end
+    end
+
+    # Sort newest first; same date: transactions before budget entries
+    items.sort_by { |i| [ -i.date.to_time.to_i, i.type == :budget ? 1 : 0 ] }
+  end
+
+  def category_transactions_scope
+    Transaction
+      .joins(:account, category: :category_group)
+      .where(category_id: @category.id)
+      .where(category_groups: { household_id: Current.household.id })
+      .recent
+  end
+
+  def compute_running_balances(all_items)
+    today = Date.current
+    latest_entry = BudgetEntry.where(category: @category)
+                              .where("year < ? OR (year = ? AND month <= ?)", today.year, today.year, today.month)
+                              .order(year: :desc, month: :desc)
+                              .first
+    current_available = latest_entry&.available || 0
+
+    if @pagy.page > 1
+      newer_sum = all_items.first(@pagy.offset).sum(&:amount)
+    else
+      newer_sum = 0
+    end
+
+    balance = current_available - newer_sum
+    @running_balances = {}
+    @items.each_with_index do |item, idx|
+      @running_balances[idx] = balance
+      balance -= item.amount
+    end
+  end
 
   def set_category
     @category = Category
