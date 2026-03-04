@@ -14,16 +14,16 @@ RSpec.describe "BudgetEntries", type: :system do
   end
 
   it "點擊已分配金額可編輯並儲存" do
-    click_on "NT$0", match: :first
+    click_on "0", match: :first
 
     fill_in "budget_entry[budgeted]", with: "3000"
     find("input[name='budget_entry[budgeted]']").send_keys(:enter)
 
-    expect(page).to have_text("NT$3,000")
+    expect(page).to have_text("3,000")
   end
 
   it "ESC 鍵取消預算編輯並恢復原始金額" do
-    click_on "NT$0", match: :first
+    click_on "0", match: :first
 
     expect(page).to have_css("input[name='budget_entry[budgeted]']")
 
@@ -31,11 +31,11 @@ RSpec.describe "BudgetEntries", type: :system do
     find("input[name='budget_entry[budgeted]']").send_keys(:escape)
 
     expect(page).not_to have_css("input[name='budget_entry[budgeted]']")
-    expect(page).to have_text("NT$0")
+    expect(page).to have_text("0")
   end
 
   it "點擊編輯區域外取消預算編輯" do
-    click_on "NT$0", match: :first
+    click_on "0", match: :first
 
     expect(page).to have_css("input[name='budget_entry[budgeted]']")
 
@@ -43,6 +43,6 @@ RSpec.describe "BudgetEntries", type: :system do
     find("th", text: "類別").click
 
     expect(page).not_to have_css("input[name='budget_entry[budgeted]']")
-    expect(page).to have_text("NT$0")
+    expect(page).to have_text("0")
   end
 end

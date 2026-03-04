@@ -42,7 +42,7 @@ RSpec.describe "Budget", type: :system do
     end
 
     within("tr", text: category.name) do
-      expect(page).to have_text("-NT$1,000")
+      expect(page).to have_text("-1,000")
     end
   end
 
@@ -61,7 +61,7 @@ RSpec.describe "Budget", type: :system do
     end
 
     within("tr", text: category.name) do
-      expect(page).to have_text("NT$200")
+      expect(page).to have_text("200")
     end
   end
 
@@ -85,12 +85,12 @@ RSpec.describe "Budget", type: :system do
 
   it "分配預算後即時更新全部已分配與剩餘可分配" do
     within("tr", text: category.name) do
-      click_link "NT$0"
+      click_link "0"
       fill_in "budget_entry[budgeted]", with: "5000"
       find("input[name='budget_entry[budgeted]']").send_keys(:enter)
     end
 
-    expect(page).to have_css("#total-budgeted", text: "NT$5,000")
-    expect(page).to have_css("#ready-to-assign", text: "-NT$5,000")
+    expect(page).to have_css("#total-budgeted", text: "5,000")
+    expect(page).to have_css("#ready-to-assign", text: "-5,000")
   end
 end

@@ -54,11 +54,11 @@
                 <td class="px-5 py-3 text-sm text-indigo-600 font-medium"><%= item.memo %></td>
                 <td class="px-5 py-3 text-sm text-slate-400">—</td>
                 <td class="px-5 py-3 text-right text-sm font-medium text-indigo-600">
-                  <%= number_to_currency(item.amount, unit: "NT$", precision: 0) %>
+                  <%= format_amount(item.amount) %>
                 </td>
                 <% unless @selected_account %>
                   <td class="px-5 py-3 text-right text-sm text-slate-500">
-                    <%= number_to_currency(@running_balances[idx], unit: "NT$", precision: 0) %>
+                    <%= format_amount(@running_balances[idx]) %>
                   </td>
                 <% end %>
                 <td class="px-5 py-3"></td>
@@ -70,11 +70,11 @@
                 <td class="px-5 py-3 text-sm text-slate-800"><%= item.memo.presence || "─" %></td>
                 <td class="px-5 py-3 text-sm text-slate-400"><%= item.account_name %></td>
                 <td class="px-5 py-3 text-right text-sm font-medium <%= item.amount < 0 ? 'text-red-600' : 'text-emerald-600' %>">
-                  <%= number_to_currency(item.amount, unit: "NT$", precision: 0) %>
+                  <%= format_amount(item.amount) %>
                 </td>
                 <% unless @selected_account %>
                   <td class="px-5 py-3 text-right text-sm text-slate-500">
-                    <%= number_to_currency(@running_balances[idx], unit: "NT$", precision: 0) %>
+                    <%= format_amount(@running_balances[idx]) %>
                   </td>
                 <% end %>
                 <td class="px-5 py-3">

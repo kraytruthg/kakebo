@@ -14,7 +14,7 @@
     <% end %>
   </td>
   <td class="px-5 py-3 text-right text-sm font-medium <%= transaction.amount < 0 ? 'text-red-500' : 'text-emerald-600' %>">
-    <%= number_to_currency(transaction.amount, unit: "NT$", precision: 0) %>
+    <%= format_amount(transaction.amount) %>
   </td>
   <td class="px-5 py-3 text-right flex items-center gap-2 justify-end">
     <% unless transaction.transfer? %>

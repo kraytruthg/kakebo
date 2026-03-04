@@ -55,7 +55,7 @@ class QuickEntryController < ApplicationController
     if transaction.save
       account.recalculate_balance!
       save_mappings_if_requested
-      redirect_to new_quick_entry_path, notice: "交易已建立：#{params[:memo]} NT$#{params[:amount]}"
+      redirect_to new_quick_entry_path, notice: "交易已建立：#{params[:memo]} #{helpers.format_amount(params[:amount].to_d)}"
     else
       redirect_to new_quick_entry_path, alert: "建立失敗，請確認所有欄位"
     end
