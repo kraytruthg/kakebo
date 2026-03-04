@@ -21,4 +21,28 @@ RSpec.describe "BudgetEntries", type: :system do
 
     expect(page).to have_text("NT$3,000")
   end
+
+  it "ESC 鍵取消預算編輯並恢復原始金額" do
+    click_on "NT$0", match: :first
+
+    expect(page).to have_css("input[name='budget_entry[budgeted]']")
+
+    fill_in "budget_entry[budgeted]", with: "9999"
+    find("input[name='budget_entry[budgeted]']").send_keys(:escape)
+
+    expect(page).not_to have_css("input[name='budget_entry[budgeted]']")
+    expect(page).to have_text("NT$0")
+  end
+
+  it "點擊編輯區域外取消預算編輯" do
+    click_on "NT$0", match: :first
+
+    expect(page).to have_css("input[name='budget_entry[budgeted]']")
+
+    # Click outside the inline edit area
+    find("th", text: "類別").click
+
+    expect(page).not_to have_css("input[name='budget_entry[budgeted]']")
+    expect(page).to have_text("NT$0")
+  end
 end
