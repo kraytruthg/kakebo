@@ -52,5 +52,18 @@ RSpec.describe "Budget copy_from_previous", type: :request do
         expect(new_entry.budgeted).to eq(2000)
       end
     end
+
+    context "when downstream months exist" do
+      it "recalculates carried_over for subsequent months" do
+        create(:budget_entry, category: category, year: 2026, month: 1, budgeted: 3000)
+        march = create(:budget_entry, category: category, year: 2026, month: 3, budgeted: 0, carried_over: 0)
+
+        perform_enqueued_jobs do
+          post budget_copy_from_previous_path, params: { year: 2026, month: 2 }
+        end
+
+        expect(march.reload.carried_over).to eq(3000)
+      end
+    end
   end
 end

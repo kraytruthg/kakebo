@@ -41,6 +41,8 @@ class BudgetController < ApplicationController
 
       current_entry.budgeted = prev_entry.budgeted
       current_entry.save!
+      next_date = Date.new(year, month, 1).next_month
+      BudgetEntryRecalculationJob.perform_later(category.id, next_date.year, next_date.month)
       copied_count += 1
     end
 

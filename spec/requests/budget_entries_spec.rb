@@ -77,5 +77,21 @@ RSpec.describe "BudgetEntries", type: :request do
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
+
+    context "when downstream months exist" do
+      it "recalculates carried_over for subsequent months" do
+        create(:budget_entry, category: category, year: 2026, month: 2, budgeted: 0, carried_over: 0)
+        march = create(:budget_entry, category: category, year: 2026, month: 3, budgeted: 1000, carried_over: 0)
+
+        perform_enqueued_jobs do
+          post budget_entries_path,
+               params: { budget_entry: { category_id: category.id,
+                                         year: 2026, month: 2, budgeted: 5000 } },
+               headers: { "Accept" => "text/vnd.turbo-stream.html" }
+        end
+
+        expect(march.reload.carried_over).to eq(5000)
+      end
+    end
   end
 end

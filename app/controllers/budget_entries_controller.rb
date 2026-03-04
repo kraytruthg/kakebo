@@ -7,6 +7,7 @@ class BudgetEntriesController < ApplicationController
     @entry.budgeted = budget_entry_params[:budgeted]
 
     if @entry.save
+      recalculate_downstream_months
       @activity        = @entry.activity
       @available       = @entry.available
       @ready_to_assign = Current.household.ready_to_assign(@year, @month)
@@ -43,5 +44,10 @@ class BudgetEntriesController < ApplicationController
 
   def budget_entry_params
     params.require(:budget_entry).permit(:category_id, :year, :month, :budgeted)
+  end
+
+  def recalculate_downstream_months
+    next_date = Date.new(@year, @month, 1).next_month
+    BudgetEntryRecalculationJob.perform_later(@category.id, next_date.year, next_date.month)
   end
 end
