@@ -65,6 +65,24 @@ RSpec.describe "Budget", type: :system do
     end
   end
 
+  it "ESC 鍵關閉 budget drawer" do
+    page.execute_script("document.querySelector('button[title=\"新增交易\"]').click()")
+    expect(page).to have_css("[data-drawer-target='panel']:not(.translate-x-full)")
+
+    find("body").send_keys(:escape)
+
+    expect(page).to have_css("[data-drawer-target='panel'].translate-x-full", visible: :all)
+  end
+
+  it "點擊背景關閉 budget drawer" do
+    page.execute_script("document.querySelector('button[title=\"新增交易\"]').click()")
+    expect(page).to have_css("[data-drawer-target='panel']:not(.translate-x-full)")
+
+    find("[data-drawer-target='backdrop']").click
+
+    expect(page).to have_css("[data-drawer-target='panel'].translate-x-full", visible: :all)
+  end
+
   it "分配預算後即時更新全部已分配與剩餘可分配" do
     within("tr", text: category.name) do
       click_link "NT$0"
