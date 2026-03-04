@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static values = { restoreHtml: String }
+  static targets = ["restore"]
 
   connect() {
     this._handleFocusOut = this._onFocusOut.bind(this)
@@ -37,10 +37,9 @@ export default class extends Controller {
   }
 
   _cancel() {
-    if (!this.hasRestoreHtmlValue) return
+    if (!this.hasRestoreTarget) return
 
-    // Replace turbo-frame innerHTML directly (no network request)
     const frame = this.element.closest("turbo-frame") || this.element
-    frame.innerHTML = this.restoreHtmlValue
+    frame.innerHTML = this.restoreTarget.innerHTML
   }
 }
