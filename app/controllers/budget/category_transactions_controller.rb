@@ -41,9 +41,8 @@ class Budget::CategoryTransactionsController < ApplicationController
     end
 
     unless @selected_account
-      today = Date.current
       BudgetEntry.where(category: @category).where.not(budgeted: 0)
-                 .where("year < ? OR (year = ? AND month <= ?)", today.year, today.year, today.month)
+                 .where("year < ? OR (year = ? AND month <= ?)", @year, @year, @month)
                  .find_each do |be|
         items << LineItem.new(
           date: Date.new(be.year, be.month, 1),
@@ -69,9 +68,8 @@ class Budget::CategoryTransactionsController < ApplicationController
   end
 
   def compute_running_balances(all_items)
-    today = Date.current
     latest_entry = BudgetEntry.where(category: @category)
-                              .where("year < ? OR (year = ? AND month <= ?)", today.year, today.year, today.month)
+                              .where("year < ? OR (year = ? AND month <= ?)", @year, @year, @month)
                               .order(year: :desc, month: :desc)
                               .first
     current_available = latest_entry&.available || 0

@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       to: "budget/category_transactions#index",
       as: :budget_category_transactions
   get "reports", to: "reports#index", as: :reports
+  get "settings", to: "settings#index", as: :settings_root
   namespace :settings do
     resources :category_groups, only: [ :new, :create, :edit, :update, :destroy ] do
       collection do

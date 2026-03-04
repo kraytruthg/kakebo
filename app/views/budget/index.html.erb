@@ -1,4 +1,4 @@
-<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8"
+<div class="px-4 py-4 lg:max-w-4xl lg:mx-auto lg:px-6 lg:py-8"
      data-controller="budget"
      data-budget-drawer-outlet="#budget-drawer">
   <%# Month navigation %>
@@ -17,25 +17,60 @@
   </div>
 
   <%# Budget summary cards %>
-  <div class="grid grid-cols-2 gap-4 mb-6">
-    <div class="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-indigo-200">
-      <p class="text-indigo-200 text-sm font-medium mb-1">全部已分配</p>
-      <p id="total-budgeted" class="text-4xl font-bold tracking-tight">
+  <div class="grid grid-cols-2 gap-3 lg:gap-4 mb-6">
+    <div class="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-2xl p-4 lg:p-6 text-white shadow-lg shadow-indigo-200">
+      <p class="text-indigo-200 text-xs lg:text-sm font-medium mb-1">全部已分配</p>
+      <p id="total-budgeted" class="text-2xl lg:text-4xl font-bold tracking-tight">
         <%= format_amount(@total_budgeted) %>
       </p>
-      <p class="text-indigo-300 text-xs mt-2">本月已分配的預算</p>
+      <p class="text-indigo-300 text-[10px] lg:text-xs mt-1 lg:mt-2">本月已分配的預算</p>
     </div>
-    <div class="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-indigo-200">
-      <p class="text-indigo-200 text-sm font-medium mb-1">剩餘可分配</p>
-      <p id="ready-to-assign" class="text-4xl font-bold tracking-tight">
+    <div class="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-2xl p-4 lg:p-6 text-white shadow-lg shadow-indigo-200">
+      <p class="text-indigo-200 text-xs lg:text-sm font-medium mb-1">剩餘可分配</p>
+      <p id="ready-to-assign" class="text-2xl lg:text-4xl font-bold tracking-tight">
         <%= format_amount(@ready_to_assign) %>
       </p>
-      <p class="text-indigo-300 text-xs mt-2">可分配給各類別的預算</p>
+      <p class="text-indigo-300 text-[10px] lg:text-xs mt-1 lg:mt-2">可分配給各類別的預算</p>
     </div>
   </div>
 
+  <%# Mobile card view %>
+  <div class="lg:hidden space-y-4">
+    <% @category_groups.each do |group| %>
+      <div>
+        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-1"><%= group.name %></h3>
+        <div class="space-y-2">
+          <% group.categories.each do |category| %>
+            <% entry = category.budget_entries.find { |e| e.year == @year && e.month == @month } %>
+            <% budgeted = entry&.budgeted || 0 %>
+            <% activity = @monthly_activities[category.id] || 0 %>
+            <% available = (entry&.carried_over || 0) + budgeted + activity %>
+            <% spent_pct = budgeted > 0 ? [(-activity / budgeted.to_f * 100).round, 100].min : 0 %>
+            <%= link_to budget_category_transactions_path(@year, @month, category),
+                  class: "block bg-white rounded-xl border border-slate-100 px-4 py-3 active:bg-slate-50 transition-colors" do %>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-sm font-medium text-slate-800"><%= category.name %></span>
+                <span id="mobile-available-<%= category.id %>" class="text-sm font-semibold <%= available < 0 ? 'text-red-600' : 'text-emerald-600' %>">
+                  剩 <%= format_amount(available) %>
+                </span>
+              </div>
+              <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+                <span>預算 <%= format_amount(budgeted) %></span>
+                <span id="mobile-activity-<%= category.id %>">支出 <%= format_amount(activity) %></span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-1.5">
+                <div class="h-1.5 rounded-full <%= spent_pct > 90 ? 'bg-red-500' : 'bg-indigo-500' %>"
+                     style="width: <%= [spent_pct, 0].max %>%"></div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
   <%# Category groups %>
-  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+  <div class="hidden lg:block bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
     <table class="w-full">
       <thead>
         <tr class="border-b border-slate-100">
