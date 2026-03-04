@@ -5,11 +5,19 @@ export default class extends Controller {
 
   connect() {
     this._handleFocusOut = this._onFocusOut.bind(this)
-    this.element.addEventListener("focusout", this._handleFocusOut)
+    this._handleFocusIn = this._onFocusIn.bind(this)
+    // Wait for first focusin before listening for focusout,
+    // to avoid race condition with autofocus on Turbo Frame load
+    this.element.addEventListener("focusin", this._handleFocusIn, { once: true })
   }
 
   disconnect() {
+    this.element.removeEventListener("focusin", this._handleFocusIn)
     this.element.removeEventListener("focusout", this._handleFocusOut)
+  }
+
+  _onFocusIn() {
+    this.element.addEventListener("focusout", this._handleFocusOut)
   }
 
   keydown(event) {
