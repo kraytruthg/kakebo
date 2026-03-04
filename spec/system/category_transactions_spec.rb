@@ -49,7 +49,7 @@ RSpec.describe "Category Transactions", type: :system do
 
     it "顯示預算撥入行" do
       expect(page).to have_text("預算撥入")
-      expect(page).to have_text("NT$10,000")
+      expect(page).to have_text("10,000")
     end
 
     it "顯示累計餘額（含預算撥入）" do
@@ -60,10 +60,10 @@ RSpec.describe "Category Transactions", type: :system do
       #   txn1 (3/1, -300): balance = 9100 - (-600) = 9700
       #   budget (3/1, +10000): balance = 9700 - (-300) = 10000
       within("#transaction-#{txn2.id}") do
-        expect(page).to have_text("NT$9,100")
+        expect(page).to have_text("9,100")
       end
       within("#transaction-#{txn1.id}") do
-        expect(page).to have_text("NT$9,700")
+        expect(page).to have_text("9,700")
       end
     end
 

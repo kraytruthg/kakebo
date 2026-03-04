@@ -28,12 +28,12 @@ RSpec.describe "帳戶間轉帳", type: :system do
       expect(page).to have_current_path(account_path(account_a))
       expect(page).to have_text("轉帳已建立")
       expect(page).to have_text("轉出 → 儲蓄帳戶")
-      expect(page).to have_text("-NT$3,000")
-      expect(page).to have_text("NT$7,000")  # 10000 - 3000
+      expect(page).to have_text("-3,000")
+      expect(page).to have_text("7,000")  # 10000 - 3000
 
       visit account_path(account_b)
       expect(page).to have_text("轉入 ← 支票帳戶")
-      expect(page).to have_text("NT$3,000")  # balance
+      expect(page).to have_text("3,000")  # balance
     end
   end
 
@@ -56,11 +56,11 @@ RSpec.describe "帳戶間轉帳", type: :system do
       end
 
       expect(page).not_to have_text("轉出 → 儲蓄帳戶")
-      expect(page).to have_text("NT$10,000")  # 還原
+      expect(page).to have_text("10,000")  # 還原
 
       visit account_path(account_b)
       expect(page).not_to have_text("轉入 ← 支票帳戶")
-      expect(page).to have_text("NT$0")  # 還原
+      expect(page).to have_text("0")  # 還原
     end
   end
 

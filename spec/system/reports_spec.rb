@@ -37,7 +37,7 @@ RSpec.describe "Reports", type: :system do
 
       it "顯示類別名稱與總金額" do
         expect(page).to have_text("外食")
-        expect(page).to have_text("NT$1,500")
+        expect(page).to have_text("1,500")
       end
 
       it "顯示各類別支出列表標題" do

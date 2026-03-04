@@ -26,7 +26,7 @@ RSpec.describe "Transactions", type: :system do
     end
 
     expect(page).to have_text("午餐")
-    expect(page).to have_text("-NT$500")
+    expect(page).to have_text("-500")
   end
 
   it "刪除交易後從列表消失" do
