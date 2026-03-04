@@ -73,6 +73,7 @@ RSpec.describe "Category Transactions", type: :system do
 
     it "帳戶篩選只顯示該帳戶的交易" do
       click_link "現金"
+      expect(page).not_to have_css("th", text: "餘額")
       expect(page).to have_text("早餐")
       expect(page).not_to have_text("晚餐")
     end
