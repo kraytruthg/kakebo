@@ -66,12 +66,10 @@ class Budget::CategoryTransactionsController < ApplicationController
   end
 
   def compute_running_balances(all_items)
-    current_entry = BudgetEntry.find_by(
-      category: @category,
-      year: @year,
-      month: @month
-    )
-    current_available = current_entry&.available || 0
+    latest_entry = BudgetEntry.where(category: @category)
+                              .order(year: :desc, month: :desc)
+                              .first
+    current_available = latest_entry&.available || 0
 
     if @pagy.page > 1
       newer_sum = all_items.first(@pagy.offset).sum(&:amount)
