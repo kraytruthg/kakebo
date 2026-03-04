@@ -1,0 +1,33 @@
+nav.pagy {
+  display: flex;
+  gap: 0.25rem;
+}
+
+nav.pagy a,
+nav.pagy span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #64748b;
+  transition: all 0.15s;
+}
+
+nav.pagy a:hover {
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+nav.pagy a.current,
+nav.pagy span.current {
+  background-color: #4f46e5;
+  color: white;
+}
+
+nav.pagy span:not(.current) {
+  color: #94a3b8;
+}
