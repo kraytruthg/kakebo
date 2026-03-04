@@ -46,23 +46,38 @@
             <% activity = @monthly_activities[category.id] || 0 %>
             <% available = (entry&.carried_over || 0) + budgeted + activity %>
             <% spent_pct = budgeted > 0 ? [(-activity / budgeted.to_f * 100).round, 100].min : 0 %>
-            <%= link_to budget_category_transactions_path(@year, @month, category),
-                  class: "block bg-white rounded-xl border border-slate-100 px-4 py-3 active:bg-slate-50 transition-colors" do %>
-              <div class="flex items-center justify-between mb-1.5">
-                <span class="text-sm font-medium text-slate-800"><%= category.name %></span>
-                <span class="text-sm font-semibold <%= available < 0 ? 'text-red-600' : 'text-emerald-600' %>">
-                  剩 <%= format_amount(available) %>
-                </span>
+            <div class="bg-white rounded-xl border border-slate-100 px-4 py-3">
+              <%= link_to budget_category_transactions_path(@year, @month, category), class: "block" do %>
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="text-sm font-medium text-slate-800"><%= category.name %></span>
+                  <span class="text-sm font-semibold <%= available < 0 ? 'text-red-600' : 'text-emerald-600' %>">
+                    剩 <%= format_amount(available) %>
+                  </span>
+                </div>
+                <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+                  <span>預算 <%= format_amount(budgeted) %></span>
+                  <span>支出 <%= format_amount(activity) %></span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-1.5">
+                  <div class="h-1.5 rounded-full <%= spent_pct > 90 ? 'bg-red-500' : 'bg-indigo-500' %>"
+                       style="width: <%= [spent_pct, 0].max %>%"></div>
+                </div>
+              <% end %>
+              <div class="flex gap-2 mt-3 pt-3 border-t border-slate-100">
+                <%= link_to edit_budget_entries_path(category_id: category.id, year: @year, month: @month),
+                      class: "flex-1 flex items-center justify-center gap-1.5 text-xs font-medium text-slate-700 bg-slate-100 active:bg-slate-200 rounded-lg py-2 transition-colors" do %>
+                  <%= icon "pencil-square", classes: "w-3.5 h-3.5" %>
+                  編輯預算
+                <% end %>
+                <button data-action="budget#openWithCategory"
+                        data-budget-category-id-param="<%= category.id %>"
+                        data-budget-category-name-param="<%= category.name %>"
+                        class="flex-1 flex items-center justify-center gap-1.5 text-xs font-medium text-white bg-indigo-600 active:bg-indigo-700 rounded-lg py-2 transition-colors">
+                  <%= icon "plus", classes: "w-3.5 h-3.5" %>
+                  記帳
+                </button>
               </div>
-              <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
-                <span>預算 <%= format_amount(budgeted) %></span>
-                <span>支出 <%= format_amount(activity) %></span>
-              </div>
-              <div class="w-full bg-slate-100 rounded-full h-1.5">
-                <div class="h-1.5 rounded-full <%= spent_pct > 90 ? 'bg-red-500' : 'bg-indigo-500' %>"
-                     style="width: <%= [spent_pct, 0].max %>%"></div>
-              </div>
-            <% end %>
+            </div>
           <% end %>
         </div>
       </div>

@@ -1,7 +1,9 @@
 class BudgetEntriesController < ApplicationController
   before_action :set_category_and_entry
 
-  def edit; end
+  def edit
+    @inline = turbo_frame_request?
+  end
 
   def create
     @entry.budgeted = budget_entry_params[:budgeted]
