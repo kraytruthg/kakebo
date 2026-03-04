@@ -87,7 +87,7 @@ RSpec.describe "Budget", type: :system do
     within("tr", text: category.name) do
       click_link "NT$0"
       fill_in "budget_entry[budgeted]", with: "5000"
-      find("input[type='submit']").click
+      find("input[name='budget_entry[budgeted]']").send_keys(:enter)
     end
 
     expect(page).to have_css("#total-budgeted", text: "NT$5,000")

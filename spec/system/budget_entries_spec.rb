@@ -17,7 +17,7 @@ RSpec.describe "BudgetEntries", type: :system do
     click_on "NT$0", match: :first
 
     fill_in "budget_entry[budgeted]", with: "3000"
-    find("input[type=submit][value='✓']").click
+    find("input[name='budget_entry[budgeted]']").send_keys(:enter)
 
     expect(page).to have_text("NT$3,000")
   end
