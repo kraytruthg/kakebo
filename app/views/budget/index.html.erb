@@ -21,14 +21,14 @@
     <div class="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-indigo-200">
       <p class="text-indigo-200 text-sm font-medium mb-1">全部已分配</p>
       <p id="total-budgeted" class="text-4xl font-bold tracking-tight">
-        <%= number_to_currency(@total_budgeted, unit: "NT$", precision: 0) %>
+        <%= format_amount(@total_budgeted) %>
       </p>
       <p class="text-indigo-300 text-xs mt-2">本月已分配的預算</p>
     </div>
     <div class="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-indigo-200">
       <p class="text-indigo-200 text-sm font-medium mb-1">剩餘可分配</p>
       <p id="ready-to-assign" class="text-4xl font-bold tracking-tight">
-        <%= number_to_currency(@ready_to_assign, unit: "NT$", precision: 0) %>
+        <%= format_amount(@ready_to_assign) %>
       </p>
       <p class="text-indigo-300 text-xs mt-2">可分配給各類別的預算</p>
     </div>
@@ -69,13 +69,13 @@
               </td>
               <td class="px-5 py-3 text-right text-sm <%= activity < 0 ? 'text-red-500' : 'text-slate-600' %>">
                 <span id="activity-<%= category.id %>">
-                  <%= number_to_currency(activity, unit: "NT$", precision: 0) %>
+                  <%= format_amount(activity) %>
                 </span>
               </td>
               <td class="px-5 py-3 text-right text-sm font-semibold">
                 <span id="available-<%= category.id %>"
                       class="<%= available < 0 ? 'text-red-600' : 'text-emerald-600' %>">
-                  <%= number_to_currency(available, unit: "NT$", precision: 0) %>
+                  <%= format_amount(available) %>
                 </span>
               </td>
               <td class="px-3 py-3 text-center opacity-0 group-hover:opacity-100 transition-opacity">

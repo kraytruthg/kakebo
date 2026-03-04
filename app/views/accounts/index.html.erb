@@ -21,7 +21,7 @@
             <div class="flex items-center justify-between mb-2">
               <span class="text-sm font-medium text-slate-800"><%= account.name %></span>
               <span class="text-base font-bold text-slate-900">
-                <%= number_to_currency(account.balance, unit: "NT$", precision: 0) %>
+                <%= format_amount(account.balance) %>
               </span>
             </div>
             <div class="w-full bg-slate-100 rounded-full h-1.5">
