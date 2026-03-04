@@ -1,0 +1,6 @@
+<turbo-frame id="budget-entry-<%= @category.id %>">
+  <%= link_to edit_budget_entries_path(category_id: @category.id, year: @year, month: @month),
+        class: "cursor-pointer hover:text-indigo-600 transition-colors" do %>
+    <%= number_to_currency(@entry.budgeted, unit: "NT$", precision: 0) %>
+  <% end %>
+</turbo-frame>
