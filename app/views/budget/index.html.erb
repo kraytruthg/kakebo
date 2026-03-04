@@ -1,4 +1,6 @@
-<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8" data-controller="budget">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8"
+     data-controller="budget"
+     data-budget-drawer-outlet="#budget-drawer">
   <%# Month navigation %>
   <div class="flex items-center justify-between mb-6">
     <div class="flex items-center gap-4">
@@ -38,9 +40,9 @@
       <thead>
         <tr class="border-b border-slate-100">
           <th class="text-left px-5 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">類別</th>
-          <th class="text-right px-5 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">已分配</th>
-          <th class="text-right px-5 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">本月支出</th>
-          <th class="text-right px-5 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">可用</th>
+          <th class="w-36 text-right px-5 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">已分配</th>
+          <th class="w-32 text-right px-5 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">本月支出</th>
+          <th class="w-32 text-right px-5 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">可用</th>
           <th class="px-3 py-3"></th>
         </tr>
       </thead>
@@ -63,12 +65,7 @@
                       class: "hover:text-indigo-600 hover:underline transition-colors" %>
               </td>
               <td class="px-5 py-3 text-right text-sm text-slate-600">
-                <turbo-frame id="budget-entry-<%= category.id %>">
-                  <%= link_to edit_budget_entries_path(category_id: category.id, year: @year, month: @month),
-                        class: "cursor-pointer hover:text-indigo-600 transition-colors" do %>
-                    <%= number_to_currency(budgeted, unit: "NT$", precision: 0) %>
-                  <% end %>
-                </turbo-frame>
+                <%= render "budget_entries/budget_entry_link", category: category, year: @year, month: @month, budgeted: budgeted %>
               </td>
               <td class="px-5 py-3 text-right text-sm <%= activity < 0 ? 'text-red-500' : 'text-slate-600' %>">
                 <span id="activity-<%= category.id %>">
@@ -97,25 +94,28 @@
     </table>
   </div>
 
-  <%# Drawer backdrop %>
-  <div data-budget-target="backdrop"
-       class="fixed inset-0 bg-black/40 z-40 opacity-0 pointer-events-none transition-opacity duration-200"
-       data-action="click->budget#backdropClick">
-  </div>
-
-  <%# Drawer panel %>
-  <div data-budget-target="panel"
-       class="fixed inset-y-0 right-0 w-full sm:w-96 bg-white shadow-2xl z-50 translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
-    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-      <h2 class="text-base font-semibold text-slate-900">新增交易</h2>
-      <button data-action="budget#close"
-              class="text-slate-400 hover:text-slate-700 transition-colors"
-              aria-label="關閉">
-        <%= icon "x-mark", classes: "w-5 h-5" %>
-      </button>
+  <%# Drawer (shared controller) %>
+  <div id="budget-drawer" data-controller="drawer">
+    <%# Backdrop %>
+    <div data-drawer-target="backdrop"
+         class="fixed inset-0 bg-black/40 z-40 opacity-0 pointer-events-none transition-opacity duration-200"
+         data-action="click->drawer#backdropClick">
     </div>
-    <div class="flex-1 overflow-y-auto px-5 py-5">
-      <%= render "transactions/budget_form" %>
+
+    <%# Panel %>
+    <div data-drawer-target="panel"
+         class="fixed inset-y-0 right-0 w-full sm:w-96 bg-white shadow-2xl z-50 translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+        <h2 class="text-base font-semibold text-slate-900">新增交易</h2>
+        <button data-action="drawer#close"
+                class="text-slate-400 hover:text-slate-700 transition-colors"
+                aria-label="關閉">
+          <%= icon "x-mark", classes: "w-5 h-5" %>
+        </button>
+      </div>
+      <div class="flex-1 overflow-y-auto px-5 py-5">
+        <%= render "transactions/budget_form" %>
+      </div>
     </div>
   </div>
 </div>

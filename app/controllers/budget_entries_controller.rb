@@ -1,24 +1,9 @@
 class BudgetEntriesController < ApplicationController
-  def edit
-    @category = Category.joins(:category_group)
-                        .where(category_groups: { household_id: Current.household.id })
-                        .find(params[:category_id])
-    @year  = params[:year].to_i
-    @month = params[:month].to_i
-    @entry = BudgetEntry.find_or_initialize_by(
-      category_id: @category.id, year: @year, month: @month
-    )
-  end
+  before_action :set_category_and_entry
+
+  def edit; end
 
   def create
-    @category = Category.joins(:category_group)
-                        .where(category_groups: { household_id: Current.household.id })
-                        .find(budget_entry_params[:category_id])
-    @year  = budget_entry_params[:year].to_i
-    @month = budget_entry_params[:month].to_i
-    @entry = BudgetEntry.find_or_initialize_by(
-      category_id: @category.id, year: @year, month: @month
-    )
     @entry.budgeted = budget_entry_params[:budgeted]
 
     if @entry.save
@@ -43,6 +28,18 @@ class BudgetEntriesController < ApplicationController
   end
 
   private
+
+  def set_category_and_entry
+    p = params.key?(:budget_entry) ? budget_entry_params : params
+    @category = Category.joins(:category_group)
+                        .where(category_groups: { household_id: Current.household.id })
+                        .find(p[:category_id])
+    @year  = p[:year].to_i
+    @month = p[:month].to_i
+    @entry = BudgetEntry.find_or_initialize_by(
+      category_id: @category.id, year: @year, month: @month
+    )
+  end
 
   def budget_entry_params
     params.require(:budget_entry).permit(:category_id, :year, :month, :budgeted)
