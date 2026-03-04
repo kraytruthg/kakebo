@@ -1,0 +1,39 @@
+<div class="px-4 py-6 lg:max-w-2xl lg:mx-auto lg:px-6 lg:py-8">
+  <h1 class="text-xl font-bold text-slate-900 mb-6">設定</h1>
+
+  <div class="space-y-3">
+    <%= link_to settings_categories_path, class: "flex items-center justify-between bg-white rounded-xl border border-slate-100 px-5 py-4 hover:border-indigo-200 hover:shadow-sm transition-all" do %>
+      <div class="flex items-center gap-3">
+        <%= icon "cog-6-tooth", classes: "w-5 h-5 text-slate-400" %>
+        <span class="text-sm font-medium text-slate-800">類別管理</span>
+      </div>
+      <%= icon "chevron-right", classes: "w-4 h-4 text-slate-400" %>
+    <% end %>
+
+    <%= link_to settings_quick_entry_mappings_path, class: "flex items-center justify-between bg-white rounded-xl border border-slate-100 px-5 py-4 hover:border-indigo-200 hover:shadow-sm transition-all" do %>
+      <div class="flex items-center gap-3">
+        <%= icon "key", classes: "w-5 h-5 text-slate-400" %>
+        <span class="text-sm font-medium text-slate-800">快速記帳對應</span>
+      </div>
+      <%= icon "chevron-right", classes: "w-4 h-4 text-slate-400" %>
+    <% end %>
+
+    <%= link_to settings_api_tokens_path, class: "flex items-center justify-between bg-white rounded-xl border border-slate-100 px-5 py-4 hover:border-indigo-200 hover:shadow-sm transition-all" do %>
+      <div class="flex items-center gap-3">
+        <%= icon "bolt", classes: "w-5 h-5 text-slate-400" %>
+        <span class="text-sm font-medium text-slate-800">Siri 記帳</span>
+      </div>
+      <%= icon "chevron-right", classes: "w-4 h-4 text-slate-400" %>
+    <% end %>
+
+    <% if Current.user.admin? %>
+      <%= link_to admin_users_path, class: "flex items-center justify-between bg-white rounded-xl border border-slate-100 px-5 py-4 hover:border-indigo-200 hover:shadow-sm transition-all" do %>
+        <div class="flex items-center gap-3">
+          <%= icon "users", classes: "w-5 h-5 text-slate-400" %>
+          <span class="text-sm font-medium text-slate-800">使用者管理</span>
+        </div>
+        <%= icon "chevron-right", classes: "w-4 h-4 text-slate-400" %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

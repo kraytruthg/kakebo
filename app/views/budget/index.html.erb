@@ -39,17 +39,17 @@
     <table class="w-full">
       <thead>
         <tr class="border-b border-slate-100">
-          <th class="text-left px-5 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">類別</th>
-          <th class="w-36 text-right px-5 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">已分配</th>
-          <th class="w-32 text-right px-5 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">本月支出</th>
-          <th class="w-32 text-right px-5 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">可用</th>
-          <th class="px-3 py-3"></th>
+          <th class="text-left px-3 sm:px-5 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">類別</th>
+          <th class="w-20 sm:w-36 text-right px-2 sm:px-5 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">已分配</th>
+          <th class="hidden sm:table-cell w-32 text-right px-5 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">本月支出</th>
+          <th class="w-20 sm:w-32 text-right px-2 sm:px-5 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider">可用</th>
+          <th class="hidden sm:table-cell px-3 py-3"></th>
         </tr>
       </thead>
       <tbody>
         <% @category_groups.each do |group| %>
           <tr class="bg-slate-50">
-            <td colspan="4" class="px-5 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <td colspan="5" class="px-3 sm:px-5 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
               <%= group.name %>
             </td>
           </tr>
@@ -59,26 +59,26 @@
             <% activity = @monthly_activities[category.id] || 0 %>
             <% available = (entry&.carried_over || 0) + budgeted + activity %>
             <tr class="border-t border-slate-50 hover:bg-slate-50 group transition-colors">
-              <td class="px-5 py-3 text-sm text-slate-700 border-l-2 border-transparent group-hover:border-indigo-400 transition-colors">
+              <td class="px-3 sm:px-5 py-3 text-sm text-slate-700 border-l-2 border-transparent group-hover:border-indigo-400 transition-colors">
                 <%= link_to category.name,
                       budget_category_transactions_path(@year, @month, category),
                       class: "hover:text-indigo-600 hover:underline transition-colors" %>
               </td>
-              <td class="px-5 py-3 text-right text-sm text-slate-600">
+              <td class="px-2 sm:px-5 py-3 text-right text-sm text-slate-600">
                 <%= render "budget_entries/budget_entry_link", category: category, year: @year, month: @month, budgeted: budgeted %>
               </td>
-              <td class="px-5 py-3 text-right text-sm <%= activity < 0 ? 'text-red-500' : 'text-slate-600' %>">
+              <td class="hidden sm:table-cell px-5 py-3 text-right text-sm <%= activity < 0 ? 'text-red-500' : 'text-slate-600' %>">
                 <span id="activity-<%= category.id %>">
                   <%= format_amount(activity) %>
                 </span>
               </td>
-              <td class="px-5 py-3 text-right text-sm font-semibold">
+              <td class="px-2 sm:px-5 py-3 text-right text-sm font-semibold">
                 <span id="available-<%= category.id %>"
                       class="<%= available < 0 ? 'text-red-600' : 'text-emerald-600' %>">
                   <%= format_amount(available) %>
                 </span>
               </td>
-              <td class="px-3 py-3 text-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <td class="hidden sm:table-cell px-3 py-3 text-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <button data-action="budget#openWithCategory"
                         data-budget-category-id-param="<%= category.id %>"
                         data-budget-category-name-param="<%= category.name %>"
