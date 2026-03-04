@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static values = { restoreUrl: String }
+  static values = { restoreHtml: String }
 
   connect() {
     this._handleFocusOut = this._onFocusOut.bind(this)
@@ -30,20 +30,17 @@ export default class extends Controller {
   // Private
 
   _onFocusOut(event) {
-    // Use requestAnimationFrame to let the browser set the new activeElement
     requestAnimationFrame(() => {
-      // If the new focused element is still within this controller's element, do nothing
       if (this.element.contains(document.activeElement)) return
-
       this._cancel()
     })
   }
 
   _cancel() {
-    if (!this.hasRestoreUrlValue) return
+    if (!this.hasRestoreHtmlValue) return
 
-    // Set the turbo-frame's src to trigger a Turbo reload of the display state
+    // Replace turbo-frame innerHTML directly (no network request)
     const frame = this.element.closest("turbo-frame") || this.element
-    frame.src = this.restoreUrlValue
+    frame.innerHTML = this.restoreHtmlValue
   }
 }
