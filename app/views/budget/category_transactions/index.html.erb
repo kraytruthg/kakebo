@@ -8,9 +8,7 @@
     <% end %>
     <h1 class="text-2xl font-bold text-slate-900">
       <%= @category.name %>
-      <span class="text-slate-400 font-normal text-lg ml-2">
-        <%= @year %>年<%= @month %>月
-      </span>
+      <span class="text-slate-400 font-normal text-lg ml-2">所有紀錄</span>
     </h1>
   </div>
 
@@ -35,26 +33,34 @@
           <th class="text-left px-5 py-3 text-xs font-medium text-slate-400">備註</th>
           <th class="text-left px-5 py-3 text-xs font-medium text-slate-400">帳戶</th>
           <th class="text-right px-5 py-3 text-xs font-medium text-slate-400">金額</th>
+          <% unless @selected_account %>
+            <th class="text-right px-5 py-3 text-xs font-medium text-slate-400">餘額</th>
+          <% end %>
           <th class="px-5 py-3"></th>
         </tr>
       </thead>
       <tbody>
         <% if @transactions.empty? %>
           <tr>
-            <td colspan="5" class="text-center py-16 text-slate-400">
-              <p class="text-sm">本月沒有此類別的交易紀錄</p>
+            <td colspan="<%= @selected_account ? 5 : 6 %>" class="text-center py-16 text-slate-400">
+              <p class="text-sm">沒有此類別的交易紀錄</p>
             </td>
           </tr>
         <% else %>
           <% @transactions.each do |t| %>
             <tr class="border-t border-slate-50 hover:bg-slate-50 group transition-colors"
                 id="transaction-<%= t.id %>">
-              <td class="px-5 py-3 text-sm text-slate-500"><%= t.date.strftime("%m/%d") %></td>
+              <td class="px-5 py-3 text-sm text-slate-500"><%= t.date.strftime("%Y/%m/%d") %></td>
               <td class="px-5 py-3 text-sm text-slate-800"><%= t.memo.presence || "─" %></td>
               <td class="px-5 py-3 text-sm text-slate-400"><%= t.account.name %></td>
               <td class="px-5 py-3 text-right text-sm font-medium <%= t.amount < 0 ? 'text-red-600' : 'text-emerald-600' %>">
                 <%= number_to_currency(t.amount, unit: "NT$", precision: 0) %>
               </td>
+              <% unless @selected_account %>
+                <td class="px-5 py-3 text-right text-sm text-slate-500">
+                  <%= number_to_currency(@running_balances[t.id], unit: "NT$", precision: 0) %>
+                </td>
+              <% end %>
               <td class="px-5 py-3">
                 <div class="flex items-center gap-2 justify-end">
                   <%= link_to "編輯",
@@ -73,17 +79,13 @@
           <% end %>
         <% end %>
       </tbody>
-      <% unless @transactions.empty? %>
-        <tfoot>
-          <tr class="border-t border-slate-200 bg-slate-50">
-            <td colspan="3" class="px-5 py-3 text-sm font-medium text-slate-500">合計</td>
-            <td class="px-5 py-3 text-right text-sm font-bold <%= @total < 0 ? 'text-red-600' : 'text-emerald-600' %>">
-              <%= number_to_currency(@total, unit: "NT$", precision: 0) %>
-            </td>
-            <td></td>
-          </tr>
-        </tfoot>
-      <% end %>
     </table>
   </div>
+
+  <%# Pagination %>
+  <% if @pagy.pages > 1 %>
+    <nav class="mt-6 flex justify-center">
+      <%== pagy_nav(@pagy) %>
+    </nav>
+  <% end %>
 </div>
