@@ -1,4 +1,5 @@
 require "pagy/extras/overflow"
+require "pagy/extras/array"
 
 Pagy::DEFAULT[:items] = 30
 Pagy::DEFAULT[:size] = 7

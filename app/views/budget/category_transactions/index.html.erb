@@ -40,42 +40,59 @@
         </tr>
       </thead>
       <tbody>
-        <% if @transactions.empty? %>
+        <% if @items.empty? %>
           <tr>
             <td colspan="<%= @selected_account ? 5 : 6 %>" class="text-center py-16 text-slate-400">
               <p class="text-sm">沒有此類別的交易紀錄</p>
             </td>
           </tr>
         <% else %>
-          <% @transactions.each do |t| %>
-            <tr class="border-t border-slate-50 hover:bg-slate-50 group transition-colors"
-                id="transaction-<%= t.id %>">
-              <td class="px-5 py-3 text-sm text-slate-500"><%= t.date.strftime("%Y/%m/%d") %></td>
-              <td class="px-5 py-3 text-sm text-slate-800"><%= t.memo.presence || "─" %></td>
-              <td class="px-5 py-3 text-sm text-slate-400"><%= t.account.name %></td>
-              <td class="px-5 py-3 text-right text-sm font-medium <%= t.amount < 0 ? 'text-red-600' : 'text-emerald-600' %>">
-                <%= number_to_currency(t.amount, unit: "NT$", precision: 0) %>
-              </td>
-              <% unless @selected_account %>
-                <td class="px-5 py-3 text-right text-sm text-slate-500">
-                  <%= number_to_currency(@running_balances[t.id], unit: "NT$", precision: 0) %>
+          <% @items.each_with_index do |item, idx| %>
+            <% if item.type == :budget %>
+              <tr class="border-t border-slate-50 bg-indigo-50/50">
+                <td class="px-5 py-3 text-sm text-slate-500"><%= item.date.strftime("%Y/%m/%d") %></td>
+                <td class="px-5 py-3 text-sm text-indigo-600 font-medium"><%= item.memo %></td>
+                <td class="px-5 py-3 text-sm text-slate-400">—</td>
+                <td class="px-5 py-3 text-right text-sm font-medium text-indigo-600">
+                  <%= number_to_currency(item.amount, unit: "NT$", precision: 0) %>
                 </td>
-              <% end %>
-              <td class="px-5 py-3">
-                <div class="flex items-center gap-2 justify-end">
-                  <%= link_to "編輯",
-                        edit_account_transaction_path(t.account, t),
-                        class: "opacity-0 group-hover:opacity-100 transition-opacity text-sm text-blue-500 hover:text-blue-700" %>
-                  <%= button_to account_transaction_path(t.account, t),
-                        method: :delete,
-                        data: { turbo_confirm: "確定刪除這筆交易？" },
-                        class: "opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-500",
-                        aria: { label: "刪除交易" } do %>
-                    <%= icon "trash", classes: "w-4 h-4" %>
-                  <% end %>
-                </div>
-              </td>
-            </tr>
+                <% unless @selected_account %>
+                  <td class="px-5 py-3 text-right text-sm text-slate-500">
+                    <%= number_to_currency(@running_balances[idx], unit: "NT$", precision: 0) %>
+                  </td>
+                <% end %>
+                <td class="px-5 py-3"></td>
+              </tr>
+            <% else %>
+              <tr class="border-t border-slate-50 hover:bg-slate-50 group transition-colors"
+                  id="transaction-<%= item.record.id %>">
+                <td class="px-5 py-3 text-sm text-slate-500"><%= item.date.strftime("%Y/%m/%d") %></td>
+                <td class="px-5 py-3 text-sm text-slate-800"><%= item.memo.presence || "─" %></td>
+                <td class="px-5 py-3 text-sm text-slate-400"><%= item.account_name %></td>
+                <td class="px-5 py-3 text-right text-sm font-medium <%= item.amount < 0 ? 'text-red-600' : 'text-emerald-600' %>">
+                  <%= number_to_currency(item.amount, unit: "NT$", precision: 0) %>
+                </td>
+                <% unless @selected_account %>
+                  <td class="px-5 py-3 text-right text-sm text-slate-500">
+                    <%= number_to_currency(@running_balances[idx], unit: "NT$", precision: 0) %>
+                  </td>
+                <% end %>
+                <td class="px-5 py-3">
+                  <div class="flex items-center gap-2 justify-end">
+                    <%= link_to "編輯",
+                          edit_account_transaction_path(item.record.account, item.record),
+                          class: "opacity-0 group-hover:opacity-100 transition-opacity text-sm text-blue-500 hover:text-blue-700" %>
+                    <%= button_to account_transaction_path(item.record.account, item.record),
+                          method: :delete,
+                          data: { turbo_confirm: "確定刪除這筆交易？" },
+                          class: "opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-500",
+                          aria: { label: "刪除交易" } do %>
+                      <%= icon "trash", classes: "w-4 h-4" %>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
           <% end %>
         <% end %>
       </tbody>

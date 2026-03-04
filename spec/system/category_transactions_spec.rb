@@ -47,12 +47,18 @@ RSpec.describe "Category Transactions", type: :system do
       expect(page).to have_text("信用卡")
     end
 
-    it "顯示累計餘額" do
+    it "顯示預算撥入行" do
+      expect(page).to have_text("預算撥入")
+      expect(page).to have_text("NT$10,000")
+    end
+
+    it "顯示累計餘額（含預算撥入）" do
       # budget_entry: budgeted=10000, carried_over=0
-      # activity = -300 + -600 = -900
       # available = 0 + 10000 + (-900) = 9100
-      # txn2 (newest, 3/5): balance = 9100
-      # txn1 (older, 3/1): balance = 9100 - (-600) = 9700
+      # Items newest first:
+      #   txn2 (3/5, -600): balance = 9100
+      #   txn1 (3/1, -300): balance = 9100 - (-600) = 9700
+      #   budget (3/1, +10000): balance = 9700 - (-300) = 10000
       within("#transaction-#{txn2.id}") do
         expect(page).to have_text("NT$9,100")
       end
@@ -71,11 +77,12 @@ RSpec.describe "Category Transactions", type: :system do
       expect(page).to have_text("晚餐")
     end
 
-    it "帳戶篩選只顯示該帳戶的交易且不顯示餘額欄" do
+    it "帳戶篩選只顯示該帳戶的交易且不顯示餘額欄和預算撥入" do
       click_link "現金"
       expect(page).not_to have_css("th", text: "餘額")
       expect(page).to have_text("早餐")
       expect(page).not_to have_text("晚餐")
+      expect(page).not_to have_text("預算撥入")
     end
 
     it "刪除交易後從列表消失" do
