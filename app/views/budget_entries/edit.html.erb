@@ -4,7 +4,7 @@
   end %>
 <turbo-frame id="budget-entry-<%= @category.id %>" class="block">
   <div data-controller="inline-edit"
-       data-inline-edit-restore-html-value="<%= restore_link %>">
+       data-inline-edit-restore-html-value="<%= ERB::Util.html_escape(restore_link) %>">
     <%= form_with url: budget_entries_path, scope: :budget_entry, data: { turbo: true } do |f| %>
       <%= f.hidden_field :category_id, value: @category.id %>
       <%= f.hidden_field :year,        value: @year %>
