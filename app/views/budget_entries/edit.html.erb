@@ -1,4 +1,6 @@
-<turbo-frame id="budget-entry-<%= @category.id %>">
+<turbo-frame id="budget-entry-<%= @category.id %>"
+             data-controller="inline-edit"
+             data-inline-edit-restore-url-value="<%= show_budget_entry_path(category_id: @category.id, year: @year, month: @month) %>">
   <%= form_with url: budget_entries_path, scope: :budget_entry, data: { turbo: true } do |f| %>
     <%= f.hidden_field :category_id, value: @category.id %>
     <%= f.hidden_field :year,        value: @year %>
@@ -7,7 +9,8 @@
           value: @entry.budgeted.to_i,
           autofocus: true,
           step: 1,
-          class: "w-28 text-right rounded border border-indigo-400 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+          class: "w-28 text-right rounded border border-indigo-400 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500",
+          data: { action: "keydown->inline-edit#keydown" } %>
     <%= f.submit "✓",
           class: "ml-1 text-sm text-indigo-600 hover:text-indigo-800 cursor-pointer" %>
   <% end %>
