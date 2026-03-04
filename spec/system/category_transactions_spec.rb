@@ -7,6 +7,12 @@ RSpec.describe "Category Transactions", type: :system do
   let!(:account2) { create(:account, household: household, name: "信用卡") }
   let!(:group)    { create(:category_group, household: household, name: "生活") }
   let!(:category) { create(:category, category_group: group, name: "食費") }
+  let!(:budget_entry) do
+    create(:budget_entry,
+           category: category,
+           year: 2026, month: 3,
+           budgeted: 10_000, carried_over: 0)
+  end
   let!(:txn1) do
     create(:transaction,
            account: account1, category: category,
@@ -25,7 +31,7 @@ RSpec.describe "Category Transactions", type: :system do
       visit budget_path(year: 2026, month: 3)
       click_link "食費"
       expect(page).to have_text("食費")
-      expect(page).to have_text("2026年3月")
+      expect(page).to have_text("所有紀錄")
     end
   end
 
@@ -41,14 +47,39 @@ RSpec.describe "Category Transactions", type: :system do
       expect(page).to have_text("信用卡")
     end
 
-    it "顯示合計金額" do
-      expect(page).to have_text("-NT$900")
+    it "顯示累計餘額" do
+      # budget_entry: budgeted=10000, carried_over=0
+      # activity = -300 + -600 = -900
+      # available = 0 + 10000 + (-900) = 9100
+      # txn2 (newest, 3/5): balance = 9100
+      # txn1 (older, 3/1): balance = 9100 - (-600) = 9700
+      within("#transaction-#{txn2.id}") do
+        expect(page).to have_text("NT$9,100")
+      end
+      within("#transaction-#{txn1.id}") do
+        expect(page).to have_text("NT$9,700")
+      end
+    end
+
+    it "顯示跨月份的交易" do
+      create(:transaction,
+             account: account1, category: category,
+             amount: -200, date: Date.new(2026, 2, 15), memo: "上月早餐")
+      visit budget_category_transactions_path(2026, 3, category)
+      expect(page).to have_text("上月早餐")
+      expect(page).to have_text("早餐")
+      expect(page).to have_text("晚餐")
     end
 
     it "帳戶篩選只顯示該帳戶的交易" do
       click_link "現金"
       expect(page).to have_text("早餐")
       expect(page).not_to have_text("晚餐")
+    end
+
+    it "帳戶篩選時不顯示餘額欄" do
+      click_link "現金"
+      expect(page).not_to have_css("th", text: "餘額")
     end
 
     it "刪除交易後從列表消失" do
@@ -59,6 +90,19 @@ RSpec.describe "Category Transactions", type: :system do
       end
       expect(page).not_to have_text("早餐")
       expect(page).to have_text("晚餐")
+    end
+  end
+
+  describe "分頁" do
+    it "超過 30 筆時顯示分頁導航" do
+      31.times do |i|
+        create(:transaction,
+               account: account1, category: category,
+               amount: -100, date: Date.new(2026, 3, 1) + i.days,
+               memo: "交易#{i}")
+      end
+      visit budget_category_transactions_path(2026, 3, category)
+      expect(page).to have_css("nav.pagy")
     end
   end
 
