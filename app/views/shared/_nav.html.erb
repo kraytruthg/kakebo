@@ -55,7 +55,7 @@
 </aside>
 
 <%# Mobile bottom tab bar %>
-<nav class="lg:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 flex z-10" aria-label="行動裝置導覽">
+<nav class="lg:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 flex z-10 pb-safe" aria-label="行動裝置導覽">
   <%= link_to budget_path, class: "flex-1 flex flex-col items-center py-2 gap-0.5 min-h-[44px] justify-center #{request.path == budget_path ? 'text-indigo-600' : 'text-slate-400'}" do %>
     <%= icon "chart-bar", classes: "w-6 h-6" %>
     <span class="text-[10px] font-medium">預算</span>
