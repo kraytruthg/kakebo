@@ -16,7 +16,7 @@ class Budget::CategoryTransactionsController < ApplicationController
                           Current.household.accounts.find_by(id: params[:account_id]) : nil
 
     all_items = build_line_items
-    @pagy, @items = pagy_array(all_items)
+    @pagy, @items = pagy(:offset, all_items)
 
     compute_running_balances(all_items) unless @selected_account
   end
