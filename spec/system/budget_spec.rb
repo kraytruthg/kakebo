@@ -78,7 +78,7 @@ RSpec.describe "Budget", type: :system do
     page.execute_script("document.querySelector('button[title=\"新增交易\"]').click()")
     expect(page).to have_css("[data-drawer-target='panel']:not(.translate-x-full)")
 
-    find("[data-drawer-target='backdrop']").click
+    find("[data-drawer-target='backdrop'].opacity-100").click
 
     expect(page).to have_css("[data-drawer-target='panel'].translate-x-full", visible: :all)
   end

@@ -15,6 +15,7 @@ RSpec.describe "BudgetEntries", type: :system do
 
   it "點擊已分配金額可編輯並儲存" do
     click_on "0", match: :first
+    expect(page).to have_css("input[name='budget_entry[budgeted]']")
 
     fill_in "budget_entry[budgeted]", with: "3000"
     find("input[name='budget_entry[budgeted]']").send_keys(:enter)
