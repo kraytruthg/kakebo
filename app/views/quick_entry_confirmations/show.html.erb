@@ -34,7 +34,7 @@
       </select>
       <% if @description_keyword.present? %>
         <label class="flex items-center gap-2 mt-2">
-          <%= f.check_box :remember_category, class: "rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" %>
+          <%= f.check_box :remember_category, { checked: true, class: "rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" } %>
           <span class="text-xs text-slate-500">記住「<%= @description_keyword %>」對應此類別</span>
         </label>
       <% end %>

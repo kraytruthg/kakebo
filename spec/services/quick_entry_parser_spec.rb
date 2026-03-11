@@ -62,6 +62,26 @@ RSpec.describe QuickEntryParser do
       expect(result).to eq({ payer: nil, description: "停車費", amount: 100.0 })
     end
 
+    it "parses amount with 元 unit: 午餐150元" do
+      result = QuickEntryParser.parse("午餐150元")
+      expect(result).to eq({ payer: nil, description: "午餐", amount: 150.0 })
+    end
+
+    it "parses amount with 元 unit and space: 午餐 150元" do
+      result = QuickEntryParser.parse("午餐 150元")
+      expect(result).to eq({ payer: nil, description: "午餐", amount: 150.0 })
+    end
+
+    it "parses amount with 塊 unit: 咖啡80塊" do
+      result = QuickEntryParser.parse("咖啡80塊")
+      expect(result).to eq({ payer: nil, description: "咖啡", amount: 80.0 })
+    end
+
+    it "parses amount with 元 unit in full format: 紀錄 Jerry 支付 午餐 150元" do
+      result = QuickEntryParser.parse("紀錄 Jerry 支付 午餐 150元")
+      expect(result).to eq({ payer: "Jerry", description: "午餐", amount: 150.0 })
+    end
+
     it "returns nil for unparseable input" do
       result = QuickEntryParser.parse("hello")
       expect(result).to be_nil
