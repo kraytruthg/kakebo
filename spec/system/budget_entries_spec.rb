@@ -19,11 +19,12 @@ RSpec.describe "BudgetEntries", type: :system do
         click_on "0"
       end
     end
-    expect(page).to have_css("input[name='budget_entry[budgeted]']")
 
-    fill_in "budget_entry[budgeted]", with: "3000"
-    find("input[name='budget_entry[budgeted]']").send_keys(:enter)
+    input = find("input[name='budget_entry[budgeted]']")
+    input.fill_in with: "3000"
+    input.native.send_keys(:enter)
 
+    expect(page).not_to have_css("input[name='budget_entry[budgeted]']")
     expect(page).to have_text("3,000")
   end
 
@@ -33,10 +34,10 @@ RSpec.describe "BudgetEntries", type: :system do
         click_on "0"
       end
     end
-    expect(page).to have_css("input[name='budget_entry[budgeted]']")
 
-    fill_in "budget_entry[budgeted]", with: "9999"
-    find("input[name='budget_entry[budgeted]']").send_keys(:escape)
+    input = find("input[name='budget_entry[budgeted]']")
+    input.fill_in with: "9999"
+    input.native.send_keys(:escape)
 
     expect(page).not_to have_css("input[name='budget_entry[budgeted]']")
     expect(page).to have_text("0")
