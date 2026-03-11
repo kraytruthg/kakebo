@@ -9,9 +9,13 @@ servers:
   web:
     - 45.76.49.170
 
+# Enable SSL via Let's Encrypt
+proxy:
+  ssl: true
+  host: jerrylabs.cc
+
 # Where you keep your container images.
 registry:
-  server: registry-1.docker.io
   username: kraytruthg
   password:
     - KAMAL_REGISTRY_PASSWORD
