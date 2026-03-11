@@ -71,6 +71,7 @@ production:
     database: kakebo_production
     username: kakebo
     password: <%= ENV["KAKEBO_DATABASE_PASSWORD"] %>
+    host: <%= ENV.fetch("DB_HOST", "localhost") %>
   cache:
     <<: *primary_production
     database: kakebo_production_cache
