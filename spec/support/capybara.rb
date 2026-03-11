@@ -1,4 +1,4 @@
-Capybara.default_max_wait_time = 5
+Capybara.default_max_wait_time = ENV["CI"] ? 10 : 5
 
 Capybara.register_driver :headless_chrome do |app|
   options = Selenium::WebDriver::Chrome::Options.new
@@ -15,7 +15,6 @@ RSpec.configure do |config|
   end
 
   config.after(:each, type: :system) do
-    Capybara.current_session.driver.browser.manage.delete_all_cookies rescue nil
     Capybara.reset_sessions!
   end
 end

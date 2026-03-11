@@ -10,6 +10,7 @@ RSpec.describe "Accounts", type: :system do
     visit accounts_path
     click_on "新增帳戶"
 
+    expect(page).to have_field("帳戶名稱")
     fill_in "帳戶名稱", with: "玉山銀行"
     select "預算帳戶", from: "帳戶類型"
     fill_in "起始餘額", with: "10000"
