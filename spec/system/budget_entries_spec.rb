@@ -14,7 +14,11 @@ RSpec.describe "BudgetEntries", type: :system do
   end
 
   it "點擊已分配金額可編輯並儲存" do
-    click_on "0", match: :first
+    within("table") do
+      within("tr", text: category.name) do
+        click_on "0"
+      end
+    end
     expect(page).to have_css("input[name='budget_entry[budgeted]']")
 
     fill_in "budget_entry[budgeted]", with: "3000"
@@ -24,8 +28,11 @@ RSpec.describe "BudgetEntries", type: :system do
   end
 
   it "ESC 鍵取消預算編輯並恢復原始金額" do
-    click_on "0", match: :first
-
+    within("table") do
+      within("tr", text: category.name) do
+        click_on "0"
+      end
+    end
     expect(page).to have_css("input[name='budget_entry[budgeted]']")
 
     fill_in "budget_entry[budgeted]", with: "9999"
@@ -36,8 +43,11 @@ RSpec.describe "BudgetEntries", type: :system do
   end
 
   it "點擊編輯區域外取消預算編輯" do
-    click_on "0", match: :first
-
+    within("table") do
+      within("tr", text: category.name) do
+        click_on "0"
+      end
+    end
     expect(page).to have_css("input[name='budget_entry[budgeted]']")
 
     # Click outside the inline edit area
