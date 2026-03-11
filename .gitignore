@@ -40,3 +40,4 @@
 
 # Git worktrees
 /.worktrees
+spec/examples.txt
