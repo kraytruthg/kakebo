@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <%= csrf_meta_tags %>
+  <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+  <title>Kakebo</title>
+</head>
+<body class="bg-slate-50 min-h-screen">
+  <% if flash[:alert] %>
+    <div class="bg-red-50 text-red-700 px-4 py-3 text-sm"><%= flash[:alert] %></div>
+  <% end %>
+  <%= yield %>
+</body>
+</html>

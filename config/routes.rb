@@ -29,12 +29,26 @@ Rails.application.routes.draw do
       end
     end
     resources :quick_entry_mappings, only: [ :index, :new, :create, :edit, :update, :destroy ]
+    resources :api_tokens, only: [ :index, :create, :destroy ] do
+      collection do
+        patch :update_default_account
+      end
+    end
   end
   get "settings/categories", to: "settings/category_groups#index", as: :settings_categories
 
   namespace :admin do
     resources :users, only: [ :index, :new, :create, :edit, :update ]
   end
+
+  namespace :api do
+    namespace :v1 do
+      resource :quick_entry, only: [ :create ], controller: "quick_entries"
+    end
+  end
+
+  get "quick_entry/confirm/:token", to: "quick_entry_confirmations#show", as: :quick_entry_confirm
+  post "quick_entry/confirm/:token", to: "quick_entry_confirmations#create"
 
   root to: redirect("/budget")
   get "up" => "rails/health#show", as: :rails_health_check

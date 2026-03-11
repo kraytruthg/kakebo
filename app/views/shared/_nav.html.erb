@@ -28,6 +28,10 @@
       <%= icon "key", classes: "w-5 h-5 shrink-0" %>
       記帳對應
     <% end %>
+    <%= link_to settings_api_tokens_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium #{request.path.start_with?('/settings/api_tokens') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}" do %>
+      <%= icon "bolt", classes: "w-5 h-5 shrink-0" %>
+      Siri 記帳
+    <% end %>
     <% if Current.user.admin? %>
       <%= link_to admin_users_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium #{request.path.start_with?('/admin') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}" do %>
         <%= icon "users", classes: "w-5 h-5 shrink-0" %>

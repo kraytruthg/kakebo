@@ -1,0 +1,133 @@
+<div class="max-w-2xl mx-auto px-4 sm:px-6 py-8">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-xl font-bold text-slate-900">Siri 記帳設定</h1>
+    <%= button_to settings_api_tokens_path, method: :post,
+          class: "flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors" do %>
+      <%= icon "plus", classes: "w-4 h-4" %>
+      產生新 Token
+    <% end %>
+  </div>
+
+  <%# Step 1: Install shortcut %>
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-6">
+    <div class="px-5 py-3 bg-slate-50 border-b border-slate-100">
+      <span class="text-sm font-semibold text-slate-700">Step 1 — 安裝捷徑</span>
+    </div>
+    <div class="px-5 py-4">
+      <p class="text-xs text-slate-400 mb-3">在 iPhone 上點擊下方連結安裝「記帳」捷徑</p>
+      <%= link_to "https://www.icloud.com/shortcuts/61c24674f5204a6eb0d8c9bc872d4987",
+            class: "flex items-center justify-center gap-2 w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors" do %>
+        <%= icon "bolt", classes: "w-4 h-4" %>
+        安裝捷徑
+      <% end %>
+    </div>
+  </div>
+
+  <%# Step 2: Token & URL %>
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-6">
+    <div class="px-5 py-3 bg-slate-50 border-b border-slate-100">
+      <span class="text-sm font-semibold text-slate-700">Step 2 — 設定 Token 和 URL</span>
+    </div>
+    <div class="px-5 py-4 space-y-4">
+      <p class="text-xs text-slate-400">安裝捷徑後，編輯捷徑內的 Authorization 和 URL 欄位</p>
+
+      <% if @api_tokens.any? %>
+        <% @api_tokens.each do |token| %>
+          <div class="space-y-3 border border-slate-100 rounded-lg p-4">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-slate-700"><%= token.name %></span>
+              <div class="flex items-center gap-3">
+                <% if token.last_used_at %>
+                  <span class="text-xs text-slate-400">上次使用：<%= token.last_used_at.strftime("%Y-%m-%d %H:%M") %></span>
+                <% else %>
+                  <span class="text-xs text-slate-400">尚未使用</span>
+                <% end %>
+                <%= button_to settings_api_token_path(token), method: :delete,
+                      data: { turbo_confirm: "確定要撤銷此 Token 嗎？撤銷後無法恢復。" },
+                      class: "text-xs text-red-500 hover:text-red-700 font-medium transition-colors" do %>
+                  撤銷
+                <% end %>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-500 mb-1">Authorization 值（直接貼入捷徑）</label>
+              <div class="flex items-center gap-2">
+                <input type="text" readonly value="Bearer <%= token.token %>"
+                       class="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 font-mono"
+                       id="token-<%= token.id %>">
+                <button type="button" onclick="copyToClipboard('token-<%= token.id %>')"
+                        class="shrink-0 text-xs text-indigo-600 hover:text-indigo-800 font-medium px-2 py-2 rounded transition-colors">
+                  複製
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-500 mb-1">API URL</label>
+              <div class="flex items-center gap-2">
+                <input type="text" readonly value="<%= api_v1_quick_entry_url %>"
+                       class="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 font-mono"
+                       id="url-<%= token.id %>">
+                <button type="button" onclick="copyToClipboard('url-<%= token.id %>')"
+                        class="shrink-0 text-xs text-indigo-600 hover:text-indigo-800 font-medium px-2 py-2 rounded transition-colors">
+                  複製
+                </button>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="text-sm text-slate-400 text-center py-4">請先點右上角「產生新 Token」</p>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Default account %>
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-6">
+    <div class="px-5 py-3 bg-slate-50 border-b border-slate-100">
+      <span class="text-sm font-semibold text-slate-700">預設帳戶</span>
+    </div>
+    <div class="px-5 py-4">
+      <p class="text-xs text-slate-400 mb-2">快速記帳未指定帳戶時，自動使用此帳戶</p>
+      <%= form_with url: update_default_account_settings_api_tokens_path, method: :patch, data: { turbo: false } do |f| %>
+        <div class="flex items-center gap-3">
+          <%= f.collection_select :default_account_id, @accounts, :id, :name,
+                { prompt: "-- 不指定 --", selected: Current.household.default_account_id },
+                class: "flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+          <%= f.submit "儲存", class: "bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg cursor-pointer transition-colors" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Instructions %>
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <div class="px-5 py-3 bg-slate-50 border-b border-slate-100">
+      <span class="text-sm font-semibold text-slate-700">使用說明</span>
+    </div>
+    <div class="px-5 py-4 text-sm text-slate-500 space-y-2">
+      <ol class="list-decimal list-inside space-y-2">
+        <li>點「產生新 Token」產生 API 金鑰</li>
+        <li>在 iPhone 上點「<strong class="text-slate-700">安裝捷徑</strong>」加入捷徑</li>
+        <li>打開捷徑 App，長按「記帳」→ 編輯</li>
+        <li>找到「<strong class="text-slate-700">取得 URL 的內容</strong>」步驟</li>
+        <li>將 URL 替換為上方的 <strong class="text-slate-700">API URL</strong></li>
+        <li>展開標頭，將 Authorization 的值替換為上方的 <strong class="text-slate-700">Authorization Header</strong></li>
+        <li>完成！對 Siri 說「<strong class="text-slate-700">記帳</strong>」開始使用</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<script>
+  function copyToClipboard(elementId) {
+    const input = document.getElementById(elementId);
+    navigator.clipboard.writeText(input.value).then(() => {
+      const btn = input.nextElementSibling;
+      const original = btn.textContent;
+      btn.textContent = "已複製";
+      setTimeout(() => { btn.textContent = original; }, 1500);
+    });
+  }
+</script>

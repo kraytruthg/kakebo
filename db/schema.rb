@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_03_144314) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_04_160728) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -24,6 +24,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_144314) do
     t.decimal "starting_balance", precision: 12, scale: 2, default: "0.0", null: false
     t.datetime "updated_at", null: false
     t.index ["household_id"], name: "index_accounts_on_household_id"
+  end
+
+  create_table "api_tokens", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "last_used_at"
+    t.string "name"
+    t.string "token", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["token"], name: "index_api_tokens_on_token", unique: true
+    t.index ["user_id"], name: "index_api_tokens_on_user_id"
   end
 
   create_table "budget_entries", force: :cascade do |t|
@@ -58,8 +69,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_144314) do
 
   create_table "households", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.bigint "default_account_id"
     t.string "name", null: false
     t.datetime "updated_at", null: false
+    t.index ["default_account_id"], name: "index_households_on_default_account_id"
   end
 
   create_table "quick_entry_mappings", force: :cascade do |t|
@@ -100,9 +113,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_144314) do
   end
 
   add_foreign_key "accounts", "households"
+  add_foreign_key "api_tokens", "users"
   add_foreign_key "budget_entries", "categories"
   add_foreign_key "categories", "category_groups"
   add_foreign_key "category_groups", "households"
+  add_foreign_key "households", "accounts", column: "default_account_id"
   add_foreign_key "quick_entry_mappings", "households"
   add_foreign_key "transactions", "accounts"
   add_foreign_key "transactions", "categories"
