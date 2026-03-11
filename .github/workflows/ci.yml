@@ -131,17 +131,12 @@ jobs:
 
       - name: Write Kamal secrets
         run: |
+          KAMAL_REGISTRY_PASSWORD=$(echo -n "$KAMAL_REGISTRY_PASSWORD" | tr -d '[:space:]')
+          RAILS_MASTER_KEY=$(echo -n "$RAILS_MASTER_KEY" | tr -d '[:space:]')
+          KAKEBO_DATABASE_PASSWORD=$(echo -n "$KAKEBO_DATABASE_PASSWORD" | tr -d '[:space:]')
           printf "KAMAL_REGISTRY_PASSWORD=%s\nRAILS_MASTER_KEY=%s\nKAKEBO_DATABASE_PASSWORD=%s\nPOSTGRES_PASSWORD=%s\n" \
             "$KAMAL_REGISTRY_PASSWORD" "$RAILS_MASTER_KEY" "$KAKEBO_DATABASE_PASSWORD" "$KAKEBO_DATABASE_PASSWORD" \
             > .kamal/secrets
-
-      - name: Verify secrets
-        run: |
-          echo "RAILS_MASTER_KEY length: ${#RAILS_MASTER_KEY}"
-          echo "KAMAL_REGISTRY_PASSWORD length: ${#KAMAL_REGISTRY_PASSWORD}"
-          echo "KAKEBO_DATABASE_PASSWORD length: ${#KAKEBO_DATABASE_PASSWORD}"
-          wc -c < .kamal/secrets
-          grep -c '.' .kamal/secrets
 
       - name: Deploy with Kamal
         run: bin/kamal deploy
