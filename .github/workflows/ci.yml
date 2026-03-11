@@ -127,7 +127,7 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Add server to known_hosts
-        run: ssh-keyscan -H 45.76.49.170 >> ~/.ssh/known_hosts
+        run: ssh-keyscan 45.76.49.170 >> ~/.ssh/known_hosts 2>/dev/null
 
       - name: Write Kamal secrets
         run: |
