@@ -1,0 +1,27 @@
+name: Auto Fix Issue
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  auto-fix:
+    if: github.actor == 'kraytruthg'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: |
+            --max-turns 30
