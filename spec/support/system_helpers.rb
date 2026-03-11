@@ -1,5 +1,6 @@
 module SystemHelpers
   def sign_in(user, password: "password123")
+    visit "about:blank"
     page.driver.browser.manage.delete_all_cookies
     visit new_session_path
     fill_in "Email", with: user.email
