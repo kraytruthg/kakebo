@@ -135,5 +135,13 @@ jobs:
             "$KAMAL_REGISTRY_PASSWORD" "$RAILS_MASTER_KEY" "$KAKEBO_DATABASE_PASSWORD" "$KAKEBO_DATABASE_PASSWORD" \
             > .kamal/secrets
 
+      - name: Verify secrets
+        run: |
+          echo "RAILS_MASTER_KEY length: ${#RAILS_MASTER_KEY}"
+          echo "KAMAL_REGISTRY_PASSWORD length: ${#KAMAL_REGISTRY_PASSWORD}"
+          echo "KAKEBO_DATABASE_PASSWORD length: ${#KAKEBO_DATABASE_PASSWORD}"
+          wc -c < .kamal/secrets
+          grep -c '.' .kamal/secrets
+
       - name: Deploy with Kamal
         run: bin/kamal deploy
