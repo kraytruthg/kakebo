@@ -69,7 +69,7 @@ RSpec.describe "Budget", type: :system do
     page.execute_script("document.querySelector('button[title=\"新增交易\"]').click()")
     expect(page).to have_css("[data-drawer-target='panel']:not(.translate-x-full)")
 
-    find("body").send_keys(:escape)
+    page.execute_script("document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))")
 
     expect(page).to have_css("[data-drawer-target='panel'].translate-x-full", visible: :all)
   end
