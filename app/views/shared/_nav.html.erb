@@ -1,7 +1,30 @@
 <%# Desktop sidebar %>
 <aside class="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-60 lg:flex-col bg-white border-r border-slate-200 z-10">
-  <div class="flex h-16 items-center px-6 border-b border-slate-100">
+  <div class="flex flex-col justify-center px-6 border-b border-slate-100 overflow-visible" style="min-height: 4rem;">
     <span class="text-indigo-600 font-bold text-lg tracking-tight">家計簿</span>
+    <% if Current.user.households.count > 1 %>
+      <details class="relative" data-testid="household-switcher" style="overflow: visible;">
+        <summary class="flex items-center gap-1 text-xs text-slate-500 cursor-pointer hover:text-slate-700 mt-0.5" style="list-style: none;">
+          <span class="truncate"><%= Current.household.name %></span>
+          <span class="text-[10px]">&#9662;</span>
+        </summary>
+        <div class="absolute left-0 mt-1 w-48 bg-white border border-slate-200 rounded-lg shadow-lg py-1" style="z-index: 50;">
+          <% Current.user.households.each do |household| %>
+            <% if household == Current.household %>
+              <div class="px-3 py-2 text-sm font-medium text-indigo-600 bg-indigo-50">
+                <%= household.name %>
+              </div>
+            <% else %>
+              <%= button_to household_switch_path, params: { household_id: household.id }, method: :post, class: "w-full text-left px-3 py-2 text-sm text-slate-700 hover:bg-slate-50" do %>
+                <%= household.name %>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      </details>
+    <% else %>
+      <span class="text-xs text-slate-400 truncate mt-0.5"><%= Current.household.name %></span>
+    <% end %>
   </div>
   <nav class="flex-1 px-3 py-4 space-y-1" aria-label="主要導覽">
     <%= link_to budget_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium #{request.path == budget_path ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}" do %>
