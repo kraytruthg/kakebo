@@ -45,7 +45,7 @@ class QuickEntryConfirmationsController < ApplicationController
     end
     user = User.find(@data[:user_id])
     Current.user = user
-    @household = user.household
+    @household = user.households.first
     @amount = @data[:amount]
     @memo = @data[:memo]
     @payer_keyword = @data[:payer]

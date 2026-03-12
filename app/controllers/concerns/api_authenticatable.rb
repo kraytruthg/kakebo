@@ -12,6 +12,7 @@ module ApiAuthenticatable
     user = ApiToken.authenticate(token)
     if user
       Current.user = user
+      Current.household = user.households.first
     else
       render json: { error: "Invalid or missing API token" }, status: :unauthorized
     end
