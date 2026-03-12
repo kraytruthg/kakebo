@@ -59,8 +59,7 @@ RSpec.describe "類別管理", type: :system do
 
     source.drag_to(target)
 
-    sleep 1
-    expect(group2.reload.position).to be < group.reload.position
+    wait_until { group2.reload.position < group.reload.position }
   end
 
   it "拖曳調整 Category 順序" do
@@ -72,8 +71,7 @@ RSpec.describe "類別管理", type: :system do
     target = find(:css, ".divide-y > [data-sortable-id='#{cat1.id}'] .drag-handle")
     source.drag_to(target)
 
-    sleep 1
-    expect(cat2.reload.position).to be < cat1.reload.position
+    wait_until { cat2.reload.position < cat1.reload.position }
   end
 
   it "編輯時將 Category 換到其他群組" do

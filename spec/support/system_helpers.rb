@@ -8,6 +8,15 @@ module SystemHelpers
     click_button "登入"
     expect(page).not_to have_current_path(new_session_path)
   end
+
+  def wait_until(timeout: Capybara.default_max_wait_time)
+    Timeout.timeout(timeout) do
+      loop do
+        break if yield
+        sleep 0.1
+      end
+    end
+  end
 end
 
 RSpec.configure do |config|

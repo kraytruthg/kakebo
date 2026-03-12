@@ -2,7 +2,6 @@ require "rails_helper"
 
 RSpec.describe "Admin user management", type: :system do
   before do
-    driven_by :selenium, using: :headless_chrome
     allow(ENV).to receive(:fetch).and_call_original
     allow(ENV).to receive(:fetch).with("ADMIN_EMAILS", "").and_return("admin@example.com")
   end
@@ -101,10 +100,6 @@ RSpec.describe "Admin user management", type: :system do
 end
 
 RSpec.describe "Admin access control", type: :system do
-  before do
-    driven_by :selenium, using: :headless_chrome
-  end
-
   let!(:household) { create(:household) }
   let!(:account) { create(:account, household: household) }
   let!(:user) { create(:user, household: household) }

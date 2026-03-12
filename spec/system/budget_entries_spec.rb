@@ -52,7 +52,7 @@ RSpec.describe "BudgetEntries", type: :system do
     expect(page).to have_css("input[name='budget_entry[budgeted]']")
 
     # Click outside the inline edit area
-    find("th", text: "類別").click
+    page.find("body").click
 
     expect(page).not_to have_css("input[name='budget_entry[budgeted]']")
     expect(page).to have_text("0")

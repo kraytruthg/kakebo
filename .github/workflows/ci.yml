@@ -96,7 +96,7 @@ jobs:
         run: bin/rails db:schema:load
 
       - name: Run tests
-        run: bundle exec rspec || bundle exec rspec --only-failures
+        run: bundle exec rspec
 
   deploy:
     runs-on: ubuntu-latest
