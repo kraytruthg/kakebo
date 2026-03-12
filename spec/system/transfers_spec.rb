@@ -45,6 +45,7 @@ RSpec.describe "帳戶間轉帳", type: :system do
       select "儲蓄帳戶", from: "目標帳戶"
       fill_in "金額", with: "2000"
       click_button "確認轉帳"
+      expect(page).to have_text("轉帳已建立")
     end
 
     it "刪除轉帳後兩筆同時消失，兩帳戶餘額還原" do
