@@ -21,10 +21,18 @@
               <% end %>
             <% end %>
           <% end %>
+          <div class="border-t border-slate-100 mt-1 pt-1">
+            <%= link_to new_settings_household_path, class: "block px-3 py-2 text-sm text-slate-500 hover:text-slate-700 hover:bg-slate-50" do %>
+              + 新增帳本
+            <% end %>
+          </div>
         </div>
       </details>
     <% else %>
-      <span class="text-xs text-slate-400 truncate mt-0.5"><%= Current.household.name %></span>
+      <div class="flex items-center gap-1 mt-0.5">
+        <span class="text-xs text-slate-400 truncate"><%= Current.household.name %></span>
+        <%= link_to new_settings_household_path, class: "text-xs text-slate-300 hover:text-indigo-500", title: "新增帳本" do %>+<% end %>
+      </div>
     <% end %>
   </div>
   <nav class="flex-1 px-3 py-4 space-y-1" aria-label="主要導覽">

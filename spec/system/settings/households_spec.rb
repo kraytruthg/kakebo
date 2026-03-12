@@ -7,7 +7,7 @@ RSpec.describe "Settings: Households", type: :system do
 
   it "creates a new household" do
     visit settings_root_path
-    click_on "新增帳本"
+    within("main") { click_on "新增帳本" }
 
     fill_in "名稱", with: "個人零用錢"
     click_button "建立"

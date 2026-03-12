@@ -10,7 +10,7 @@ RSpec.describe "Multi-household workflow", type: :system do
 
     # 2. Create personal household via settings
     visit settings_root_path
-    click_on "新增帳本"
+    within("main") { click_on "新增帳本" }
     fill_in "名稱", with: "Jerry 零用錢"
     click_button "建立"
 
