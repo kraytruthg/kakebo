@@ -31,6 +31,7 @@ class ApplicationController < ActionController::Base
 
   def current_user_needs_onboarding?
     Current.user &&
+      Current.household &&
       request.path == "/budget" &&
       Current.household.accounts.none?
   end

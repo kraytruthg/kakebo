@@ -11,19 +11,14 @@ module Admin
 
     def create
       @user = User.new(user_params)
-      household_id = params[:household_id].presence
-
-      User.transaction do
-        if @user.save
-          if household_id
-            @user.household_memberships.create!(household_id: household_id, role: "member")
-          end
-          redirect_to admin_users_path, notice: "用戶已建立"
-        else
-          @households = Household.order(:name)
-          render :new, status: :unprocessable_entity
-          raise ActiveRecord::Rollback
+      if @user.save
+        if params[:household_id].present?
+          @user.household_memberships.create!(household_id: params[:household_id], role: "member")
         end
+        redirect_to admin_users_path, notice: "用戶已建立"
+      else
+        @households = Household.order(:name)
+        render :new, status: :unprocessable_entity
       end
     end
 
@@ -36,19 +31,14 @@ module Admin
       @user = User.find(params[:id])
       update_params = user_params
       update_params = update_params.except(:password, :password_confirmation) if update_params[:password].blank?
-      household_id = params[:household_id].presence
-
-      User.transaction do
-        if @user.update(update_params)
-          if household_id && !@user.households.exists?(id: household_id)
-            @user.household_memberships.create!(household_id: household_id, role: "member")
-          end
-          redirect_to admin_users_path, notice: "用戶已更新"
-        else
-          @households = Household.order(:name)
-          render :edit, status: :unprocessable_entity
-          raise ActiveRecord::Rollback
+      if @user.update(update_params)
+        if params[:household_id].present? && !@user.households.exists?(id: params[:household_id])
+          @user.household_memberships.create!(household_id: params[:household_id], role: "member")
         end
+        redirect_to admin_users_path, notice: "用戶已更新"
+      else
+        @households = Household.order(:name)
+        render :edit, status: :unprocessable_entity
       end
     end
 

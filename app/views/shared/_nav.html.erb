@@ -1,15 +1,16 @@
 <%# Desktop sidebar %>
 <aside class="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-60 lg:flex-col bg-white border-r border-slate-200 z-10">
-  <div class="flex flex-col justify-center px-6 border-b border-slate-100 overflow-visible" style="min-height: 4rem;">
+  <div class="flex flex-col justify-center px-6 border-b border-slate-100 overflow-visible min-h-16">
     <span class="text-indigo-600 font-bold text-lg tracking-tight">家計簿</span>
-    <% if Current.user.households.count > 1 %>
-      <details class="relative" data-testid="household-switcher" style="overflow: visible;">
-        <summary class="flex items-center gap-1 text-xs text-slate-500 cursor-pointer hover:text-slate-700 mt-0.5" style="list-style: none;">
+    <% households = Current.user.households.to_a %>
+    <% if households.size > 1 %>
+      <details class="relative overflow-visible" data-testid="household-switcher">
+        <summary class="flex items-center gap-1 text-xs text-slate-500 cursor-pointer hover:text-slate-700 mt-0.5 list-none">
           <span class="truncate"><%= Current.household.name %></span>
           <span class="text-[10px]">&#9662;</span>
         </summary>
-        <div class="absolute left-0 mt-1 w-48 bg-white border border-slate-200 rounded-lg shadow-lg py-1" style="z-index: 50;">
-          <% Current.user.households.each do |household| %>
+        <div class="absolute left-0 mt-1 w-48 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-50">
+          <% households.each do |household| %>
             <% if household == Current.household %>
               <div class="px-3 py-2 text-sm font-medium text-indigo-600 bg-indigo-50">
                 <%= household.name %>
