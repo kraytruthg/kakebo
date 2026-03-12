@@ -16,7 +16,7 @@ RSpec.describe User, "household management" do
       user = User.new(name: "Test", email: "test2@example.com", password: "password123")
       user.household_memberships.build(household: household, role: "member")
       user.save!
-      expect(user.households).to eq([household])
+      expect(user.households).to eq([ household ])
     end
   end
 end
