@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Accounts", type: :system do
   let(:user) { create(:user) }
-  let(:household) { user.household }
+  let(:household) { user.households.first }
 
   before { sign_in(user) }
 

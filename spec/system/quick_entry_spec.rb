@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "快速記帳", type: :system do
   let(:user) { create(:user) }
-  let(:household) { user.household }
+  let(:household) { user.households.first }
   let!(:account) { create(:account, household: household, name: "Jerry 現金") }
   let!(:category_group) { create(:category_group, household: household, name: "日常") }
   let!(:category) { create(:category, category_group: category_group, name: "生活花費") }

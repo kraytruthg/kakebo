@@ -27,7 +27,7 @@ RSpec.describe "Onboarding", type: :system do
 
   context "已有帳戶的用戶" do
     let(:user)    { create(:user) }
-    let!(:account) { create(:account, household: user.household) }
+    let!(:account) { create(:account, household: user.households.first) }
 
     before { sign_in(user) }
 

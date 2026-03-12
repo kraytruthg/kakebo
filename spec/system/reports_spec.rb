@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Reports", type: :system do
   let!(:user) { create(:user) }
-  let(:household) { user.household }
+  let(:household) { user.households.first }
   let!(:account) { create(:account, household: household) }
   let!(:group) { create(:category_group, household: household, name: "食費") }
   let!(:category) { create(:category, category_group: group, name: "外食") }

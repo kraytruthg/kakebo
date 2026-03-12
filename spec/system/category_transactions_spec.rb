@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Category Transactions", type: :system do
   let(:user)      { create(:user) }
-  let(:household) { user.household }
+  let(:household) { user.households.first }
   let!(:account1) { create(:account, household: household, name: "現金") }
   let!(:account2) { create(:account, household: household, name: "信用卡") }
   let!(:group)    { create(:category_group, household: household, name: "生活") }
