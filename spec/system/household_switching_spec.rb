@@ -28,11 +28,14 @@ RSpec.describe "Household switching", type: :system do
     expect(page).not_to have_content("家用戶頭")
   end
 
-  it "does not show switcher when user has only one household" do
-    single_user = create(:user)
-    create(:account, household: single_user.households.first)
-    sign_in(single_user)
-    visit accounts_path
-    expect(page).not_to have_css("[data-testid='household-switcher']")
+  context "when user has only one household" do
+    let(:single_user) { create(:user) }
+    let!(:single_account) { create(:account, household: single_user.households.first) }
+
+    it "does not show switcher" do
+      sign_in(single_user)
+      visit accounts_path
+      expect(page).not_to have_css("[data-testid='household-switcher']")
+    end
   end
 end
