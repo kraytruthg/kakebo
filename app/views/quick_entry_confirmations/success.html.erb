@@ -6,6 +6,12 @@
       </svg>
     </div>
     <h1 class="text-xl font-bold text-slate-900 mb-2">記帳完成</h1>
-    <p class="text-sm text-slate-500">交易已成功建立，可以關閉此頁面了</p>
+    <p class="text-sm text-slate-500 mb-6">交易已成功建立</p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <button onclick="window.close()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium px-5 py-2.5 rounded-lg cursor-pointer transition-colors">
+        關閉分頁
+      </button>
+      <%= link_to "回到預算頁", budget_path, class: "flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors" %>
+    </div>
   </div>
 </div>
