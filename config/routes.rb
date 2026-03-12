@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   resource :session, only: [ :new, :create, :destroy ]
+  resource :household_switch, only: [ :create ]
   get "onboarding", to: "onboarding#index", as: :onboarding
   get "signup", to: "users#new"
   resources :users, only: [ :create ]
