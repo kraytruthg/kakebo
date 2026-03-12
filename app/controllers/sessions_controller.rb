@@ -9,6 +9,7 @@ class SessionsController < ApplicationController
     if user&.authenticate(params[:password])
       reset_session
       session[:user_id] = user.id
+      session[:current_household_id] = user.households.first&.id
       redirect_to root_path, notice: "歡迎回來，#{user.name}！"
     else
       redirect_to new_session_path, alert: "Email 或密碼錯誤"
