@@ -7,6 +7,7 @@ class AccountsController < ApplicationController
   end
 
   def show
+    @transaction_count = @account.transactions.count
     @transactions = @account.transactions.includes(:category, transfer_pair: :account).recent.limit(50)
     @new_transaction = Transaction.new(account: @account, date: Date.today)
   end
@@ -36,9 +37,6 @@ class AccountsController < ApplicationController
   end
 
   def destroy
-    if Current.household.default_account_id == @account.id
-      Current.household.update!(default_account_id: nil)
-    end
     @account.destroy!
     redirect_to accounts_path, notice: "帳戶已刪除"
   end
