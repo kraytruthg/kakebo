@@ -1,6 +1,29 @@
 <div class="px-4 py-6 lg:max-w-2xl lg:mx-auto lg:px-6 lg:py-8">
   <h1 class="text-xl font-bold text-slate-900 mb-6">設定</h1>
 
+  <% households = Current.user.households.to_a %>
+  <% if households.size > 1 %>
+    <div class="mb-6" data-testid="mobile-household-switcher">
+      <h2 class="text-sm font-medium text-slate-500 mb-2">帳本</h2>
+      <div class="space-y-2">
+        <% households.each do |household| %>
+          <% if household == Current.household %>
+            <div class="flex items-center gap-3 bg-indigo-50 border border-indigo-200 rounded-xl px-5 py-4">
+              <div class="w-2 h-2 rounded-full bg-indigo-600"></div>
+              <span class="text-sm font-medium text-indigo-700"><%= household.name %></span>
+            </div>
+          <% else %>
+            <%= button_to household_switch_path, params: { household_id: household.id }, method: :post,
+                  class: "w-full flex items-center gap-3 bg-white border border-slate-100 rounded-xl px-5 py-4 hover:border-indigo-200 hover:shadow-sm transition-all text-left" do %>
+              <div class="w-2 h-2 rounded-full bg-slate-300"></div>
+              <span class="text-sm font-medium text-slate-800"><%= household.name %></span>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
   <div class="space-y-3">
     <%= link_to settings_categories_path, class: "flex items-center justify-between bg-white rounded-xl border border-slate-100 px-5 py-4 hover:border-indigo-200 hover:shadow-sm transition-all" do %>
       <div class="flex items-center gap-3">
