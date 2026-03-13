@@ -28,6 +28,27 @@ RSpec.describe "Household switching", type: :system do
     expect(page).not_to have_content("家用戶頭")
   end
 
+  context "mobile settings page" do
+    before { page.driver.browser.manage.window.resize_to(375, 812) }
+    after { page.driver.browser.manage.window.resize_to(1400, 900) }
+
+    it "switches household from settings page" do
+      visit settings_root_path
+      expect(page).to have_css("[data-testid='mobile-household-switcher']")
+      expect(page).to have_text("家庭帳本")
+      expect(page).to have_text("個人零用錢")
+
+      click_button "個人零用錢"
+
+      # Wait for redirect to complete (goes to root_path -> /budget)
+      expect(page).to have_current_path(budget_path)
+
+      visit accounts_path
+      expect(page).to have_content("零用錢錢包")
+      expect(page).not_to have_content("家用戶頭")
+    end
+  end
+
   context "when user has only one household" do
     let(:single_user) { create(:user) }
     let!(:single_account) { create(:account, household: single_user.households.first) }
