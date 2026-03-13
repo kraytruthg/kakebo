@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Quick Entry Confirmations", type: :request do
   let(:user) { create(:user) }
-  let(:household) { user.household }
+  let(:household) { user.households.first }
   let!(:account) { create(:account, household: household, name: "現金") }
   let!(:category_group) { create(:category_group, household: household, name: "日常") }
   let!(:category) { create(:category, category_group: category_group, name: "午餐") }

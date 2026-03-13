@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_04_160728) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_12_065419) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -67,6 +67,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_04_160728) do
     t.index ["household_id"], name: "index_category_groups_on_household_id"
   end
 
+  create_table "household_memberships", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "household_id", null: false
+    t.string "role", default: "member", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["household_id"], name: "index_household_memberships_on_household_id"
+    t.index ["user_id", "household_id"], name: "index_household_memberships_on_user_id_and_household_id", unique: true
+    t.index ["user_id"], name: "index_household_memberships_on_user_id"
+  end
+
   create_table "households", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "default_account_id"
@@ -104,12 +115,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_04_160728) do
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
-    t.bigint "household_id", null: false
     t.string "name", null: false
     t.string "password_digest", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["household_id"], name: "index_users_on_household_id"
   end
 
   add_foreign_key "accounts", "households"
@@ -117,9 +126,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_04_160728) do
   add_foreign_key "budget_entries", "categories"
   add_foreign_key "categories", "category_groups"
   add_foreign_key "category_groups", "households"
+  add_foreign_key "household_memberships", "households"
+  add_foreign_key "household_memberships", "users"
   add_foreign_key "households", "accounts", column: "default_account_id"
   add_foreign_key "quick_entry_mappings", "households"
   add_foreign_key "transactions", "accounts"
   add_foreign_key "transactions", "categories"
-  add_foreign_key "users", "households"
 end

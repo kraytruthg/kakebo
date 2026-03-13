@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Settings::CategoryGroups", type: :request do
   let(:user) { create(:user) }
-  let(:household) { user.household }
+  let(:household) { user.households.first }
 
   before do
     post session_path, params: { email: user.email, password: "password123" }

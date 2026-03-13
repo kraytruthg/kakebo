@@ -1,7 +1,7 @@
 module Admin
   class UsersController < BaseController
     def index
-      @users = User.includes(:household).order(:created_at)
+      @users = User.includes(:households).order(:created_at)
     end
 
     def new
@@ -12,6 +12,9 @@ module Admin
     def create
       @user = User.new(user_params)
       if @user.save
+        if params[:household_id].present?
+          @user.household_memberships.create!(household_id: params[:household_id], role: "member")
+        end
         redirect_to admin_users_path, notice: "用戶已建立"
       else
         @households = Household.order(:name)
@@ -29,6 +32,9 @@ module Admin
       update_params = user_params
       update_params = update_params.except(:password, :password_confirmation) if update_params[:password].blank?
       if @user.update(update_params)
+        if params[:household_id].present? && !@user.households.exists?(id: params[:household_id])
+          @user.household_memberships.create!(household_id: params[:household_id], role: "member")
+        end
         redirect_to admin_users_path, notice: "用戶已更新"
       else
         @households = Household.order(:name)
@@ -39,7 +45,7 @@ module Admin
     private
 
     def user_params
-      params.require(:user).permit(:name, :email, :password, :password_confirmation, :household_id)
+      params.require(:user).permit(:name, :email, :password, :password_confirmation)
     end
   end
 end

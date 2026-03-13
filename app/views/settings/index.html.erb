@@ -26,6 +26,14 @@
       <%= icon "chevron-right", classes: "w-4 h-4 text-slate-400" %>
     <% end %>
 
+    <%= link_to new_settings_household_path, class: "flex items-center justify-between bg-white rounded-xl border border-slate-100 px-5 py-4 hover:border-indigo-200 hover:shadow-sm transition-all" do %>
+      <div class="flex items-center gap-3">
+        <%= icon "plus-circle", classes: "w-5 h-5 text-slate-400" %>
+        <span class="text-sm font-medium text-slate-800">新增帳本</span>
+      </div>
+      <%= icon "chevron-right", classes: "w-4 h-4 text-slate-400" %>
+    <% end %>
+
     <% if Current.user.admin? %>
       <%= link_to admin_users_path, class: "flex items-center justify-between bg-white rounded-xl border border-slate-100 px-5 py-4 hover:border-indigo-200 hover:shadow-sm transition-all" do %>
         <div class="flex items-center gap-3">

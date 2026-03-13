@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "API Authentication", type: :request do
   let(:user) { create(:user) }
-  let!(:account) { create(:account, household: user.household) }
+  let!(:account) { create(:account, household: user.households.first) }
   let(:api_token) { ApiToken.generate_for(user) }
 
   describe "without token" do

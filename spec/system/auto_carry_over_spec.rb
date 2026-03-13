@@ -2,8 +2,8 @@ require "rails_helper"
 
 RSpec.describe "自動結轉", type: :system do
   let(:user)   { create(:user) }
-  let!(:acct)  { create(:account, household: user.household) }
-  let!(:group) { create(:category_group, household: user.household) }
+  let!(:acct)  { create(:account, household: user.households.first) }
+  let!(:group) { create(:category_group, household: user.households.first) }
   let!(:cat)   { create(:category, category_group: group) }
 
   before { sign_in(user) }

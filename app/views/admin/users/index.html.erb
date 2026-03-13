@@ -23,7 +23,7 @@
           <tr>
             <td class="px-5 py-3 text-slate-700"><%= user.name %></td>
             <td class="px-5 py-3 text-slate-500"><%= user.email %></td>
-            <td class="px-5 py-3 text-slate-500"><%= user.household&.name %></td>
+            <td class="px-5 py-3 text-slate-500"><%= user.households.map(&:name).join(", ") %></td>
             <td class="px-5 py-3 text-right">
               <%= link_to edit_admin_user_path(user),
                     class: "text-slate-400 hover:text-indigo-600 transition-colors" do %>

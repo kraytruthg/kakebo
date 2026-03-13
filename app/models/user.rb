@@ -1,5 +1,6 @@
 class User < ApplicationRecord
-  belongs_to :household, optional: true
+  has_many :household_memberships, dependent: :destroy
+  has_many :households, through: :household_memberships
   has_secure_password
   has_many :api_tokens, dependent: :destroy
 
@@ -9,7 +10,7 @@ class User < ApplicationRecord
 
   normalizes :email, with: ->(e) { e.strip.downcase }
 
-  before_create :create_household, unless: -> { household_id.present? }
+  before_create :create_default_household, unless: -> { household_memberships.any? }
 
   def admin?
     admin_emails = ENV.fetch("ADMIN_EMAILS", "").split(",").map(&:strip).map(&:downcase)
@@ -18,7 +19,8 @@ class User < ApplicationRecord
 
   private
 
-  def create_household
-    self.household ||= Household.create!(name: "#{name} 的家")
+  def create_default_household
+    household = Household.create!(name: "#{name} 的家")
+    household_memberships.build(household: household, role: "owner")
   end
 end

@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "帳戶間轉帳", type: :system do
   let(:user) { create(:user) }
-  let(:household) { user.household }
+  let(:household) { user.households.first }
   let!(:account_a) { create(:account, household: household, name: "支票帳戶", starting_balance: 10_000) }
   let!(:account_b) { create(:account, household: household, name: "儲蓄帳戶", starting_balance: 0) }
 

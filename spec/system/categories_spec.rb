@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "類別管理", type: :system do
   let(:user) { create(:user) }
-  let!(:group) { create(:category_group, household: user.household, name: "日常開銷") }
+  let!(:group) { create(:category_group, household: user.households.first, name: "日常開銷") }
 
   before { sign_in(user) }
 
@@ -41,7 +41,7 @@ RSpec.describe "類別管理", type: :system do
 
   it "刪除有交易的 Category 顯示錯誤" do
     cat = create(:category, category_group: group, name: "有交易")
-    account = create(:account, household: user.household, account_type: "budget")
+    account = create(:account, household: user.households.first, account_type: "budget")
     create(:transaction, account: account, category: cat, amount: -500, date: Date.today)
     visit settings_categories_path
     within(".divide-y > [data-sortable-id='#{cat.id}']") do
@@ -51,7 +51,7 @@ RSpec.describe "類別管理", type: :system do
   end
 
   it "拖曳調整 CategoryGroup 順序" do
-    group2 = create(:category_group, household: user.household, name: "娛樂", position: 2)
+    group2 = create(:category_group, household: user.households.first, name: "娛樂", position: 2)
     visit settings_categories_path
 
     source = find(".space-y-4 > [data-sortable-id='#{group2.id}'] .drag-handle")
@@ -75,7 +75,7 @@ RSpec.describe "類別管理", type: :system do
   end
 
   it "編輯時將 Category 換到其他群組" do
-    group2 = create(:category_group, household: user.household, name: "娛樂")
+    group2 = create(:category_group, household: user.households.first, name: "娛樂")
     cat = create(:category, category_group: group, name: "電影")
     visit settings_categories_path
 

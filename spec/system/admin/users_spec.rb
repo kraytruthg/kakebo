@@ -40,7 +40,7 @@ RSpec.describe "Admin user management", type: :system do
       expect(page).to have_content("用戶已建立")
       expect(page).to have_content("New User")
       expect(page).to have_content("newuser@example.com")
-      expect(User.find_by(email: "newuser@example.com").household).to eq(household)
+      expect(User.find_by(email: "newuser@example.com").households.first).to eq(household)
     end
 
     it "shows validation errors for invalid input" do

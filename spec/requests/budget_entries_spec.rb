@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "BudgetEntries", type: :request do
   let(:user) { create(:user) }
-  let(:household) { user.household }
+  let(:household) { user.households.first }
   let(:category_group) { create(:category_group, household: household) }
   let(:category) { create(:category, category_group: category_group) }
 

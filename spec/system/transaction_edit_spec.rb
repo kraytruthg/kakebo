@@ -2,8 +2,8 @@ require "rails_helper"
 
 RSpec.describe "交易編輯", type: :system do
   let(:user)    { create(:user) }
-  let!(:account) { create(:account, household: user.household, account_type: "budget") }
-  let!(:group)   { create(:category_group, household: user.household) }
+  let!(:account) { create(:account, household: user.households.first, account_type: "budget") }
+  let!(:group)   { create(:category_group, household: user.households.first) }
   let!(:cat1)    { create(:category, category_group: group, name: "餐費") }
   let!(:cat2)    { create(:category, category_group: group, name: "交通") }
   let!(:txn)     { create(:transaction, account: account, category: cat1, amount: -500, date: Date.today, memo: "午餐") }

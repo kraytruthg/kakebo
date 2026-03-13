@@ -20,9 +20,10 @@
         <%= f.email_field :email, class: "w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
       </div>
       <div>
-        <%= f.label :household_id, "家庭", class: "block text-sm font-medium text-slate-700 mb-1" %>
-        <%= f.collection_select :household_id, @households, :id, :name,
-              {},
+        <label for="household_id" class="block text-sm font-medium text-slate-700 mb-1">家庭</label>
+        <%= select_tag :household_id,
+              options_from_collection_for_select(@households, :id, :name, @user.households.first&.id),
+              prompt: "（無家庭）",
               class: "w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
       </div>
 

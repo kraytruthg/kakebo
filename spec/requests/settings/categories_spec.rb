@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Settings::Categories", type: :request do
   let(:user)     { create(:user) }
-  let(:household) { user.household }
+  let(:household) { user.households.first }
   let(:group)    { create(:category_group, household: household) }
 
   before do

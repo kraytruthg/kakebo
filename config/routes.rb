@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   resource :session, only: [ :new, :create, :destroy ]
+  resource :household_switch, only: [ :create ]
   get "onboarding", to: "onboarding#index", as: :onboarding
   get "signup", to: "users#new"
   resources :users, only: [ :create ]
@@ -34,6 +35,7 @@ Rails.application.routes.draw do
         patch :update_default_account
       end
     end
+    resources :households, only: [ :new, :create ]
   end
   get "settings/categories", to: "settings/category_groups#index", as: :settings_categories
 

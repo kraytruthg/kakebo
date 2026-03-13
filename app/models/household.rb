@@ -1,5 +1,6 @@
 class Household < ApplicationRecord
-  has_many :users, dependent: :destroy
+  has_many :household_memberships, dependent: :destroy
+  has_many :users, through: :household_memberships
   has_many :accounts, dependent: :destroy
   has_many :category_groups, dependent: :destroy
   has_many :quick_entry_mappings, dependent: :destroy
