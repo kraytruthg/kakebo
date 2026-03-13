@@ -1,5 +1,5 @@
 class AccountsController < ApplicationController
-  before_action :set_account, only: [ :show, :edit, :update ]
+  before_action :set_account, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @budget_accounts = Current.household.accounts.budget.active.order(:name)
@@ -33,6 +33,14 @@ class AccountsController < ApplicationController
     else
       render :edit, status: :unprocessable_entity
     end
+  end
+
+  def destroy
+    if Current.household.default_account_id == @account.id
+      Current.household.update!(default_account_id: nil)
+    end
+    @account.destroy!
+    redirect_to accounts_path, notice: "帳戶已刪除"
   end
 
   private
