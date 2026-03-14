@@ -1,0 +1,62 @@
+<div class="px-4 py-6 lg:max-w-2xl lg:mx-auto lg:px-6 lg:py-8">
+  <div class="mb-6">
+    <%= link_to "← 設定", settings_root_path, class: "text-sm text-slate-500 hover:text-slate-700" %>
+  </div>
+
+  <h1 class="text-xl font-bold text-slate-900 mb-6"><%= @household.name %></h1>
+
+  <div class="bg-white rounded-xl border border-slate-100 p-5 mb-8">
+    <h2 class="text-sm font-medium text-slate-500 mb-4">帳本資訊</h2>
+    <dl class="grid grid-cols-2 gap-4">
+      <div>
+        <dt class="text-xs text-slate-400">建立日期</dt>
+        <dd class="text-lg font-semibold text-slate-900"><%= @household.created_at.strftime("%Y-%m-%d") %></dd>
+      </div>
+      <div>
+        <dt class="text-xs text-slate-400">帳戶數</dt>
+        <dd class="text-lg font-semibold text-slate-900" data-testid="account-count"><%= @household.accounts.count %></dd>
+      </div>
+      <div>
+        <dt class="text-xs text-slate-400">交易數</dt>
+        <dd class="text-lg font-semibold text-slate-900" data-testid="transaction-count"><%= @transaction_count %></dd>
+      </div>
+      <div>
+        <dt class="text-xs text-slate-400">預算項目</dt>
+        <dd class="text-lg font-semibold text-slate-900" data-testid="budget-entry-count"><%= @budget_entry_count %></dd>
+      </div>
+      <div>
+        <dt class="text-xs text-slate-400">成員數</dt>
+        <dd class="text-lg font-semibold text-slate-900" data-testid="member-count"><%= @household.users.count %></dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="bg-white rounded-xl border-2 border-red-200 p-5">
+    <h2 class="text-base font-bold text-red-700 mb-2">刪除帳本</h2>
+
+    <% if Current.user.households.count <= 1 %>
+      <p class="text-sm text-slate-500" data-testid="cannot-delete-message">這是你唯一的帳本，無法刪除。</p>
+    <% else %>
+      <p class="text-sm text-slate-500 mb-4">刪除後所有帳戶、交易、預算資料將永久刪除，無法復原。</p>
+
+      <%= form_with url: settings_household_path(@household), method: :delete, class: "space-y-4",
+            data: { controller: "confirm-delete", confirm_delete_expected_value: @household.name } do |f| %>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">
+            請輸入「<span class="font-bold text-red-600"><%= @household.name %></span>」以確認
+          </label>
+          <%= f.text_field :household_name, placeholder: @household.name,
+                class: "w-full rounded-lg border-slate-300 text-sm focus:ring-red-500 focus:border-red-500",
+                data: { confirm_delete_target: "input", action: "input->confirm-delete#validate" },
+                autocomplete: "off" %>
+        </div>
+        <button type="submit" disabled
+                class="w-full bg-red-600 text-white text-sm font-medium rounded-lg px-4 py-2.5 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                data-confirm-delete-target="button"
+                data-testid="delete-household-button">
+          永久刪除此帳本
+        </button>
+      <% end %>
+    <% end %>
+  </div>
+</div>
