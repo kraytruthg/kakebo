@@ -35,7 +35,7 @@ Rails.application.routes.draw do
         patch :update_default_account
       end
     end
-    resources :households, only: [ :new, :create ]
+    resources :households, only: [ :new, :create, :show, :destroy ]
   end
   get "settings/categories", to: "settings/category_groups#index", as: :settings_categories
 
