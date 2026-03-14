@@ -114,7 +114,7 @@ class Settings::HouseholdsController < ApplicationController
                  .where(category_groups: { household_id: household.id })
                  .delete_all
       Category.where(category_group_id: household.category_group_ids).delete_all
-      household.category_groups.delete_all
+      CategoryGroup.where(household_id: household.id).delete_all
       household.destroy!
     end
   end
