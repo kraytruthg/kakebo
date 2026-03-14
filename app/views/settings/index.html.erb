@@ -25,6 +25,19 @@
   <% end %>
 
   <div class="space-y-3">
+    <% current_membership = Current.user.household_memberships.find_by(household: Current.household) %>
+    <% if current_membership&.role == "owner" %>
+      <%= link_to settings_household_path(Current.household),
+            class: "flex items-center justify-between bg-white rounded-xl border border-slate-100 px-5 py-4 hover:border-indigo-200 hover:shadow-sm transition-all",
+            data: { testid: "manage-household-link" } do %>
+        <div class="flex items-center gap-3">
+          <%= icon "document-duplicate", classes: "w-5 h-5 text-slate-400" %>
+          <span class="text-sm font-medium text-slate-800">管理帳本</span>
+        </div>
+        <%= icon "chevron-right", classes: "w-4 h-4 text-slate-400" %>
+      <% end %>
+    <% end %>
+
     <%= link_to settings_categories_path, class: "flex items-center justify-between bg-white rounded-xl border border-slate-100 px-5 py-4 hover:border-indigo-200 hover:shadow-sm transition-all" do %>
       <div class="flex items-center gap-3">
         <%= icon "cog-6-tooth", classes: "w-5 h-5 text-slate-400" %>
