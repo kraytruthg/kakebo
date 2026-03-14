@@ -30,10 +30,14 @@ end
 1. Find household, verify current user is owner
 2. Check user has more than 1 household, otherwise reject with flash error
 3. Compare `params[:household_name]` with `household.name`, reject if mismatch
-4. Delete in safe order (wrapped in transaction):
-   a. `household.update_columns(default_account_id: nil)` — prevent Account `clear_default_account` callback issues
-   b. `Transaction.where(account_id: household.account_ids).delete_all` — skip callbacks to avoid enqueuing useless recalculation jobs
-   c. `household.destroy!` — Category `before_destroy` won't block since transactions are already gone
+4. Delete in safe order (wrapped in `ActiveRecord::Base.transaction`):
+   a. Create default households for orphaned members (see Other Members Handling)
+   b. `household.update_columns(default_account_id: nil)` — prevent Account `clear_default_account` callback issues
+   c. `Transaction.where(account_id: household.account_ids).delete_all` — skip callbacks to avoid enqueuing useless recalculation jobs
+   d. `BudgetEntry.joins(category: :category_group).where(category_groups: { household_id: household.id }).delete_all` — clear budget entries before categories
+   e. `Category.where(category_group_id: household.category_group_ids).delete_all` — skip `before_destroy` guard (transactions already gone)
+   f. `household.category_groups.delete_all` — skip `before_destroy :prevent_if_has_categories` (categories already gone)
+   g. `household.destroy!` — only memberships, accounts, quick_entry_mappings remain
 5. Set `session[:current_household_id]` to user's next available household
 6. Redirect to settings path with flash success message
 
@@ -66,15 +70,18 @@ end
 
 The controller explicitly deletes in safe order to avoid callback conflicts:
 
-1. **Nullify `default_account_id`** — prevents `Account#clear_default_account` from updating a household mid-destroy
-2. **`delete_all` transactions** — bypasses `Transaction#after_commit` (avoids enqueuing hundreds of `BudgetEntryRecalculationJob`s) and clears the data that would trigger `Category#before_destroy` abort
-3. **`household.destroy!`** — remaining cascade via `dependent: :destroy` works cleanly:
+1. **Create default households for orphaned members** — inside the transaction, before any deletes
+2. **Nullify `default_account_id`** — prevents `Account#clear_default_account` from updating a household mid-destroy
+3. **`delete_all` transactions** — bypasses `Transaction#after_commit` (avoids enqueuing hundreds of `BudgetEntryRecalculationJob`s) and clears the data that would trigger `Category#before_destroy` abort
+4. **`delete_all` budget_entries** — clears FK references to categories
+5. **`delete_all` categories** — bypasses `Category#before_destroy` guard (transactions already gone)
+6. **`delete_all` category_groups** — bypasses `CategoryGroup#before_destroy :prevent_if_has_categories` (categories already gone)
+7. **`household.destroy!`** — only clean associations remain:
 
 ```
 Household
-├── household_memberships (all member associations)
+├── household_memberships
 ├── accounts (transactions already deleted)
-├── category_groups → categories → budget_entries
 └── quick_entry_mappings
 ```
 
@@ -83,7 +90,16 @@ Household
 When a household is deleted, other members lose access. Two scenarios:
 
 1. **Member has other households:** `ApplicationController#set_current_household` already falls back to `households.first` when `current_household_id` is invalid — no extra work needed.
-2. **Member loses their last household:** The `User#before_create` callback only fires on creation. For existing users who lose their last household, the controller must create a new default household for each affected member before destroying the target household.
+2. **Member loses their last household:** The `User#before_create` callback only fires on creation. For existing users who lose their last household, the controller creates a new default household inside the same transaction, before calling `destroy!`:
+
+```ruby
+other_members = household.users.where.not(id: current_user.id)
+orphaned = other_members.select { |u| u.households.count == 1 }
+orphaned.each do |user|
+  new_hh = Household.create!(name: "#{user.name} 的家")
+  HouseholdMembership.create!(user: user, household: new_hh, role: "owner")
+end
+```
 
 ## Permission Rules
 
