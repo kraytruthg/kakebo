@@ -1,5 +1,5 @@
 class AccountsController < ApplicationController
-  before_action :set_account, only: [ :show, :edit, :update ]
+  before_action :set_account, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @budget_accounts = Current.household.accounts.budget.active.order(:name)
@@ -7,6 +7,7 @@ class AccountsController < ApplicationController
   end
 
   def show
+    @transaction_count = @account.transactions.count
     @transactions = @account.transactions.includes(:category, transfer_pair: :account).recent.limit(50)
     @new_transaction = Transaction.new(account: @account, date: Date.today)
   end
@@ -33,6 +34,11 @@ class AccountsController < ApplicationController
     else
       render :edit, status: :unprocessable_entity
     end
+  end
+
+  def destroy
+    @account.destroy!
+    redirect_to accounts_path, notice: "帳戶已刪除"
   end
 
   private

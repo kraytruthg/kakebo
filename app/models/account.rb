@@ -2,6 +2,8 @@ class Account < ApplicationRecord
   belongs_to :household
   has_many :transactions, dependent: :destroy
 
+  before_destroy :clear_default_account
+
   TYPES = %w[budget tracking].freeze
 
   validates :name, presence: true
@@ -18,5 +20,11 @@ class Account < ApplicationRecord
   def recalculate_balance!
     calculated = starting_balance + transactions.sum(:amount)
     update_columns(balance: calculated)
+  end
+
+  private
+
+  def clear_default_account
+    household.update!(default_account_id: nil) if household.default_account_id == id
   end
 end

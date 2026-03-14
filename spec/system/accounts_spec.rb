@@ -19,4 +19,35 @@ RSpec.describe "Accounts", type: :system do
     expect(page).to have_text("帳戶已建立")
     expect(page).to have_text("玉山銀行")
   end
+
+  describe "刪除帳戶" do
+    let!(:account) { create(:account, household: household, name: "測試帳戶", account_type: "budget") }
+
+    it "從帳戶詳情頁刪除帳戶" do
+      create(:transaction, account: account, amount: -100, date: Date.today)
+
+      visit account_path(account)
+      expect(page).to have_text("測試帳戶")
+
+      page.execute_script("window.confirm = function() { return true; }")
+      click_button "刪除"
+
+      expect(page).to have_text("帳戶已刪除")
+      expect(page).not_to have_text("測試帳戶")
+    end
+
+    context "when account is the default account" do
+      before { household.update!(default_account: account) }
+
+      it "clears default_account after deletion" do
+        visit account_path(account)
+
+        page.execute_script("window.confirm = function() { return true; }")
+        click_button "刪除"
+
+        expect(page).to have_text("帳戶已刪除")
+        expect(household.reload.default_account_id).to be_nil
+      end
+    end
+  end
 end

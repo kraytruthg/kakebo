@@ -19,6 +19,12 @@
           <%= format_amount(@account.balance) %>
         </p>
         <div class="flex gap-2 mt-3 lg:justify-end">
+          <%= button_to account_path(@account), method: :delete,
+                class: "inline-flex items-center gap-1.5 text-xs text-red-500 hover:text-red-700 border border-red-200 rounded-lg px-3 py-1.5 transition-colors",
+                data: { turbo_confirm: "確定要刪除「#{@account.name}」帳戶嗎？帳戶下的 #{@transaction_count} 筆交易也會一併刪除。" } do %>
+            <%= icon "trash", classes: "w-3.5 h-3.5" %>
+            刪除
+          <% end %>
           <%= link_to edit_account_path(@account),
                 class: "inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 border border-slate-200 rounded-lg px-3 py-1.5 transition-colors" do %>
             <%= icon "pencil-square", classes: "w-3.5 h-3.5" %>
