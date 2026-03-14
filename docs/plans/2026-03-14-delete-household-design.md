@@ -30,7 +30,10 @@ end
 1. Find household, verify current user is owner
 2. Check user has more than 1 household, otherwise reject with flash error
 3. Compare `params[:household_name]` with `household.name`, reject if mismatch
-4. Execute `household.destroy!`
+4. Delete in safe order (wrapped in transaction):
+   a. `household.update_columns(default_account_id: nil)` — prevent Account `clear_default_account` callback issues
+   b. `Transaction.where(account_id: household.account_ids).delete_all` — skip callbacks to avoid enqueuing useless recalculation jobs
+   c. `household.destroy!` — Category `before_destroy` won't block since transactions are already gone
 5. Set `session[:current_household_id]` to user's next available household
 6. Redirect to settings path with flash success message
 
@@ -59,19 +62,28 @@ end
 - Settings page: add a "管理" link next to the household switcher area (only visible to owners)
 - Links to `settings/households/:id`
 
-## Cascade Delete
+## Cascade Delete Strategy
 
-Existing `dependent: :destroy` handles the cascade:
+The controller explicitly deletes in safe order to avoid callback conflicts:
+
+1. **Nullify `default_account_id`** — prevents `Account#clear_default_account` from updating a household mid-destroy
+2. **`delete_all` transactions** — bypasses `Transaction#after_commit` (avoids enqueuing hundreds of `BudgetEntryRecalculationJob`s) and clears the data that would trigger `Category#before_destroy` abort
+3. **`household.destroy!`** — remaining cascade via `dependent: :destroy` works cleanly:
 
 ```
 Household
 ├── household_memberships (all member associations)
-├── accounts → transactions
+├── accounts (transactions already deleted)
 ├── category_groups → categories → budget_entries
 └── quick_entry_mappings
 ```
 
-**Important:** Category model has a `before_destroy` callback that prevents deletion when transactions exist. Need to verify this doesn't block cascade deletion from Household level. If it does, adjust the destroy order or bypass the validation during household-level cascade.
+## Other Members Handling
+
+When a household is deleted, other members lose access. Two scenarios:
+
+1. **Member has other households:** `ApplicationController#set_current_household` already falls back to `households.first` when `current_household_id` is invalid — no extra work needed.
+2. **Member loses their last household:** The `User#before_create` callback only fires on creation. For existing users who lose their last household, the controller must create a new default household for each affected member before destroying the target household.
 
 ## Permission Rules
 
@@ -83,7 +95,7 @@ Household
 
 ### Model Tests (`spec/models/household_spec.rb`)
 - Cascade delete: destroying household deletes accounts, transactions, category_groups, categories, budget_entries, memberships
-- Verify Category `before_destroy` callback doesn't block cascade
+- Cascade works even when categories have transactions (the main edge case)
 
 ### Request Tests (`spec/requests/settings/households_spec.rb`)
 - Owner can delete household (success path)
@@ -91,6 +103,7 @@ Household
 - Last household cannot be deleted (redirect with error)
 - Name mismatch rejects deletion (redirect with error)
 - After deletion, session switches to another household
+- Other members who lose their last household get a new default household created
 
 ### System Tests (`spec/system/household_delete_spec.rb`)
 - Desktop: navigate to household detail → type name → button enables → click delete → redirected to settings
