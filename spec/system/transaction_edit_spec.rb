@@ -12,7 +12,8 @@ RSpec.describe "交易編輯", type: :system do
 
   it "修改金額後顯示成功通知" do
     visit account_path(account)
-    within("#transaction-#{txn.id}") { click_link "編輯" }
+    edit_link = within("#transaction-#{txn.id}") { find("a", text: "編輯", visible: false) }
+    visit edit_link[:href]
     fill_in "金額", with: "-800"
     click_button "更新"
     expect(page).to have_text("交易已更新")
@@ -20,7 +21,8 @@ RSpec.describe "交易編輯", type: :system do
 
   it "修改類別後顯示成功通知" do
     visit account_path(account)
-    within("#transaction-#{txn.id}") { click_link "編輯" }
+    edit_link = within("#transaction-#{txn.id}") { find("a", text: "編輯", visible: false) }
+    visit edit_link[:href]
     select "交通", from: "類別"
     click_button "更新"
     expect(page).to have_text("交易已更新")
@@ -28,7 +30,8 @@ RSpec.describe "交易編輯", type: :system do
 
   it "金額留空時顯示驗證錯誤" do
     visit account_path(account)
-    within("#transaction-#{txn.id}") { click_link "編輯" }
+    edit_link = within("#transaction-#{txn.id}") { find("a", text: "編輯", visible: false) }
+    visit edit_link[:href]
     fill_in "金額", with: ""
     click_button "更新"
     expect(page).to have_text("編輯交易")
