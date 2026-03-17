@@ -14,8 +14,7 @@ RSpec.describe "Accounts", type: :system do
     fill_in "帳戶名稱", with: "玉山銀行"
     select "預算帳戶", from: "帳戶類型"
     field = find_field("起始餘額")
-    field.native.clear
-    field.send_keys("10000")
+    page.execute_script("arguments[0].value = '10000'; arguments[0].dispatchEvent(new Event('input'))", field.native)
     click_button "建立帳戶"
 
     expect(page).to have_text("帳戶已建立")
