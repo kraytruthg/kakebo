@@ -51,8 +51,7 @@ RSpec.describe "Household deletion", type: :system do
     context "with only one household" do
       it "shows cannot-delete message" do
         sign_in user
-        visit settings_root_path
-        click_link "管理帳本"
+        visit settings_household_path(user.households.first)
 
         expect(page).to have_text("唯一的帳本，無法刪除")
         expect(page).not_to have_button("永久刪除此帳本")
@@ -90,8 +89,7 @@ RSpec.describe "Household deletion", type: :system do
         sign_in user
         page.driver.browser.manage.window.resize_to(375, 812)
 
-        visit settings_root_path
-        click_link "管理帳本"
+        visit settings_household_path(user.households.first)
 
         expect(page).to have_text("唯一的帳本，無法刪除")
       end

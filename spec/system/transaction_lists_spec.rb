@@ -63,7 +63,7 @@ RSpec.describe "Transaction Lists", type: :system do
 
     it "清除篩選" do
       visit transaction_lists_path(account_id: account1.id)
-      click_link "清除"
+      first(:link, "清除").click
       expect(page).to have_text("午餐")
       expect(page).to have_text("電車")
     end
