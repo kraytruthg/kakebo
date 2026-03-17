@@ -1,6 +1,26 @@
 <div class="px-4 py-4 lg:max-w-4xl lg:mx-auto lg:px-6 lg:py-8">
-  <h1 class="text-xl font-bold text-slate-900 mb-6">交易紀錄</h1>
-  <% @transactions.each do |t| %>
-    <div><%= t.memo %> <%= format_amount(t.amount) %></div>
+  <div class="mb-6">
+    <h1 class="text-xl lg:text-2xl font-bold text-slate-900">交易紀錄</h1>
+    <span class="text-xs text-slate-400">共 <%= @total_count %> 筆</span>
+  </div>
+
+  <%= render "shared/transaction_filters",
+        filter_url: transaction_lists_path,
+        accounts: @accounts,
+        categories: @categories,
+        show_account_filter: true %>
+
+  <%= render "shared/transaction_table",
+        transactions: @transactions,
+        show_account_column: true %>
+
+  <%= render "shared/transaction_cards",
+        transactions: @transactions,
+        show_account_name: true %>
+
+  <% if @pagy.pages > 1 %>
+    <nav class="mt-6 flex justify-center">
+      <%== @pagy.series_nav %>
+    </nav>
   <% end %>
 </div>
