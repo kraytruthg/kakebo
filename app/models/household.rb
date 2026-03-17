@@ -2,6 +2,7 @@ class Household < ApplicationRecord
   has_many :household_memberships, dependent: :destroy
   has_many :users, through: :household_memberships
   has_many :accounts, dependent: :destroy
+  has_many :transactions, through: :accounts
   has_many :category_groups, dependent: :destroy
   has_many :quick_entry_mappings, dependent: :destroy
   belongs_to :default_account, class_name: "Account", optional: true

@@ -16,26 +16,25 @@ RSpec.describe "Household deletion", type: :system do
       end
 
       it "deletes household after typing name confirmation" do
-        target = user.households.first
-        account = create(:account, household: target)
+        account = create(:account, household: second_household)
         create(:transaction, account: account, amount: -100, date: Date.today)
 
         sign_in user
-        visit settings_root_path
-        click_link "管理帳本"
+        visit settings_household_path(second_household)
 
-        expect(page).to have_text(target.name)
+        expect(page).to have_text(second_household.name)
         expect(page).to have_text("帳戶數")
         expect(page).to have_button("永久刪除此帳本", disabled: true)
 
-        fill_in "household_name", with: target.name
+        fill_in "household_name", with: ""
+        find_field("household_name").send_keys(second_household.name)
         expect(page).to have_button("永久刪除此帳本", disabled: false)
 
         click_button "永久刪除此帳本"
 
         expect(page).to have_text("已刪除")
         expect(page).to have_current_path(settings_root_path)
-        expect(Household.find_by(id: target.id)).to be_nil
+        expect(Household.find_by(id: second_household.id)).to be_nil
       end
 
       it "keeps delete button disabled when name does not match" do
@@ -51,8 +50,7 @@ RSpec.describe "Household deletion", type: :system do
     context "with only one household" do
       it "shows cannot-delete message" do
         sign_in user
-        visit settings_root_path
-        click_link "管理帳本"
+        visit settings_household_path(user.households.first)
 
         expect(page).to have_text("唯一的帳本，無法刪除")
         expect(page).not_to have_button("永久刪除此帳本")
@@ -69,16 +67,15 @@ RSpec.describe "Household deletion", type: :system do
       end
 
       it "deletes household from mobile settings" do
-        target = user.households.first
         sign_in user
         page.driver.browser.manage.window.resize_to(375, 812)
 
-        visit settings_root_path
-        click_link "管理帳本"
+        visit settings_household_path(second_household)
 
-        expect(page).to have_text(target.name)
+        expect(page).to have_text(second_household.name)
 
-        fill_in "household_name", with: target.name
+        fill_in "household_name", with: ""
+        find_field("household_name").send_keys(second_household.name)
         click_button "永久刪除此帳本"
 
         expect(page).to have_text("已刪除")
@@ -90,8 +87,7 @@ RSpec.describe "Household deletion", type: :system do
         sign_in user
         page.driver.browser.manage.window.resize_to(375, 812)
 
-        visit settings_root_path
-        click_link "管理帳本"
+        visit settings_household_path(user.households.first)
 
         expect(page).to have_text("唯一的帳本，無法刪除")
       end

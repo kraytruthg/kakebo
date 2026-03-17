@@ -1,0 +1,57 @@
+<%# locals: (filter_url:, accounts:, grouped_category_options:, show_account_filter: true) %>
+<%= form_with url: filter_url, method: :get, data: { turbo: false } do |f| %>
+  <%# Desktop filters %>
+  <div class="hidden lg:flex flex-wrap gap-3 mb-5 items-center">
+    <% if show_account_filter %>
+      <%= f.select :account_id,
+            options_from_collection_for_select(accounts, :id, :name, params[:account_id]&.to_i),
+            { include_blank: "所有帳戶" },
+            class: "rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+    <% end %>
+    <%= f.select :category_id,
+          grouped_options_for_select(grouped_category_options, params[:category_id]),
+          { include_blank: "所有類別" },
+          class: "rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+    <%= f.date_field :date_from, value: params[:date_from],
+          class: "rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500",
+          placeholder: "開始日期" %>
+    <span class="text-slate-400 text-sm">~</span>
+    <%= f.date_field :date_to, value: params[:date_to],
+          class: "rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500",
+          placeholder: "結束日期" %>
+    <div class="flex-1 min-w-[180px]">
+      <%= f.search_field :query, value: params[:query],
+            placeholder: "搜尋備註...",
+            class: "w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+    </div>
+    <%= f.submit "篩選", class: "bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-1.5 rounded-lg cursor-pointer transition-colors" %>
+    <% if any_transaction_filters? %>
+      <%= link_to "清除", filter_url, class: "text-sm text-slate-400 hover:text-slate-600" %>
+    <% end %>
+  </div>
+
+  <%# Mobile filters %>
+  <div class="lg:hidden flex flex-wrap gap-2 mb-4 px-0">
+    <% if show_account_filter %>
+      <%= f.select :account_id,
+            options_from_collection_for_select(accounts, :id, :name, params[:account_id]&.to_i),
+            { include_blank: "所有帳戶" },
+            class: "rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-600" %>
+    <% end %>
+    <%= f.select :category_id,
+          grouped_options_for_select(grouped_category_options, params[:category_id]),
+          { include_blank: "所有類別" },
+          class: "rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-600" %>
+    <%= f.date_field :date_from, value: params[:date_from],
+          class: "rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-600 w-[130px]" %>
+    <%= f.date_field :date_to, value: params[:date_to],
+          class: "rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-600 w-[130px]" %>
+    <%= f.search_field :query, value: params[:query],
+          placeholder: "搜尋備註...",
+          class: "flex-1 min-w-[120px] rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-600" %>
+    <%= f.submit "篩選", class: "bg-indigo-600 text-white text-xs font-medium px-3 py-1.5 rounded-full cursor-pointer" %>
+    <% if any_transaction_filters? %>
+      <%= link_to "清除", filter_url, class: "text-xs text-slate-400 hover:text-slate-600 py-1.5" %>
+    <% end %>
+  </div>
+<% end %>

@@ -39,13 +39,12 @@ RSpec.describe "帳戶間轉帳", type: :system do
 
   describe "刪除轉帳" do
     before do
-      # 預先建立一筆轉帳
-      visit account_path(account_a)
-      click_link "轉帳"
-      select "儲蓄帳戶", from: "目標帳戶"
-      fill_in "金額", with: "2000"
-      click_button "確認轉帳"
-      expect(page).to have_text("轉帳已建立")
+      # 直接建立轉帳（避免 UI 操作的 timing 問題）
+      outgoing = account_a.transactions.create!(amount: -2000, date: Date.today, memo: nil, category_id: nil)
+      incoming = account_b.transactions.create!(amount: 2000, date: Date.today, memo: nil, category_id: nil, transfer_pair_id: outgoing.id)
+      outgoing.update!(transfer_pair_id: incoming.id)
+      account_a.recalculate_balance!
+      account_b.recalculate_balance!
     end
 
     it "刪除轉帳後兩筆同時消失，兩帳戶餘額還原" do

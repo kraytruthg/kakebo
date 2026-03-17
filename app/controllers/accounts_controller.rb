@@ -1,4 +1,6 @@
 class AccountsController < ApplicationController
+  include TransactionFilterable
+
   before_action :set_account, only: [ :show, :edit, :update, :destroy ]
 
   def index
@@ -8,7 +10,14 @@ class AccountsController < ApplicationController
 
   def show
     @transaction_count = @account.transactions.count
-    @transactions = @account.transactions.includes(:category, transfer_pair: :account).recent.limit(50)
+    scope = @account.transactions
+              .includes(:category, transfer_pair: :account)
+              .recent
+
+    scope = apply_transaction_filters(scope)
+
+    @pagy, @transactions = pagy(scope)
+    load_category_filter_options
     @new_transaction = Transaction.new(account: @account, date: Date.today)
   end
 
