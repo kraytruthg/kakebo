@@ -10,7 +10,7 @@ class TransactionListsController < ApplicationController
 
     @pagy, @transactions = pagy(scope)
     @accounts = Current.household.accounts.active.order(:name)
-    @categories = Current.household.category_groups.includes(:categories).order(:position)
+    load_category_filter_options
     @total_count = Current.household.transactions.count
   end
 end

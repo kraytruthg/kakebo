@@ -48,7 +48,7 @@
   <%= render "shared/transaction_filters",
         filter_url: account_path(@account),
         accounts: [],
-        categories: @categories,
+        grouped_category_options: @grouped_category_options,
         show_account_filter: false %>
 
   <%= render "shared/transaction_table",

@@ -13,13 +13,13 @@
         <th class="px-5 py-3"></th>
       </tr>
     </thead>
-    <tbody<%= " id=\"#{tbody_id}\"".html_safe if tbody_id.present? %>>
+    <%= tag.tbody(id: tbody_id.presence) do %>
       <% if transactions.empty? %>
-        <tr<%= " id=\"#{empty_row_id}\"".html_safe if empty_row_id.present? %>>
+        <%= tag.tr(id: empty_row_id.presence) do %>
           <td colspan="<%= show_account_column ? 6 : 5 %>" class="text-center py-16 text-slate-400">
             <p class="text-sm"><%= empty_message || "沒有符合條件的交易紀錄" %></p>
           </td>
-        </tr>
+        <% end %>
       <% else %>
         <% transactions.each do |t| %>
           <tr class="border-t border-slate-50 hover:bg-slate-50 group transition-colors <%= 'bg-purple-50/50' if t.transfer? %>"
@@ -27,14 +27,7 @@
             <td class="px-5 py-3 text-sm text-slate-500"><%= t.date.strftime("%Y/%m/%d") %></td>
             <td class="px-5 py-3 text-sm text-slate-800"><%= t.memo.presence || "─" %></td>
             <td class="px-5 py-3 text-sm text-slate-400">
-              <% if t.transfer? %>
-                <% partner_name = t.transfer_pair.account.name %>
-                <span class="text-purple-600"><%= t.amount < 0 ? "轉出 → #{partner_name}" : "轉入 ← #{partner_name}" %></span>
-              <% elsif t.income? %>
-                <span class="italic">收入</span>
-              <% else %>
-                <%= t.category&.name %>
-              <% end %>
+              <%= transaction_category_label(t) %>
             </td>
             <% if show_account_column %>
               <td class="px-5 py-3 text-sm text-slate-400"><%= t.account.name %></td>
@@ -70,6 +63,6 @@
           </tr>
         <% end %>
       <% end %>
-    </tbody>
+    <% end %>
   </table>
 </div>

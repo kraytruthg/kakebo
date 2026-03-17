@@ -3,6 +3,13 @@ module TransactionFilterable
 
   private
 
+  def load_category_filter_options
+    @categories = Current.household.category_groups.includes(:categories).order(:position)
+    @grouped_category_options = @categories.map { |g|
+      [ g.name, g.categories.map { |c| [ c.name, c.id.to_s ] } ]
+    } + [ [ "", [ [ "收入", "income" ] ] ] ]
+  end
+
   def apply_transaction_filters(scope)
     scope = scope.where(account_id: params[:account_id]) if params[:account_id].present?
 

@@ -7,7 +7,7 @@
   <%= render "shared/transaction_filters",
         filter_url: transaction_lists_path,
         accounts: @accounts,
-        categories: @categories,
+        grouped_category_options: @grouped_category_options,
         show_account_filter: true %>
 
   <%= render "shared/transaction_table",

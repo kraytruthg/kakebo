@@ -17,7 +17,7 @@ class AccountsController < ApplicationController
     scope = apply_transaction_filters(scope)
 
     @pagy, @transactions = pagy(scope)
-    @categories = Current.household.category_groups.includes(:categories).order(:position)
+    load_category_filter_options
     @new_transaction = Transaction.new(account: @account, date: Date.today)
   end
 
