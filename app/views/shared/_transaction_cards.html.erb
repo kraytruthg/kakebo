@@ -1,0 +1,35 @@
+<%# locals: (transactions:, show_account_name: true, empty_message: "沒有符合條件的交易紀錄") %>
+<div class="lg:hidden space-y-2">
+  <% if transactions.empty? %>
+    <div class="bg-white rounded-xl border border-slate-100 py-12 text-center text-slate-400">
+      <p class="text-sm"><%= empty_message %></p>
+    </div>
+  <% else %>
+    <% transactions.each do |t| %>
+      <div class="<%= t.transfer? ? 'bg-purple-50/50 border-purple-100' : 'bg-white border-slate-100' %> rounded-xl border px-4 py-3"
+           id="transaction-mobile-<%= t.id %>">
+        <div class="flex items-start justify-between">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-400"><%= t.date.strftime("%m/%d") %></span>
+              <span class="text-sm text-slate-800 truncate"><%= t.memo.presence || "─" %></span>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">
+              <% if t.transfer? %>
+                <% partner_name = t.transfer_pair.account.name %>
+                <span class="text-purple-600"><%= t.amount < 0 ? "轉出 → #{partner_name}" : "轉入 ← #{partner_name}" %></span>
+              <% elsif t.income? %>
+                <span class="italic">收入</span><%= " · #{t.account.name}" if show_account_name %>
+              <% else %>
+                <%= t.category&.name %><%= " · #{t.account.name}" if show_account_name %>
+              <% end %>
+            </p>
+          </div>
+          <span class="text-sm font-semibold ml-3 <%= t.amount < 0 ? 'text-red-500' : 'text-emerald-600' %>">
+            <%= format_amount(t.amount) %>
+          </span>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>
