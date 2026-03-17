@@ -1,0 +1,6 @@
+<div class="px-4 py-4 lg:max-w-4xl lg:mx-auto lg:px-6 lg:py-8">
+  <h1 class="text-xl font-bold text-slate-900 mb-6">交易紀錄</h1>
+  <% @transactions.each do |t| %>
+    <div><%= t.memo %> <%= format_amount(t.amount) %></div>
+  <% end %>
+</div>

@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   resources :accounts, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
     resources :transactions, only: [ :create, :destroy, :edit, :update ]
   end
+  resources :transaction_lists, only: [ :index ], path: "transactions"
   resources :transfers, only: [ :new, :create, :destroy ]
   resource :quick_entry, only: [ :new, :create ], controller: "quick_entry"
   get "budget/:year/:month/categories/:category_id/transactions",
