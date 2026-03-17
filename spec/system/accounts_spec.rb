@@ -13,7 +13,9 @@ RSpec.describe "Accounts", type: :system do
     expect(page).to have_field("帳戶名稱")
     fill_in "帳戶名稱", with: "玉山銀行"
     select "預算帳戶", from: "帳戶類型"
-    fill_in "起始餘額", with: "10000"
+    field = find_field("起始餘額")
+    field.native.clear
+    field.send_keys("10000")
     click_button "建立帳戶"
 
     expect(page).to have_text("帳戶已建立")
@@ -29,8 +31,9 @@ RSpec.describe "Accounts", type: :system do
       visit account_path(account)
       expect(page).to have_text("測試帳戶")
 
-      page.execute_script("window.confirm = function() { return true; }")
-      click_button "刪除"
+      accept_confirm do
+        click_button "刪除"
+      end
 
       expect(page).to have_text("帳戶已刪除")
       expect(page).not_to have_text("測試帳戶")
@@ -42,8 +45,9 @@ RSpec.describe "Accounts", type: :system do
       it "clears default_account after deletion" do
         visit account_path(account)
 
-        page.execute_script("window.confirm = function() { return true; }")
-        click_button "刪除"
+        accept_confirm do
+          click_button "刪除"
+        end
 
         expect(page).to have_text("帳戶已刪除")
         expect(household.reload.default_account_id).to be_nil
