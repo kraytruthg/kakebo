@@ -1,8 +1,8 @@
-<%# locals: (transactions:, show_account_name: true, empty_message: "沒有符合條件的交易紀錄") %>
+<%# locals: (transactions:, show_account_name: true, empty_message: nil) %>
 <div class="lg:hidden space-y-2">
   <% if transactions.empty? %>
     <div class="bg-white rounded-xl border border-slate-100 py-12 text-center text-slate-400">
-      <p class="text-sm"><%= empty_message %></p>
+      <p class="text-sm"><%= empty_message || "沒有符合條件的交易紀錄" %></p>
     </div>
   <% else %>
     <% transactions.each do |t| %>

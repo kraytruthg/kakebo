@@ -1,4 +1,4 @@
-<%# locals: (transactions:, show_account_column: true, tbody_id: nil, empty_row_id: nil, empty_message: "沒有符合條件的交易紀錄") %>
+<%# locals: (transactions:, show_account_column: true, tbody_id: "", empty_row_id: "", empty_message: nil) %>
 <div class="hidden lg:block bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
   <table class="w-full">
     <thead>
@@ -17,7 +17,7 @@
       <% if transactions.empty? %>
         <tr id="<%= empty_row_id %>">
           <td colspan="<%= show_account_column ? 6 : 5 %>" class="text-center py-16 text-slate-400">
-            <p class="text-sm"><%= empty_message %></p>
+            <p class="text-sm"><%= empty_message || "沒有符合條件的交易紀錄" %></p>
           </td>
         </tr>
       <% else %>
