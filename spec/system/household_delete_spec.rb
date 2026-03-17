@@ -28,7 +28,8 @@ RSpec.describe "Household deletion", type: :system do
         expect(page).to have_text("帳戶數")
         expect(page).to have_button("永久刪除此帳本", disabled: true)
 
-        fill_in "household_name", with: target.name
+        fill_in "household_name", with: ""
+        find_field("household_name").send_keys(target.name)
         expect(page).to have_button("永久刪除此帳本", disabled: false)
 
         click_button "永久刪除此帳本"
@@ -77,7 +78,8 @@ RSpec.describe "Household deletion", type: :system do
 
         expect(page).to have_text(target.name)
 
-        fill_in "household_name", with: target.name
+        fill_in "household_name", with: ""
+        find_field("household_name").send_keys(target.name)
         click_button "永久刪除此帳本"
 
         expect(page).to have_text("已刪除")
