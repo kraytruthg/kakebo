@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_12_065419) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_18_125047) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -20,7 +20,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_12_065419) do
     t.decimal "balance", precision: 12, scale: 2, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.bigint "household_id", null: false
+    t.datetime "last_reconciled_at"
     t.string "name", null: false
+    t.decimal "reconciled_balance", precision: 12, scale: 2, default: "0.0", null: false
     t.decimal "starting_balance", precision: 12, scale: 2, default: "0.0", null: false
     t.datetime "updated_at", null: false
     t.index ["household_id"], name: "index_accounts_on_household_id"
@@ -104,11 +106,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_12_065419) do
     t.datetime "created_at", null: false
     t.date "date", null: false
     t.string "memo"
+    t.string "status", default: "uncleared", null: false
     t.integer "transfer_pair_id"
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_transactions_on_account_id"
     t.index ["category_id"], name: "index_transactions_on_category_id"
     t.index ["date"], name: "index_transactions_on_date"
+    t.index ["status"], name: "index_transactions_on_status"
     t.index ["transfer_pair_id"], name: "index_transactions_on_transfer_pair_id"
   end
 
