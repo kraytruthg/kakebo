@@ -1,0 +1,79 @@
+<div class="px-4 py-4 lg:max-w-4xl lg:mx-auto lg:px-6 lg:py-8"
+     data-controller="reconciliation"
+     data-reconciliation-reconciled-balance-value="<%= @reconciled_balance %>">
+
+  <%# Back link %>
+  <%= link_to account_path(@account), class: "inline-flex items-center gap-1 text-sm text-slate-400 hover:text-slate-700 mb-4" do %>
+    <%= icon "chevron-left", classes: "w-4 h-4" %>
+    <%= @account.name %>
+  <% end %>
+
+  <h1 class="text-xl font-bold text-slate-900 mb-6">對帳 — <%= @account.name %></h1>
+
+  <%# Bank balance input %>
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 mb-6">
+    <label class="block text-sm font-medium text-slate-700 mb-1.5">銀行實際餘額</label>
+    <input type="number" step="0.01"
+           class="block w-full rounded-lg border-slate-300 text-lg font-semibold focus:ring-indigo-500 focus:border-indigo-500"
+           data-reconciliation-target="bankBalance"
+           data-action="input->reconciliation#calculate"
+           placeholder="輸入銀行 app 上的餘額">
+  </div>
+
+  <%# Difference display %>
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 mb-6">
+    <div class="grid grid-cols-3 gap-4 text-center">
+      <div>
+        <p class="text-xs text-slate-400 mb-1">銀行餘額</p>
+        <p class="text-lg font-bold text-slate-900" data-reconciliation-target="bankBalanceDisplay">—</p>
+      </div>
+      <div>
+        <p class="text-xs text-slate-400 mb-1">已確認餘額</p>
+        <p class="text-lg font-bold text-slate-900" data-reconciliation-target="confirmedBalance">
+          <%= format_amount(@reconciled_balance + @cleared_sum) %>
+        </p>
+      </div>
+      <div>
+        <p class="text-xs text-slate-400 mb-1">差額</p>
+        <p class="text-lg font-bold" data-reconciliation-target="difference">—</p>
+      </div>
+    </div>
+  </div>
+
+  <%# Action buttons %>
+  <div class="flex gap-3 mb-6">
+    <%= form_with url: account_reconciliation_path(@account), method: :post, class: "flex-1" do |f| %>
+      <input type="hidden" name="bank_balance" data-reconciliation-target="bankBalanceInput">
+      <button type="submit"
+              class="w-full bg-emerald-600 text-white text-sm font-medium rounded-lg px-4 py-2.5 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              data-reconciliation-target="completeButton"
+              disabled>
+        完成對帳
+      </button>
+    <% end %>
+    <%= button_to account_reconciliation_path(@account),
+          method: :post,
+          params: { cancel: true },
+          class: "text-sm text-slate-500 hover:text-slate-700 border border-slate-200 rounded-lg px-4 py-2.5 transition-colors",
+          data: { turbo_confirm: "確定取消？已勾選的項目將會重設。" } do %>
+      取消對帳
+    <% end %>
+  </div>
+
+  <%# Transaction list %>
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <div class="px-5 py-3 border-b border-slate-100">
+      <h2 class="text-sm font-semibold text-slate-700">待確認交易（<%= @transactions.size %> 筆）</h2>
+    </div>
+
+    <div id="reconciliation-transactions">
+      <% if @transactions.empty? %>
+        <div class="px-5 py-12 text-center text-slate-400 text-sm">沒有待對帳的交易</div>
+      <% else %>
+        <% @transactions.each do |t| %>
+          <%= render "reconciliations/transaction_row", transaction: t, account: @account %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

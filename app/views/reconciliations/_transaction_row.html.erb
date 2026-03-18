@@ -1,0 +1,29 @@
+<%# locals: (transaction:, account:) %>
+<div class="flex items-center gap-3 px-5 py-3 border-b border-slate-50 hover:bg-slate-50 transition-colors"
+     id="reconciliation-row-<%= transaction.id %>"
+     data-cleared="<%= transaction.cleared? %>"
+     data-amount="<%= transaction.amount %>">
+  <%= button_to toggle_clear_account_transaction_path(account, transaction),
+        method: :patch,
+        data: { turbo_stream: true },
+        class: "shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors #{transaction.cleared? ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 hover:border-indigo-400'}",
+        aria: { label: transaction.cleared? ? "取消確認" : "確認交易" } do %>
+    <% if transaction.cleared? %>
+      <%= icon "check", classes: "w-3.5 h-3.5" %>
+    <% end %>
+  <% end %>
+
+  <div class="flex-1 min-w-0">
+    <div class="flex items-center gap-2">
+      <span class="text-xs text-slate-400"><%= transaction.date.strftime("%m/%d") %></span>
+      <span class="text-sm text-slate-800 truncate"><%= transaction.memo.presence || "─" %></span>
+    </div>
+    <p class="text-xs text-slate-400 mt-0.5">
+      <%= transaction_category_label(transaction) %>
+    </p>
+  </div>
+
+  <span class="text-sm font-semibold ml-3 <%= transaction.amount < 0 ? 'text-red-500' : 'text-emerald-600' %>">
+    <%= format_amount(transaction.amount) %>
+  </span>
+</div>

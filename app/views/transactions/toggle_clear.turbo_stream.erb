@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "reconciliation-row-#{@transaction.id}" do %>
+  <%= render "reconciliations/transaction_row", transaction: @transaction, account: @account %>
+<% end %>

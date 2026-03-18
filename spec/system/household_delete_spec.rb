@@ -78,6 +78,7 @@ RSpec.describe "Household deletion", type: :system do
         field = find_field("household_name")
         field.fill_in with: second_household.name
         execute_script("arguments[0].dispatchEvent(new Event('input', { bubbles: true }))", field)
+        expect(page).to have_button("永久刪除此帳本", disabled: false)
         click_button "永久刪除此帳本"
 
         expect(page).to have_text("已刪除")
