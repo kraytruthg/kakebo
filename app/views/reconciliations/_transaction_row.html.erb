@@ -19,15 +19,7 @@
       <span class="text-sm text-slate-800 truncate"><%= transaction.memo.presence || "─" %></span>
     </div>
     <p class="text-xs text-slate-400 mt-0.5">
-      <% if transaction.transfer? %>
-        <% if transaction.amount < 0 %>
-          轉出 → <%= transaction.transfer_pair.account.name %>
-        <% else %>
-          轉入 ← <%= transaction.transfer_pair.account.name %>
-        <% end %>
-      <% else %>
-        <%= transaction.category&.name || "收入" %>
-      <% end %>
+      <%= transaction_category_label(transaction) %>
     </p>
   </div>
 

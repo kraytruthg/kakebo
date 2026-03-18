@@ -6,8 +6,9 @@ class ReconciliationsController < ApplicationController
                             .where(status: [ :uncleared, :cleared ])
                             .includes(:category, transfer_pair: :account)
                             .order(date: :desc, created_at: :desc)
+                            .load
     @reconciled_balance = @account.reconciled_balance
-    @cleared_sum = @account.transactions.cleared.sum(:amount)
+    @cleared_sum = @transactions.select(&:cleared?).sum(&:amount)
   end
 
   def create
@@ -29,6 +30,7 @@ class ReconciliationsController < ApplicationController
     end
 
     ActiveRecord::Base.transaction do
+      # update_all intentionally bypasses model callbacks (prevent_reconciled_modification)
       @account.transactions.cleared.update_all(status: :reconciled)
       @account.update!(
         reconciled_balance: bank_balance,

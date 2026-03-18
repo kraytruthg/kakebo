@@ -39,6 +39,8 @@ class TransactionsController < ApplicationController
   end
 
   def toggle_clear
+    return head(:unprocessable_entity) if @transaction.reconciled?
+
     new_status = @transaction.uncleared? ? :cleared : :uncleared
     @transaction.update!(status: new_status)
 

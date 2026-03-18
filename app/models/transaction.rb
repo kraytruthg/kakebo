@@ -50,15 +50,8 @@ class Transaction < ApplicationRecord
   def prevent_reconciled_modification
     return unless status_was == "reconciled"
 
-    if !status_changed?
-      errors.add(:base, "已對帳的交易無法修改")
-      throw :abort
-    end
-
-    if status_changed? && status != "reconciled"
-      errors.add(:base, "已對帳的交易無法修改")
-      throw :abort
-    end
+    errors.add(:base, "已對帳的交易無法修改")
+    throw :abort
   end
 
   def prevent_reconciled_destruction

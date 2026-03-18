@@ -11,16 +11,7 @@
   <td class="px-5 py-3 text-sm text-slate-500"><%= transaction.date.strftime("%m/%d") %></td>
   <td class="px-5 py-3 text-sm text-slate-800"><%= transaction.memo.presence || "─" %></td>
   <td class="px-5 py-3 text-sm text-slate-400">
-    <% if transaction.transfer? %>
-      <% partner_name = transaction.transfer_pair.account.name %>
-      <% if transaction.amount < 0 %>
-        轉出 → <%= partner_name %>
-      <% else %>
-        轉入 ← <%= partner_name %>
-      <% end %>
-    <% else %>
-      <%= transaction.category&.name || "收入" %>
-    <% end %>
+    <%= transaction_category_label(transaction) %>
   </td>
   <td class="px-5 py-3 text-right text-sm font-medium <%= transaction.amount < 0 ? 'text-red-500' : 'text-emerald-600' %>">
     <%= format_amount(transaction.amount) %>

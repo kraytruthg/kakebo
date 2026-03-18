@@ -15,7 +15,7 @@ export default class extends Controller {
     this.calculate()
     this.observer = new MutationObserver(() => this.calculate())
     this.observer.observe(this.element.querySelector("#reconciliation-transactions"), {
-      childList: true, subtree: true, attributes: true
+      childList: true, subtree: true
     })
   }
 
