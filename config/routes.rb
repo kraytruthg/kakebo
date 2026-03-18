@@ -9,7 +9,12 @@ Rails.application.routes.draw do
   resources :budget_entries, only: [ :create ]
   get "budget_entries/edit", to: "budget_entries#edit", as: :edit_budget_entries
   resources :accounts, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
-    resources :transactions, only: [ :create, :destroy, :edit, :update ]
+    resource :reconciliation, only: [ :new, :create ]
+    resources :transactions, only: [ :create, :destroy, :edit, :update ] do
+      member do
+        patch :toggle_clear
+      end
+    end
   end
   resources :transaction_lists, only: [ :index ], path: "transactions"
   resources :transfers, only: [ :new, :create, :destroy ]
