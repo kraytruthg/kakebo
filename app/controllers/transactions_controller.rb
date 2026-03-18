@@ -1,6 +1,6 @@
 class TransactionsController < ApplicationController
   before_action :set_account
-  before_action :set_transaction, only: [ :edit, :update, :destroy ]
+  before_action :set_transaction, only: [ :edit, :update, :destroy, :toggle_clear ]
   before_action :set_categories, only: [ :edit, :update ]
 
   def create
@@ -36,6 +36,16 @@ class TransactionsController < ApplicationController
     @transaction.destroy
     @account.recalculate_balance!
     redirect_back_or_to account_path(@account), notice: "交易已刪除"
+  end
+
+  def toggle_clear
+    new_status = @transaction.uncleared? ? :cleared : :uncleared
+    @transaction.update!(status: new_status)
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to new_account_reconciliation_path(@account) }
+    end
   end
 
   private
