@@ -52,6 +52,9 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resource :quick_entry, only: [ :create ], controller: "quick_entries"
+      resources :households, only: [] do
+        resource :quick_entry, only: [ :create ], controller: "quick_entries"
+      end
     end
   end
 

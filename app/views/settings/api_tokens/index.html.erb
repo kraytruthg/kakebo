@@ -65,15 +65,30 @@
 
             <div>
               <label class="block text-xs font-medium text-slate-500 mb-1">API URL</label>
-              <div class="flex items-center gap-2">
-                <input type="text" readonly value="<%= api_v1_quick_entry_url %>"
-                       class="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 font-mono"
-                       id="url-<%= token.id %>">
-                <button type="button" onclick="copyToClipboard('url-<%= token.id %>')"
-                        class="shrink-0 text-xs text-indigo-600 hover:text-indigo-800 font-medium px-2 py-2 rounded transition-colors">
-                  複製
-                </button>
-              </div>
+              <% if @households.size > 1 %>
+                <% @households.each do |household| %>
+                  <div class="flex items-center gap-2 mb-2">
+                    <input type="text" readonly value="<%= api_v1_household_quick_entry_url(household_id: household.id) %>"
+                           class="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 font-mono"
+                           id="url-<%= token.id %>-<%= household.id %>">
+                    <button type="button" onclick="copyToClipboard('url-<%= token.id %>-<%= household.id %>')"
+                            class="shrink-0 text-xs text-indigo-600 hover:text-indigo-800 font-medium px-2 py-2 rounded transition-colors">
+                      複製
+                    </button>
+                  </div>
+                  <p class="text-xs text-slate-400 mb-2"><%= household.name %></p>
+                <% end %>
+              <% else %>
+                <div class="flex items-center gap-2">
+                  <input type="text" readonly value="<%= api_v1_quick_entry_url %>"
+                         class="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 font-mono"
+                         id="url-<%= token.id %>">
+                  <button type="button" onclick="copyToClipboard('url-<%= token.id %>')"
+                          class="shrink-0 text-xs text-indigo-600 hover:text-indigo-800 font-medium px-2 py-2 rounded transition-colors">
+                    複製
+                  </button>
+                </div>
+              <% end %>
             </div>
           </div>
         <% end %>

@@ -1,9 +1,11 @@
 class Api::V1::QuickEntriesController < Api::V1::BaseController
+  before_action :set_household
+
   def create
     parsed = QuickEntryParser.parse(extract_text)
     return render_error("無法解析，請用「描述 金額」格式") unless parsed
 
-    resolved = QuickEntryResolver.resolve(parsed, Current.household)
+    resolved = QuickEntryResolver.resolve(parsed, @household)
     account = resolved[:account] || default_account
     return render_error("找不到帳戶，請先在 App 建立帳戶") unless account
 
@@ -21,10 +23,19 @@ class Api::V1::QuickEntriesController < Api::V1::BaseController
       params.except(:controller, :action, :format).values.detect { |v| v.is_a?(String) && v.present? }.to_s
   end
 
+  def set_household
+    @household = if params[:household_id].present?
+      Current.user.households.find(params[:household_id])
+    else
+      Current.household
+    end
+    Current.household = @household
+  end
+
   def default_account
-    Current.household.default_account ||
-      Current.household.accounts.budget.active.first ||
-      Current.household.accounts.active.first
+    @household.default_account ||
+      @household.accounts.budget.active.first ||
+      @household.accounts.active.first
   end
 
   def create_transaction(account, resolved)
@@ -48,6 +59,7 @@ class Api::V1::QuickEntriesController < Api::V1::BaseController
       "quick_entry_confirm:#{token}",
       {
         user_id: Current.user.id,
+        household_id: @household.id,
         amount: parsed[:amount],
         memo: resolved[:memo],
         payer: parsed[:payer],

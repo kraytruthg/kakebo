@@ -11,6 +11,7 @@ RSpec.describe "Quick Entry Confirmations", type: :request do
   let(:cache_data) do
     {
       user_id: user.id,
+      household_id: household.id,
       amount: 350.0,
       memo: "晚餐",
       payer: nil,
@@ -59,6 +60,48 @@ RSpec.describe "Quick Entry Confirmations", type: :request do
           remember_category: "1", description_keyword: "晚餐"
         }
       expect(QuickEntryMapping.find_by(keyword: "晚餐", target_type: "Category")).to be_present
+    end
+  end
+
+  context "with household_id in cache" do
+    let(:second_household) { create(:household, name: "公司帳本") }
+    let!(:second_membership) { create(:household_membership, user: user, household: second_household) }
+    let!(:second_account) { create(:account, household: second_household, name: "公司卡") }
+    let!(:second_category_group) { create(:category_group, household: second_household, name: "辦公") }
+    let!(:second_category) { create(:category, category_group: second_category_group, name: "文具") }
+
+    let(:household_token) { SecureRandom.hex(20) }
+    let(:household_cache_data) do
+      {
+        user_id: user.id,
+        household_id: second_household.id,
+        amount: 200.0,
+        memo: "文具",
+        payer: nil,
+        description: "文具"
+      }
+    end
+
+    before do
+      Rails.cache.write("quick_entry_confirm:#{household_token}", household_cache_data, expires_in: 30.minutes)
+    end
+
+    it "shows confirmation page with correct household accounts" do
+      get "/quick_entry/confirm/#{household_token}"
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("公司卡")
+      expect(response.body).to include("200")
+    end
+
+    it "creates transaction in the specified household" do
+      expect {
+        post "/quick_entry/confirm/#{household_token}",
+          params: { account_id: second_account.id, category_id: second_category.id, amount: 200, memo: "文具", date: Date.today }
+      }.to change(Transaction, :count).by(1)
+
+      txn = Transaction.last
+      expect(txn.account).to eq(second_account)
+      expect(txn.category).to eq(second_category)
     end
   end
 end
