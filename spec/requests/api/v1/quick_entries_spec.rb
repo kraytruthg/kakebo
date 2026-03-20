@@ -72,4 +72,62 @@ RSpec.describe "API Quick Entry", type: :request do
       end
     end
   end
+
+  describe "POST /api/v1/households/:household_id/quick_entry" do
+    let(:second_household) { create(:household, name: "公司帳本") }
+    let!(:second_membership) { create(:household_membership, user: user, household: second_household) }
+    let!(:second_account) { create(:account, household: second_household, name: "公司卡") }
+    let!(:second_category_group) { create(:category_group, household: second_household, name: "辦公") }
+    let!(:second_category) { create(:category, category_group: second_category_group, name: "文具") }
+
+    context "with valid household_id and mapping" do
+      before do
+        create(:quick_entry_mapping, household: second_household, keyword: "文具", target: second_category)
+      end
+
+      it "creates transaction in the specified household" do
+        expect {
+          post "/api/v1/households/#{second_household.id}/quick_entry",
+            params: { text: "文具 200" }, headers: headers
+        }.to change(Transaction, :count).by(1)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.parsed_body["status"]).to eq("ok")
+        txn = Transaction.last
+        expect(txn.account).to eq(second_account)
+        expect(txn.category).to eq(second_category)
+      end
+    end
+
+    context "with household user does not belong to" do
+      let(:other_household) { create(:household, name: "別人的帳本") }
+
+      it "returns 404" do
+        post "/api/v1/households/#{other_household.id}/quick_entry",
+          params: { text: "午餐 350" }, headers: headers
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context "without mapping (needs confirmation)" do
+      let(:memory_store) { ActiveSupport::Cache::MemoryStore.new }
+
+      before do
+        allow(Rails).to receive(:cache).and_return(memory_store)
+      end
+
+      it "returns confirm_url and caches household_id" do
+        post "/api/v1/households/#{second_household.id}/quick_entry",
+          params: { text: "新品 300" }, headers: headers
+
+        expect(response).to have_http_status(:ok)
+        body = response.parsed_body
+        expect(body["status"]).to eq("needs_confirmation")
+
+        token = body["confirm_url"].split("/").last
+        cached = Rails.cache.read("quick_entry_confirm:#{token}")
+        expect(cached[:household_id]).to eq(second_household.id)
+      end
+    end
+  end
 end

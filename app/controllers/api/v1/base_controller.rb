@@ -3,6 +3,10 @@ class Api::V1::BaseController < ActionController::Base
 
   skip_forgery_protection
 
+  rescue_from ActiveRecord::RecordNotFound do
+    render json: { status: "error", message: "Not found" }, status: :not_found
+  end
+
   private
 
   def render_success(data = {})

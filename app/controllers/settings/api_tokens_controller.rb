@@ -3,6 +3,7 @@ module Settings
     def index
       @api_tokens = Current.user.api_tokens.order(created_at: :desc)
       @accounts = Current.household.accounts.active
+      @households = Current.user.households
     end
 
     def create
