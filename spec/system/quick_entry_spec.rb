@@ -29,6 +29,7 @@ RSpec.describe "快速記帳", type: :system do
     select "生活花費", from: "category_id"
     click_button "確認建立"
 
+    expect(page).to have_current_path(new_quick_entry_path)
     expect(page).to have_text("交易已建立")
     expect(Transaction.last).to have_attributes(
       amount: -350.to_d,
