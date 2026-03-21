@@ -27,7 +27,7 @@ RSpec.describe "Household deletion", type: :system do
         expect(page).to have_button("永久刪除此帳本", disabled: true)
 
         wait_for_stimulus("[data-controller='confirm-delete']", "confirm-delete")
-        fill_in_with_keyboard("household_name", with: second_household.name)
+        fill_in_and_trigger("household_name", with: second_household.name)
         expect(page).to have_button("永久刪除此帳本", disabled: false)
 
         click_button "永久刪除此帳本"
@@ -76,7 +76,7 @@ RSpec.describe "Household deletion", type: :system do
         expect(page).to have_text(second_household.name)
 
         wait_for_stimulus("[data-controller='confirm-delete']", "confirm-delete")
-        fill_in_with_keyboard("household_name", with: second_household.name)
+        fill_in_and_trigger("household_name", with: second_household.name)
         expect(page).to have_button("永久刪除此帳本", disabled: false)
         click_button "永久刪除此帳本"
         wait_for_turbo

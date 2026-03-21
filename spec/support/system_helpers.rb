@@ -29,11 +29,10 @@ module SystemHelpers
     # Allow test to continue; Capybara assertions will catch real failures
   end
 
-  def fill_in_with_keyboard(locator, with:)
+  def fill_in_and_trigger(locator, with:)
     field = find_field(locator)
-    field.click
-    field.send_keys([ :control, "a" ], :delete)
-    field.send_keys(with)
+    field.fill_in with: with
+    page.execute_script("arguments[0].dispatchEvent(new InputEvent('input', { bubbles: true }))", field.native)
   end
 
   def wait_for_turbo
