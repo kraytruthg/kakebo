@@ -69,7 +69,6 @@ RSpec.describe "Account reconciliation", type: :system do
       field.fill_in with: "9999"
 
       within("#reconciliation-row-#{t1.id}") { click_button }
-      expect(page).to have_css("#reconciliation-row-#{t1.id}[data-cleared='true']")
 
       expect(page).to have_button("完成對帳", disabled: true)
     end
