@@ -20,6 +20,7 @@ RSpec.describe "Account reconciliation", type: :system do
     it "completes reconciliation when difference is zero" do
       visit account_path(account)
       click_link "對帳"
+      wait_for_turbo
 
       expect(page).to have_text("對帳 — 玉山銀行")
       expect(page).to have_text("待確認交易（3 筆）")
@@ -42,6 +43,7 @@ RSpec.describe "Account reconciliation", type: :system do
       expect(page).to have_css("[data-reconciliation-target='difference']", text: "$0")
 
       click_button "完成對帳"
+      wait_for_turbo
       expect(page).to have_text("對帳完成")
 
       # Transactions should be reconciled
@@ -78,6 +80,7 @@ RSpec.describe "Account reconciliation", type: :system do
 
       visit new_account_reconciliation_path(account)
       accept_confirm { click_button "取消對帳" }
+      wait_for_turbo
 
       expect(page).to have_current_path(account_path(account))
       expect(t1.reload.status).to eq("uncleared")
@@ -107,6 +110,7 @@ RSpec.describe "Account reconciliation", type: :system do
       expect(page).to have_css("[data-reconciliation-target='difference']", text: "$0")
 
       click_button "完成對帳"
+      wait_for_turbo
       expect(page).to have_text("對帳完成")
     end
   end
