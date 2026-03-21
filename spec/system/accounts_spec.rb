@@ -29,6 +29,7 @@ RSpec.describe "Accounts", type: :system do
       create(:transaction, account: account, amount: -100, date: Date.today)
 
       visit account_path(account)
+      wait_for_turbo
       expect(page).to have_text("測試帳戶")
 
       accept_confirm do
@@ -45,6 +46,7 @@ RSpec.describe "Accounts", type: :system do
 
       it "clears default_account after deletion" do
         visit account_path(account)
+        wait_for_turbo
 
         accept_confirm do
           click_button "刪除"
