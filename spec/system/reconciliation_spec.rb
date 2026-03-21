@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe "Account reconciliation", type: :system do
-  before { driven_by :selenium, using: :headless_chrome }
-
   let(:user) { create(:user, password: "password123") }
   let(:household) { user.households.first }
   let(:category_group) { create(:category_group, household: household) }
@@ -15,7 +13,7 @@ RSpec.describe "Account reconciliation", type: :system do
   before { sign_in user }
 
   describe "desktop" do
-    before { page.driver.browser.manage.window.resize_to(1280, 800) }
+    before { resize_to_desktop }
 
     it "completes reconciliation when difference is zero" do
       visit account_path(account)
@@ -88,7 +86,7 @@ RSpec.describe "Account reconciliation", type: :system do
   end
 
   describe "mobile" do
-    before { page.driver.browser.manage.window.resize_to(375, 812) }
+    before { resize_to_mobile }
 
     it "can complete reconciliation on mobile" do
       visit new_account_reconciliation_path(account)

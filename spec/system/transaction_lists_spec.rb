@@ -93,11 +93,11 @@ RSpec.describe "Transaction Lists", type: :system do
 
   describe "手機版", js: true do
     before do
-      page.driver.browser.manage.window.resize_to(375, 812)
+      resize_to_mobile
     end
 
     after do
-      page.driver.browser.manage.window.resize_to(1280, 800)
+      resize_to_desktop
     end
 
     it "從帳戶頁進入所有交易" do

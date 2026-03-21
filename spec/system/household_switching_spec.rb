@@ -29,8 +29,8 @@ RSpec.describe "Household switching", type: :system do
   end
 
   context "mobile settings page" do
-    before { page.driver.browser.manage.window.resize_to(375, 812) }
-    after { page.driver.browser.manage.window.resize_to(1400, 900) }
+    before { resize_to_mobile }
+    after { resize_to_desktop }
 
     it "switches household from settings page" do
       visit settings_root_path
