@@ -32,7 +32,7 @@ module SystemHelpers
   def fill_in_with_keyboard(locator, with:)
     field = find_field(locator)
     field.click
-    field.send_keys([:control, "a"], :delete)
+    field.send_keys([ :control, "a" ], :delete)
     field.send_keys(with)
   end
 
