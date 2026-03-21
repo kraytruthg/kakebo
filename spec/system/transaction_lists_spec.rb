@@ -29,6 +29,7 @@ RSpec.describe "Transaction Lists", type: :system do
       within("aside") do
         click_link "交易"
       end
+      wait_for_turbo
       expect(page).to have_text("交易紀錄")
       expect(page).to have_text("午餐")
       expect(page).to have_text("電車")
@@ -64,6 +65,7 @@ RSpec.describe "Transaction Lists", type: :system do
     it "清除篩選" do
       visit transaction_lists_path(account_id: account1.id)
       first(:link, "清除").click
+      wait_for_turbo
       expect(page).to have_text("午餐")
       expect(page).to have_text("電車")
     end
@@ -101,6 +103,7 @@ RSpec.describe "Transaction Lists", type: :system do
     it "從帳戶頁進入所有交易" do
       visit accounts_path
       click_link "所有交易"
+      wait_for_turbo
       expect(page).to have_text("交易紀錄")
       expect(page).to have_text("午餐")
       expect(page).to have_text("電車")

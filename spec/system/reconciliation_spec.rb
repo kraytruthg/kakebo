@@ -28,10 +28,15 @@ RSpec.describe "Account reconciliation", type: :system do
       field = find("input[data-reconciliation-target='bankBalance']")
       field.fill_in with: "9000"
 
-      # Check all 3 transactions
+      # Check all 3 transactions, waiting for each toggle to complete
       within("#reconciliation-row-#{t1.id}") { click_button }
+      expect(page).to have_css("#reconciliation-row-#{t1.id}[data-cleared='true']")
+
       within("#reconciliation-row-#{t2.id}") { click_button }
+      expect(page).to have_css("#reconciliation-row-#{t2.id}[data-cleared='true']")
+
       within("#reconciliation-row-#{t3.id}") { click_button }
+      expect(page).to have_css("#reconciliation-row-#{t3.id}[data-cleared='true']")
 
       # Difference should be 0
       expect(page).to have_css("[data-reconciliation-target='difference']", text: "$0")
@@ -64,6 +69,7 @@ RSpec.describe "Account reconciliation", type: :system do
       field.fill_in with: "9999"
 
       within("#reconciliation-row-#{t1.id}") { click_button }
+      expect(page).to have_css("#reconciliation-row-#{t1.id}[data-cleared='true']")
 
       expect(page).to have_button("完成對帳", disabled: true)
     end
@@ -91,10 +97,14 @@ RSpec.describe "Account reconciliation", type: :system do
       field.fill_in with: "9000"
 
       within("#reconciliation-row-#{t1.id}") { click_button }
-      within("#reconciliation-row-#{t2.id}") { click_button }
-      within("#reconciliation-row-#{t3.id}") { click_button }
+      expect(page).to have_css("#reconciliation-row-#{t1.id}[data-cleared='true']")
 
-      # Wait for Stimulus to recalculate after turbo stream updates
+      within("#reconciliation-row-#{t2.id}") { click_button }
+      expect(page).to have_css("#reconciliation-row-#{t2.id}[data-cleared='true']")
+
+      within("#reconciliation-row-#{t3.id}") { click_button }
+      expect(page).to have_css("#reconciliation-row-#{t3.id}[data-cleared='true']")
+
       expect(page).to have_css("[data-reconciliation-target='difference']", text: "$0")
 
       click_button "完成對帳"

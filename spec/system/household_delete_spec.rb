@@ -26,12 +26,12 @@ RSpec.describe "Household deletion", type: :system do
         expect(page).to have_text("帳戶數")
         expect(page).to have_button("永久刪除此帳本", disabled: true)
 
-        field = find_field("household_name")
-        field.fill_in with: second_household.name
-        execute_script("arguments[0].dispatchEvent(new Event('input', { bubbles: true }))", field)
+        wait_for_stimulus("[data-controller='confirm-delete']", "confirm-delete")
+        fill_in_with_keyboard("household_name", with: second_household.name)
         expect(page).to have_button("永久刪除此帳本", disabled: false)
 
         click_button "永久刪除此帳本"
+        wait_for_turbo
 
         expect(page).to have_text("已刪除")
         expect(page).to have_current_path(settings_root_path)
@@ -75,11 +75,11 @@ RSpec.describe "Household deletion", type: :system do
 
         expect(page).to have_text(second_household.name)
 
-        field = find_field("household_name")
-        field.fill_in with: second_household.name
-        execute_script("arguments[0].dispatchEvent(new Event('input', { bubbles: true }))", field)
+        wait_for_stimulus("[data-controller='confirm-delete']", "confirm-delete")
+        fill_in_with_keyboard("household_name", with: second_household.name)
         expect(page).to have_button("永久刪除此帳本", disabled: false)
         click_button "永久刪除此帳本"
+        wait_for_turbo
 
         expect(page).to have_text("已刪除")
       end
