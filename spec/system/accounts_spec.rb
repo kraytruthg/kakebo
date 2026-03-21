@@ -9,6 +9,7 @@ RSpec.describe "Accounts", type: :system do
   it "新增帳戶後出現在帳戶列表" do
     visit accounts_path
     click_on "新增帳戶"
+    wait_for_turbo
 
     expect(page).to have_field("帳戶名稱")
     fill_in "帳戶名稱", with: "玉山銀行"

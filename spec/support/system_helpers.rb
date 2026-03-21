@@ -39,6 +39,10 @@ module SystemHelpers
   def wait_for_turbo(timeout: Capybara.default_max_wait_time)
     return unless page.evaluate_script("typeof Turbo !== 'undefined'")
 
+    # Wait until no active Turbo visit is in-flight and no preview is showing.
+    # A brief initial pause ensures Turbo has time to initiate the navigation
+    # after a click_button / click_link before we start polling.
+    sleep 0.1
     Timeout.timeout(timeout) do
       loop do
         idle = page.evaluate_script(<<~JS)
