@@ -36,25 +36,13 @@ module SystemHelpers
     field.send_keys(with)
   end
 
-  def wait_for_turbo(timeout: Capybara.default_max_wait_time)
-    return unless page.evaluate_script("typeof Turbo !== 'undefined'")
+  def wait_for_turbo
+    return if Capybara.current_driver == :rack_test
 
-    # Wait until no active Turbo visit is in-flight and no preview is showing.
-    # A brief initial pause ensures Turbo has time to initiate the navigation
-    # after a click_button / click_link before we start polling.
-    sleep 0.1
-    Timeout.timeout(timeout) do
-      loop do
-        idle = page.evaluate_script(<<~JS)
-          !document.querySelector("[data-turbo-preview]") &&
-          (!Turbo.navigator.currentVisit || Turbo.navigator.currentVisit.state === "completed")
-        JS
-        break if idle
-        sleep 0.05
-      end
-    end
-  rescue Timeout::Error
-    # Allow test to continue; Capybara assertions will catch real failures
+    page.assert_no_selector(
+      "html[aria-busy], html[data-turbo-not-loaded], html[data-turbo-loading], html[data-turbo-preview]",
+      visible: :all
+    )
   end
 
   def wait_until(timeout: Capybara.default_max_wait_time)
