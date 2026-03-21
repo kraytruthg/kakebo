@@ -9,6 +9,42 @@ module SystemHelpers
     expect(page).not_to have_current_path(new_session_path)
   end
 
+  def wait_for_stimulus(selector, controller_name, timeout: Capybara.default_max_wait_time)
+    Timeout.timeout(timeout) do
+      loop do
+        connected = page.evaluate_script(<<~JS)
+          (function() {
+            var el = document.querySelector(#{selector.to_json});
+            if (!el) return false;
+            if (!window.Stimulus) return false;
+            var controller = window.Stimulus.getControllerForElementAndIdentifier(el, #{controller_name.to_json});
+            return !!controller;
+          })()
+        JS
+        break if connected
+        sleep 0.05
+      end
+    end
+  rescue Timeout::Error
+    # Allow test to continue; Capybara assertions will catch real failures
+  end
+
+  def fill_in_with_keyboard(locator, with:)
+    field = find_field(locator)
+    field.click
+    field.send_keys([ :control, "a" ], :delete)
+    field.send_keys(with)
+  end
+
+  def wait_for_turbo
+    return if Capybara.current_driver == :rack_test
+
+    page.assert_no_selector(
+      "html[aria-busy], html[data-turbo-not-loaded], html[data-turbo-loading], html[data-turbo-preview]",
+      visible: :all
+    )
+  end
+
   def wait_until(timeout: Capybara.default_max_wait_time)
     Timeout.timeout(timeout) do
       loop do

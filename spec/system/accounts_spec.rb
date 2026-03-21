@@ -9,12 +9,14 @@ RSpec.describe "Accounts", type: :system do
   it "新增帳戶後出現在帳戶列表" do
     visit accounts_path
     click_on "新增帳戶"
+    wait_for_turbo
 
     expect(page).to have_field("帳戶名稱")
     fill_in "帳戶名稱", with: "玉山銀行"
     select "預算帳戶", from: "帳戶類型"
     fill_in "起始餘額", with: "10000"
     click_button "建立帳戶"
+    wait_for_turbo
 
     expect(page).to have_text("帳戶已建立")
     expect(page).to have_text("玉山銀行")
@@ -32,6 +34,7 @@ RSpec.describe "Accounts", type: :system do
       accept_confirm do
         click_button "刪除"
       end
+      wait_for_turbo
 
       expect(page).to have_text("帳戶已刪除")
       expect(page).not_to have_text("測試帳戶")
@@ -46,6 +49,7 @@ RSpec.describe "Accounts", type: :system do
         accept_confirm do
           click_button "刪除"
         end
+        wait_for_turbo
 
         expect(page).to have_text("帳戶已刪除")
         expect(household.reload.default_account_id).to be_nil

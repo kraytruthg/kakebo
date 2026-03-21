@@ -20,6 +20,7 @@ RSpec.describe "Account reconciliation", type: :system do
     it "completes reconciliation when difference is zero" do
       visit account_path(account)
       click_link "對帳"
+      wait_for_turbo
 
       expect(page).to have_text("對帳 — 玉山銀行")
       expect(page).to have_text("待確認交易（3 筆）")
@@ -28,15 +29,21 @@ RSpec.describe "Account reconciliation", type: :system do
       field = find("input[data-reconciliation-target='bankBalance']")
       field.fill_in with: "9000"
 
-      # Check all 3 transactions
+      # Check all 3 transactions, waiting for each toggle to complete
       within("#reconciliation-row-#{t1.id}") { click_button }
+      expect(page).to have_css("#reconciliation-row-#{t1.id}[data-cleared='true']")
+
       within("#reconciliation-row-#{t2.id}") { click_button }
+      expect(page).to have_css("#reconciliation-row-#{t2.id}[data-cleared='true']")
+
       within("#reconciliation-row-#{t3.id}") { click_button }
+      expect(page).to have_css("#reconciliation-row-#{t3.id}[data-cleared='true']")
 
       # Difference should be 0
       expect(page).to have_css("[data-reconciliation-target='difference']", text: "$0")
 
       click_button "完成對帳"
+      wait_for_turbo
       expect(page).to have_text("對帳完成")
 
       # Transactions should be reconciled
@@ -73,6 +80,7 @@ RSpec.describe "Account reconciliation", type: :system do
 
       visit new_account_reconciliation_path(account)
       accept_confirm { click_button "取消對帳" }
+      wait_for_turbo
 
       expect(page).to have_current_path(account_path(account))
       expect(t1.reload.status).to eq("uncleared")
@@ -91,13 +99,18 @@ RSpec.describe "Account reconciliation", type: :system do
       field.fill_in with: "9000"
 
       within("#reconciliation-row-#{t1.id}") { click_button }
-      within("#reconciliation-row-#{t2.id}") { click_button }
-      within("#reconciliation-row-#{t3.id}") { click_button }
+      expect(page).to have_css("#reconciliation-row-#{t1.id}[data-cleared='true']")
 
-      # Wait for Stimulus to recalculate after turbo stream updates
+      within("#reconciliation-row-#{t2.id}") { click_button }
+      expect(page).to have_css("#reconciliation-row-#{t2.id}[data-cleared='true']")
+
+      within("#reconciliation-row-#{t3.id}") { click_button }
+      expect(page).to have_css("#reconciliation-row-#{t3.id}[data-cleared='true']")
+
       expect(page).to have_css("[data-reconciliation-target='difference']", text: "$0")
 
       click_button "完成對帳"
+      wait_for_turbo
       expect(page).to have_text("對帳完成")
     end
   end
