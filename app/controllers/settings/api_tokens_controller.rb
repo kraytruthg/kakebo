@@ -18,7 +18,11 @@ module Settings
     end
 
     def update_default_account
-      Current.household.update!(default_account_id: params[:default_account_id].presence)
+      account_id = params[:default_account_id].presence
+      if account_id
+        Current.household.accounts.find(account_id)
+      end
+      Current.user.update!(default_account_id: account_id)
       redirect_to settings_api_tokens_path, notice: "預設帳戶已更新"
     end
   end

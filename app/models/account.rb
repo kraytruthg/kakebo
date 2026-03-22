@@ -49,6 +49,6 @@ class Account < ApplicationRecord
   private
 
   def clear_default_account
-    household.update!(default_account_id: nil) if household.default_account_id == id
+    User.where(default_account_id: id).update_all(default_account_id: nil)
   end
 end

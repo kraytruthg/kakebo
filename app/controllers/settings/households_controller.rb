@@ -70,9 +70,11 @@ class Settings::HouseholdsController < ApplicationController
         HouseholdMembership.create!(user: user, household: new_hh, role: "owner")
       end
 
+      acct_ids = household.account_ids
+      User.where(default_account_id: acct_ids).update_all(default_account_id: nil)
+
       # Safe delete order to bypass model callbacks
-      household.update_columns(default_account_id: nil)
-      Transaction.where(account_id: household.account_ids).delete_all
+      Transaction.where(account_id: acct_ids).delete_all
       BudgetEntry.joins(category: :category_group)
                  .where(category_groups: { household_id: household.id })
                  .delete_all

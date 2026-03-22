@@ -9,7 +9,7 @@ class QuickEntryConfirmationsController < ApplicationController
   def show
     @accounts = @household.accounts.active
     @categories = @household.category_groups.includes(:categories)
-    @default_account = @household.default_account
+    @default_account = Current.user.default_account_for(@household)
   end
 
   def create
