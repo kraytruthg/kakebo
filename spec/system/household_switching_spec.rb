@@ -38,7 +38,9 @@ RSpec.describe "Household switching", type: :system do
       expect(page).to have_text("家庭帳本")
       expect(page).to have_text("個人零用錢")
 
-      click_button "個人零用錢"
+      within("[data-testid='mobile-household-switcher']") do
+        click_button "個人零用錢"
+      end
 
       # Wait for redirect to complete (goes to root_path -> /budget)
       expect(page).to have_current_path(budget_path)
