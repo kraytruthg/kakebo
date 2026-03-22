@@ -29,8 +29,8 @@ RSpec.describe "Household switching", type: :system do
   end
 
   context "mobile settings page" do
-    before { page.driver.browser.manage.window.resize_to(375, 812) }
-    after { page.driver.browser.manage.window.resize_to(1400, 900) }
+    before { resize_to_mobile }
+    after { resize_to_desktop }
 
     it "switches household from settings page" do
       visit settings_root_path
@@ -38,7 +38,9 @@ RSpec.describe "Household switching", type: :system do
       expect(page).to have_text("家庭帳本")
       expect(page).to have_text("個人零用錢")
 
-      click_button "個人零用錢"
+      within("[data-testid='mobile-household-switcher']") do
+        click_button "個人零用錢"
+      end
 
       # Wait for redirect to complete (goes to root_path -> /budget)
       expect(page).to have_current_path(budget_path)

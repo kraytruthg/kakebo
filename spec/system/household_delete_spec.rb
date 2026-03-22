@@ -1,10 +1,6 @@
 require "rails_helper"
 
 RSpec.describe "Household deletion", type: :system do
-  before do
-    driven_by :selenium, using: :headless_chrome
-  end
-
   let(:user) { create(:user, password: "password123") }
 
   describe "desktop" do
@@ -69,7 +65,7 @@ RSpec.describe "Household deletion", type: :system do
 
       it "deletes household from mobile settings" do
         sign_in user
-        page.driver.browser.manage.window.resize_to(375, 812)
+        resize_to_mobile
 
         visit settings_household_path(second_household)
 
@@ -88,7 +84,7 @@ RSpec.describe "Household deletion", type: :system do
     context "with only one household" do
       it "shows cannot-delete message on mobile" do
         sign_in user
-        page.driver.browser.manage.window.resize_to(375, 812)
+        resize_to_mobile
 
         visit settings_household_path(user.households.first)
 

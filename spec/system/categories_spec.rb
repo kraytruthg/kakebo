@@ -53,11 +53,13 @@ RSpec.describe "類別管理", type: :system do
   it "拖曳調整 CategoryGroup 順序" do
     group2 = create(:category_group, household: user.households.first, name: "娛樂", position: 2)
     visit settings_categories_path
+    wait_for_turbo
+    wait_for_stimulus(".space-y-4[data-controller='sortable']", "sortable")
 
     source = find(".space-y-4 > [data-sortable-id='#{group2.id}'] .drag-handle")
     target = find(".space-y-4 > [data-sortable-id='#{group.id}'] .drag-handle")
 
-    source.drag_to(target)
+    drag_sortable(source, target)
 
     wait_until { group2.reload.position < group.reload.position }
   end
@@ -66,10 +68,11 @@ RSpec.describe "類別管理", type: :system do
     cat1 = create(:category, category_group: group, name: "食物", position: 0)
     cat2 = create(:category, category_group: group, name: "交通", position: 1)
     visit settings_categories_path
+    wait_for_stimulus(".divide-y[data-controller='sortable']", "sortable")
 
     source = find(:css, ".divide-y > [data-sortable-id='#{cat2.id}'] .drag-handle")
     target = find(:css, ".divide-y > [data-sortable-id='#{cat1.id}'] .drag-handle")
-    source.drag_to(target)
+    drag_sortable(source, target)
 
     wait_until { cat2.reload.position < cat1.reload.position }
   end

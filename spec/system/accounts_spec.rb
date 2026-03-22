@@ -78,8 +78,8 @@ RSpec.describe "Accounts", type: :system do
     end
 
     describe "手機版", js: true do
-      before { page.driver.browser.manage.window.resize_to(375, 812) }
-      after { page.driver.browser.manage.window.resize_to(1280, 800) }
+      before { resize_to_mobile }
+      after { resize_to_desktop }
 
       it "帳戶詳情頁手機版顯示篩選和卡片" do
         create(:transaction, account: account, category: category1, amount: -300, date: Date.today, memo: "午餐")
