@@ -8,7 +8,7 @@
   <div>
     <%= f.label :account_type, "帳戶類型", class: "block text-sm font-medium text-slate-700 mb-1.5" %>
     <%= f.select :account_type,
-          [["預算帳戶", "budget"], ["追蹤帳戶", "tracking"]],
+          [["預算帳戶", "budget"], ["資產帳戶", "tracking_asset"], ["負債帳戶", "tracking_liability"]],
           {},
           class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" %>
   </div>
@@ -18,6 +18,13 @@
           step: 1,
           class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent",
           placeholder: "0" %>
+  </div>
+  <div class="flex items-center gap-2">
+    <%= f.check_box :investable,
+          class: "rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" %>
+    <%= f.label :investable, "可投資資產（計入 FIRE 目標）",
+          class: "text-sm text-slate-700" %>
+    <span class="text-xs text-slate-400">自住房產建議取消勾選</span>
   </div>
   <div class="flex gap-3 pt-2">
     <%= f.submit account.new_record? ? "建立帳戶" : "更新帳戶",

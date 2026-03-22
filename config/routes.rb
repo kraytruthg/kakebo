@@ -15,6 +15,7 @@ Rails.application.routes.draw do
         patch :toggle_clear
       end
     end
+    resources :balance_snapshots, only: [ :new, :create ]
   end
   resources :transaction_lists, only: [ :index ], path: "transactions"
   resources :transfers, only: [ :new, :create, :destroy ]
@@ -23,6 +24,9 @@ Rails.application.routes.draw do
       to: "budget/category_transactions#index",
       as: :budget_category_transactions
   get "reports", to: "reports#index", as: :reports
+  get "reports/financial_overview", to: "reports#financial_overview", as: :reports_financial_overview
+  get "reports/fire", to: "reports#fire", as: :reports_fire
+  resource :fire_goal, only: [ :create, :update ]
   get "settings", to: "settings#index", as: :settings_root
   namespace :settings do
     resources :category_groups, only: [ :new, :create, :edit, :update, :destroy ] do

@@ -25,6 +25,9 @@ gem "bcrypt", "~> 3.1.7"
 # Pagination [https://github.com/ddnexus/pagy]
 gem "pagy", "~> 43.3"
 
+# Charts [https://github.com/ankane/chartkick]
+gem "chartkick"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 

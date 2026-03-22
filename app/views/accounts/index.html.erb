@@ -15,26 +15,53 @@
     </div>
   </div>
 
-  <% total_all = (@budget_accounts + @tracking_accounts).sum(&:balance) %>
+  <% all_accounts = @budget_accounts + @asset_accounts + @liability_accounts %>
+  <% total_all = all_accounts.sum { |a| a.tracking? ? a.current_balance.abs : a.balance.abs } %>
 
-  <% [["預算帳戶", @budget_accounts], ["追蹤帳戶", @tracking_accounts]].each do |label, accounts| %>
+  <% sections = [
+       ["預算帳戶", @budget_accounts, false],
+       ["資產帳戶", @asset_accounts, true],
+       ["負債帳戶", @liability_accounts, true]
+     ] %>
+
+  <% sections.each do |label, accounts, is_tracking| %>
     <% next if accounts.empty? %>
     <div class="mb-6">
       <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3"><%= label %></h2>
       <div class="space-y-2">
         <% accounts.each do |account| %>
-          <% pct = total_all > 0 ? (account.balance / total_all * 100).round : 0 %>
-          <%= link_to account_path(account), class: "block bg-white rounded-xl border border-slate-100 px-5 py-4 hover:border-indigo-200 hover:shadow-sm transition-all" do %>
+          <% display_balance = is_tracking ? account.current_balance : account.balance %>
+          <% pct = total_all > 0 ? (display_balance.abs / total_all * 100).round : 0 %>
+          <div class="bg-white rounded-xl border border-slate-100 px-5 py-4 hover:border-indigo-200 hover:shadow-sm transition-all">
             <div class="flex items-center justify-between mb-2">
-              <span class="text-sm font-medium text-slate-800"><%= account.name %></span>
-              <span class="text-base font-bold text-slate-900">
-                <%= format_amount(account.balance) %>
-              </span>
+              <div>
+                <%= link_to account.name, account_path(account), class: "text-sm font-medium text-slate-800 hover:text-indigo-600" %>
+                <% if is_tracking && !account.investable? %>
+                  <span class="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded ml-2">非流動</span>
+                <% end %>
+                <% if is_tracking %>
+                  <% latest_snapshot = account.balance_snapshots.max_by(&:date) %>
+                  <% if latest_snapshot %>
+                    <span class="text-xs text-slate-400 ml-1">
+                      (<%= latest_snapshot.date.strftime("%Y-%m-%d") %>)
+                    </span>
+                  <% end %>
+                <% end %>
+              </div>
+              <div class="flex items-center gap-3">
+                <% if is_tracking %>
+                  <%= link_to "更新餘額", new_account_balance_snapshot_path(account),
+                        class: "text-xs text-indigo-600 hover:text-indigo-800 font-medium" %>
+                <% end %>
+                <span class="text-base font-bold text-slate-900">
+                  <%= format_amount(display_balance) %>
+                </span>
+              </div>
             </div>
             <div class="w-full bg-slate-100 rounded-full h-1.5">
               <div class="bg-indigo-500 h-1.5 rounded-full" style="width: <%= pct %>%"></div>
             </div>
-          <% end %>
+          </div>
         <% end %>
       </div>
     </div>

@@ -1,0 +1,12 @@
+<div class="flex gap-1 mb-6 bg-slate-100 rounded-lg p-1">
+  <% tabs = [
+    ["支出分析", reports_path],
+    ["財務總覽", reports_financial_overview_path],
+    ["FIRE", reports_fire_path]
+  ] %>
+  <% tabs.each do |label, path| %>
+    <% active = request.path == path %>
+    <%= link_to label, path,
+          class: "flex-1 text-center text-sm font-medium py-2 rounded-md transition-colors #{active ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}" %>
+  <% end %>
+</div>
