@@ -5,7 +5,8 @@ class AccountsController < ApplicationController
 
   def index
     @budget_accounts = Current.household.accounts.budget.active.order(:name)
-    @tracking_accounts = Current.household.accounts.tracking.active.order(:name)
+    @asset_accounts = Current.household.accounts.tracking_asset.active.includes(:balance_snapshots).order(:name)
+    @liability_accounts = Current.household.accounts.tracking_liability.active.includes(:balance_snapshots).order(:name)
   end
 
   def show
@@ -57,6 +58,6 @@ class AccountsController < ApplicationController
   end
 
   def account_params
-    params.require(:account).permit(:name, :account_type, :starting_balance)
+    params.require(:account).permit(:name, :account_type, :starting_balance, :investable)
   end
 end

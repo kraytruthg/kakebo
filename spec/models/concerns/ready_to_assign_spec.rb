@@ -38,7 +38,7 @@ RSpec.describe "Household#ready_to_assign" do
   end
 
   it "ignores tracking accounts" do
-    create(:account, household: household, account_type: "tracking", balance: 500_000)
+    create(:account, household: household, account_type: "tracking_asset", balance: 500_000)
     create(:budget_entry, category: cat1, year: 2026, month: 2, budgeted: 10_000, carried_over: 0)
 
     # only budget account (100,000) counts

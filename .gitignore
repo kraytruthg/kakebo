@@ -41,3 +41,5 @@
 # Git worktrees
 /.worktrees
 spec/examples.txt
+.spectra/
+openspec/.vector-search.db*

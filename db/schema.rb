@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_18_125047) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_22_035035) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -20,6 +20,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_125047) do
     t.decimal "balance", precision: 12, scale: 2, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.bigint "household_id", null: false
+    t.boolean "investable", default: true, null: false
     t.datetime "last_reconciled_at"
     t.string "name", null: false
     t.decimal "reconciled_balance", precision: 12, scale: 2, default: "0.0", null: false
@@ -37,6 +38,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_125047) do
     t.bigint "user_id", null: false
     t.index ["token"], name: "index_api_tokens_on_token", unique: true
     t.index ["user_id"], name: "index_api_tokens_on_user_id"
+  end
+
+  create_table "balance_snapshots", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.decimal "balance", precision: 12, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.string "note"
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "date"], name: "index_balance_snapshots_on_account_id_and_date", unique: true
+    t.index ["account_id"], name: "index_balance_snapshots_on_account_id"
   end
 
   create_table "budget_entries", force: :cascade do |t|
@@ -67,6 +79,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_125047) do
     t.integer "position"
     t.datetime "updated_at", null: false
     t.index ["household_id"], name: "index_category_groups_on_household_id"
+  end
+
+  create_table "fire_goals", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.decimal "expected_return_rate", precision: 5, scale: 2, default: "7.0", null: false
+    t.bigint "household_id", null: false
+    t.decimal "target_amount", precision: 14, scale: 2
+    t.decimal "target_annual_expense", precision: 14, scale: 2
+    t.datetime "updated_at", null: false
+    t.decimal "withdrawal_rate", precision: 5, scale: 2, default: "4.0", null: false
+    t.index ["household_id"], name: "index_fire_goals_on_household_id", unique: true
   end
 
   create_table "household_memberships", force: :cascade do |t|
@@ -127,9 +150,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_125047) do
 
   add_foreign_key "accounts", "households"
   add_foreign_key "api_tokens", "users"
+  add_foreign_key "balance_snapshots", "accounts"
   add_foreign_key "budget_entries", "categories"
   add_foreign_key "categories", "category_groups"
   add_foreign_key "category_groups", "households"
+  add_foreign_key "fire_goals", "households"
   add_foreign_key "household_memberships", "households"
   add_foreign_key "household_memberships", "users"
   add_foreign_key "households", "accounts", column: "default_account_id"
