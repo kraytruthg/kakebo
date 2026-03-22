@@ -8,7 +8,6 @@ class Household < ApplicationRecord
   has_many :category_groups, dependent: :destroy
   has_many :quick_entry_mappings, dependent: :destroy
   has_one :fire_goal, dependent: :destroy
-  belongs_to :default_account, class_name: "Account", optional: true
 
   def actual_annual_expense
     budget_transactions

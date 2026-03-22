@@ -33,9 +33,7 @@ class Api::V1::QuickEntriesController < Api::V1::BaseController
   end
 
   def default_account
-    @household.default_account ||
-      @household.accounts.budget.active.first ||
-      @household.accounts.active.first
+    Current.user.default_account_for(@household)
   end
 
   def create_transaction(account, resolved)

@@ -23,7 +23,7 @@ class QuickEntryController < ApplicationController
 
     @accounts = Current.household.accounts.active
     @categories = Current.household.category_groups.includes(:categories)
-    @account = resolved[:account] || Current.household.default_account
+    @account = resolved[:account] || Current.user.default_account_for(Current.household)
     @category = resolved[:category]
     @memo = resolved[:memo]
     @amount = resolved[:amount].abs
